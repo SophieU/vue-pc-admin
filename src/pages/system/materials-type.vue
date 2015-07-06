@@ -40,6 +40,7 @@
       <Modal
         width="800"
         v-model="materialsModal"
+        :mask-closable="false"
         :title="modalTitle===1?'新建辅材分类':'编辑辅材分类'"
         @on-visible-change="modalHide"
       >

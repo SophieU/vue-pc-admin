@@ -4,6 +4,7 @@
 <template>
   <div>
     <Modal
+      :mask-closable="false"
       v-model="activeModal"
       title="新建工单"
     >
@@ -183,6 +184,7 @@
                 let needFee=parseFloat(repairType[1]);
                 if(needFee>0&&!this.acceptFee){
                   this.$Message.info('请先勾选接受上门费，再继续');
+                  this.loadingSubmit=false;
                   return false;
                 }
                this.$http.post(`/repair/order/add`,{

@@ -20,7 +20,7 @@
           </div>
         </div>
       </Card>
-      <Modal v-model="portSetting" :title="modalTitle+'服务网点'" @on-visible-change="modalHide">
+      <Modal :mask-closable="false" v-model="portSetting" :title="modalTitle+'服务网点'" @on-visible-change="modalHide">
         <Form ref="portSet" :model="portSettingForm" :rules="portSettingRule" :label-width="120" label-position="right">
           <FormItem label="服务网点名称" prop="name">
             <Input :disabled="viewInfo" v-model="portSettingForm.name" class="form-input"/>

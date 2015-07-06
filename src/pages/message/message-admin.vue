@@ -12,6 +12,7 @@
       </div>
 
       <Modal width="700" v-model="showModal" :title="modalTitle"
+             :mask-closable="false"
             @on-visible-change="modalHide"
       >
         <Form ref="msgForm" :model="msgForm" :rules="msgFormRule" label-position="top">

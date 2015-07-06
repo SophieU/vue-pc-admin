@@ -58,7 +58,7 @@
       </div>
       <!--辅材弹窗-->
       <!--辅材弹窗-->
-      <Modal title="选择辅材" v-model="showModal" width="650" @on-visible-change="modalVisible">
+      <Modal :mask-closable="false" title="选择辅材" v-model="showModal" width="650" @on-visible-change="modalVisible">
         <div>
           <div class="mb-15">
             <Form ref="searchForm" :model="searchForm" inline :label-width="70">

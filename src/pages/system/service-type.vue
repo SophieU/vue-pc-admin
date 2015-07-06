@@ -31,6 +31,7 @@
       <!--报修弹窗-->
       <Modal v-model="serviceModal"
         :title="modalTitle"
+             :mask-closable="false"
              @on-visible-change="modalHide"
       >
         <div class="modal_wrap_form">

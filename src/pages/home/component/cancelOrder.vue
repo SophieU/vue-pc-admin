@@ -9,6 +9,7 @@
 <template>
   <div>
     <Modal
+      :mask-closable="false"
       v-model="activeModal"
       title="取消工单"
       width="700"

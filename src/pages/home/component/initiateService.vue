@@ -9,6 +9,7 @@
 <template>
   <div>
     <Modal
+      :mask-closable="false"
       v-model="activeModal"
       title="发起售后"
       width="650"

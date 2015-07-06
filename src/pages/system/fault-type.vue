@@ -32,6 +32,7 @@
       </Card>
       <!--报修弹窗-->
       <Modal v-model="faultModal"
+             :mask-closable="false"
         :title="modalTitle+'故障原因管理'"
              @on-visible-change="modalHide"
       >
