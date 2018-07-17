@@ -1,6 +1,6 @@
 # wy-pc
 
-> wy admin pc
+> A Vue.js project
 
 ## Build Setup
 
