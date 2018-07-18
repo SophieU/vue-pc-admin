@@ -14,6 +14,7 @@ export default {
   html,body{
     padding: 0;
     margin: 0;
+    height: 100%;
   }
 #app {
   padding: 0;
@@ -128,4 +129,8 @@ export default {
     }
   }
 }
+
+  .collapsed-menu .ivu-menu-submenu-title-icon{
+    display: none!important;
+  }
 </style>
