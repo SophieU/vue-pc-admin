@@ -9,6 +9,7 @@
     <sidebar-menu-collapse
         v-show="collapse"
         :menu-list="menuList"
+        :open-names="openNames"
     ></sidebar-menu-collapse>
   </div>
 </template>
@@ -31,6 +32,14 @@
       menuList:{
         type:Array,
         required:true,
+      },
+      openNames:{
+        type:Array
+      }
+    },
+    methods:{
+      handleChange(name){
+        let willPush = true;
       }
     }
   }

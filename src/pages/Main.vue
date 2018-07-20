@@ -7,7 +7,11 @@
 <template>
   <div class="main" :class="{'main-hide-text':collapse}">
     <div class="sidebar-menu" :style="{width:collapse?'60px':'200px',overflow:collapse?'visible':'auto'}">
-      <sidebar :menu-list="menuList">
+      <sidebar
+        :menu-list="menuList"
+        :open-names="openedSubmenuArr"
+        :collapse = "collapse"
+      >
         <div slot="top"  class="logo-con">
           <img v-show="!collapse" src="../assets/bg/logo03.png"  key="max-logo" >
           <img v-show="collapse" src="../assets/bg/logo.png"  key="min-logo" >
@@ -77,12 +81,16 @@
             collapse:false, //菜单收起状态
           }
       },
+
       computed:{
           cachePage(){
             return this.$store.state.app.cachePage;
           },
           menuList(){
               return this.$store.state.app.menuList;
+          },
+          openedSubmenuArr(){
+              return this.$store.state.openedSubmenuArr;
           }
       },
       methods:{

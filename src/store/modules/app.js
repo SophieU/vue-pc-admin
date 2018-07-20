@@ -4,6 +4,7 @@ import Vue from 'vue'
 const app = {
   state:{
     cachePage:[], //缓存页
+    openedSubmenuArr:[], //要展开的菜单数组
     pageOpenedList:[{
       title:'首页',
       path:'',

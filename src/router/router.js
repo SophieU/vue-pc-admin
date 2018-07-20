@@ -53,16 +53,16 @@ export const appRouter=[
     title:'内容管理',
     component:Main,
     children:[
-      {path:'home',title:'首页',name:'home',component:()=>import('@/pages/home/Index')},
-      {path:'notice',title:'小区公告',name:'notice',component:()=>import('@/pages/home/Index')},
+      {path:'index',icon:'mouse',title:'首页',name:'home',component:()=>import('@/pages/home/Index')},
+      {path:'notice',icon:'flash',title:'小区公告',name:'notice',component:()=>import('@/pages/home/Index')},
     ]
   },{
-  path:'/estate',
+    path:'/estate',
     icon:'ipad',
     title:'物业App管理',
     name:'app',
     children:[
-      {path:'staff',title:'员工管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'staff',icon:'qr-scanner',title:'员工管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')},
     ]
   }
 ];

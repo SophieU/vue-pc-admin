@@ -1,14 +1,14 @@
 <template>
-  <Menu ref="sideMenu" :active-name="$route.name" theme="dark" width="auto">
-    <Submenu name="1-1">
+  <Menu ref="sideMenu" :active-name="$route.name" :open-names="openNames" theme="dark" width="auto">
+    <Submenu v-for="item in menuList" :name="item.name" :key="item.name">
       <template slot="title">
-        <Icon type="user" :size="16"></Icon>
-        <span class="layout-text">{{'标题'}}</span>
+        <Icon :type="item.icon" :size="16"></Icon>
+        <span class="layout-text">{{item.title}}</span>
       </template>
-      <template>
-        <MenuItem name="1-2">
-          <Icon ></Icon>
-          <span class="layout-text">内容</span>
+      <template v-for="child in item.children">
+        <MenuItem :name="child.name" :key="'menuitem'+child.name">
+          <Icon size="16" :type="child.icon" :key="'icon'+child.name"></Icon>
+          <span class="layout-text" :key="'title'+child.name">{{child.title}}</span>
         </MenuItem>
       </template>
     </Submenu>
@@ -17,7 +17,18 @@
 
 <script>
     export default {
-        name: "sidebarMenu"
+        name: "sidebarMenu",
+      data:()=>{
+        return{
+        }
+      },
+      props:{
+          menuList:Array,
+          openNames:Array
+      },
+      mounted(){
+          console.log()
+      }
     }
 </script>
 
