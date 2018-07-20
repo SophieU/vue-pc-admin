@@ -12,20 +12,3 @@ const RouterConfig= {
 }
 export default new Router(RouterConfig);
 
-// export default new Router({
-//   routes: [
-//     {
-//       path: '/login',
-//       name: 'login',
-//       component: Login
-//     },{
-//     path:'/',
-//       name:'home',
-//       component:Main,
-//     },{
-//       path:'*',
-//       name:'notfound',
-//       component:()=>import('@/pages/NotFound.vue')
-//     }
-//   ]
-// })

@@ -1,8 +1,9 @@
 <template>
-    <Breadcrumb>
+    <Breadcrumb  separator=">">
       <BreadcrumbItem v-for="item in currentPath"
                       :href="item.path"
                       :key="item.name"
+
       >{{itemTitle(item)}}</BreadcrumbItem>
     </Breadcrumb>
 </template>
@@ -15,7 +16,7 @@
             currentPath:[
               {
                 title: '首页',
-                path: '',
+                path: '##',
                 name: 'home_index'
               },{
               path:'##',

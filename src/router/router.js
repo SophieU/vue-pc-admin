@@ -37,10 +37,10 @@ export const page500={
 export const otherRouter={
   path:'/',
   name:'otherRouter',
-  redirect:'/test',
+  redirect:'/home',
   component:Main,
   children:[
-    {path:'test',title:'员工管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')}
+    {path:'home',title:'首页',name:'home',component:()=>import('@/pages/home/Index.vue')},
   ]
 };
 

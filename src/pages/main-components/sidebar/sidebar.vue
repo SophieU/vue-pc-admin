@@ -1,8 +1,15 @@
 <template>
   <div class="ivu-shrinkable-menu">
     <slot name="top"></slot>
-    <sidebar-menu v-show="!collapse"></sidebar-menu>
-    <sidebar-menu-collapse v-show="collapse"></sidebar-menu-collapse>
+    <sidebar-menu v-show="!collapse"
+                  :menu-list="menuList"
+                  :open-names="openNames"
+
+    ></sidebar-menu>
+    <sidebar-menu-collapse
+        v-show="collapse"
+        :menu-list="menuList"
+    ></sidebar-menu-collapse>
   </div>
 </template>
 
@@ -20,11 +27,15 @@
       collapse:{
         type:Boolean,
         default:false
+      },
+      menuList:{
+        type:Array,
+        required:true,
       }
     }
   }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+@import '../../main.scss';
 </style>
