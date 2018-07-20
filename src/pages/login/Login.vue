@@ -102,6 +102,7 @@
 </template>
 
 <script>
+  import iView from 'iview'
     export default {
         name: "Login",
         data:()=>{
@@ -175,7 +176,11 @@
           //验证登录
           let tel = this.formLogin.username;
           let password = this.formLogin.password;
-
+          iView.LoadingBar.start();
+          setTimeout(()=>{
+            this.$router.push({name:'home'})
+            iView.LoadingBar.finish();
+          },5000)
         }
       }
     }
