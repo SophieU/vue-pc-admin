@@ -16,6 +16,9 @@ export default {
     margin: 0;
     height: 100%;
   }
+  ul,li{
+    list-style: none;
+  }
 #app {
   padding: 0;
   margin: 0;

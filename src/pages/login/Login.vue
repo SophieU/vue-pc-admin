@@ -7,7 +7,6 @@
         </div>
         <div class="login-right">
           <transition name="fade">
-
             <div class="login-box" v-if="now==='login'||now==='register'">
               <Form ref="loginForm" :model="formLogin" :rules="ruleLogin">
                 <FormItem label="Telephone" prop="username">
@@ -22,8 +21,8 @@
                   </Input>
                 </FormItem>
                 <transition name="slide-fade">
-                  <FormItem label="Code"  v-show="now==='register'" prop="authCode">
-                    <Input placeholder="请输入密码" type="password" v-model="formLogin.password">
+                  <FormItem label="Code"  v-if="now==='register'" prop="authCode">
+                    <Input placeholder="请输入验证" type="password" v-model="formLogin.password">
                     <span slot="prepend" class="login-ico"><Icon type="outlet"></Icon></span>
                     <span slot="append" class="code-btn">
                     <Button  type="primary" :loading="getCoding" @click="getCodingHandle">验证码</Button>
@@ -46,7 +45,7 @@
           <!--忘记密码-->
           <transition name="fade">
             <div class="forget-box" v-show="now==='forget'||now==='next'">
-              <Form ref="loginForm" :model="formLogin">
+              <Form ref="forgetForm" :model="formLogin">
 
                 <div v-show="now==='forget'">
                   <FormItem label="Telephone">
@@ -103,6 +102,8 @@
 
 <script>
   import iView from 'iview'
+  import Cookie from 'js-cookie'
+
     export default {
         name: "Login",
         data:()=>{
@@ -117,8 +118,8 @@
           }
           return {
             formLogin:{
-              username:'',
-              password:'',
+              username:'13708044289',
+              password:'123456',
               authCode:'',
             },
             ruleLogin:{
@@ -172,17 +173,28 @@
             this.getCoding=false;
           },1000)
         },
+        //验证登录
         validateLogin(){
-          //验证登录
-          let tel = this.formLogin.username;
-          let password = this.formLogin.password;
-          iView.LoadingBar.start();
-          setTimeout(()=>{
-            this.$router.push({name:'home'})
-            iView.LoadingBar.finish();
-          },5000)
+          this.$refs.loginForm.validate((valid)=>{
+            console.log(valid)
+            if(valid){
+              let tel = this.formLogin.username;
+              let password = this.formLogin.password;
+              iView.LoadingBar.start();
+              Cookie.set('user',tel)
+              setTimeout(()=>{
+                this.$router.push({name:'home'})
+                iView.LoadingBar.finish();
+              },1000)
+            }else{
+              this.$Message.error('输入有误，请重试')
+            }
+          })
+          //验证忘记密码
+
+
         }
-      }
+      },
     }
 </script>
 

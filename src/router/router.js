@@ -7,6 +7,8 @@
 * */
 import Main from '@/pages/Main.vue'
 
+
+
 // 1、不在Main组件内展示
 export const loginRouter = {
   path :'/login',
@@ -53,8 +55,10 @@ export const appRouter=[
     title:'内容管理',
     component:Main,
     children:[
-      {path:'index',icon:'mouse',title:'首页',name:'home',component:()=>import('@/pages/home/Index')},
-      {path:'notice',icon:'flash',title:'小区公告',name:'notice',component:()=>import('@/pages/home/Index')},
+      {path:'notice',icon:'speakerphone',title:'小区公告',name:'notice',component:()=>import('@/pages/contents/broadcast')},
+      {path:'sos',icon:'flash',title:'报警管理',name:'sos',component:()=>import('@/pages/home/Index')},
+      {path:'assembly',icon:'ios-home',title:'议事厅',name:'assembly',component:()=>import('@/pages/home/Index')},
+      {path:'feedback',icon:'ribbon-a',title:'投诉表扬',name:'feedback',component:()=>import('@/pages/home/Index')},
     ]
   },{
     path:'/estate',
@@ -62,7 +66,20 @@ export const appRouter=[
     title:'物业App管理',
     name:'app',
     children:[
-      {path:'staff',icon:'qr-scanner',title:'员工管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'staff',icon:'person-stalker',title:'人员管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'chat',icon:'chatbubbles',title:'群聊管理',name:'chat',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'approve',icon:'compose',title:'审批管理',name:'approve',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'holiday',icon:'coffee',title:'假期管理',name:'holiday',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'database',icon:'soup-can',title:'数据导出',name:'database',component:()=>import('@/pages/components/HelloWorld.vue')},
+    ]
+  },{
+    path:'/source',
+    icon:'arrow-shrink',
+    title:'资源管理',
+    name:'source',
+    component:Main,
+    children:[
+      {path:'staff',icon:'person-stalker',title:'业主管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')},
     ]
   }
 ];

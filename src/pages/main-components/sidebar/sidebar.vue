@@ -4,12 +4,13 @@
     <sidebar-menu v-show="!collapse"
                   :menu-list="menuList"
                   :open-names="openNames"
-
+                  @on-change="handleChange"
     ></sidebar-menu>
     <sidebar-menu-collapse
         v-show="collapse"
         :menu-list="menuList"
         :open-names="openNames"
+        @on-change="handleChange"
     ></sidebar-menu-collapse>
   </div>
 </template>
@@ -40,6 +41,17 @@
     methods:{
       handleChange(name){
         let willPush = true;
+        if(this.beforePush!==undefined){
+          if(!this.beforePush(name)){
+            willPush=false;
+          }
+        }
+        if(willPush){
+          this.$router.push({
+            name:name
+          });
+        }
+        this.$emit('on-change',name)
       }
     }
   }

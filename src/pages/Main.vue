@@ -11,6 +11,7 @@
         :menu-list="menuList"
         :open-names="openedSubmenuArr"
         :collapse = "collapse"
+        @on-change="handleSubmenuChange"
       >
         <div slot="top"  class="logo-con">
           <img v-show="!collapse" src="../assets/bg/logo03.png"  key="max-logo" >
@@ -29,9 +30,18 @@
         </div>
         <div class="header-middle-con">
           <!--面包导航-->
-          <div class="main-breadcrumb">
-            <breadcrumb-nav></breadcrumb-nav>
-          </div>
+          <Dropdown style="margin-left: 20px" @on-click="selectVillage">
+            <Button type="ghost" :class="'ghost-btn'">
+                {{!curVillage?'选择小区':curVillage}}
+              <Icon type="arrow-down-b"></Icon>
+            </Button>
+            <DropdownMenu slot="list">
+              <DropdownItem :key="vil" v-for="vil in village" :name="vil">{{vil}}</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+          <!--<div class="main-breadcrumb">-->
+            <!--<breadcrumb-nav></breadcrumb-nav>-->
+          <!--</div>-->
         </div>
         <div class="header-avator-con">
           <div class="user-dropdown-menu-con">
@@ -42,8 +52,8 @@
                   <Icon color="#fff" type="arrow-down-b"></Icon>
                 </a>
                 <DropdownMenu slot="list">
+                  <DropdownItem>设置</DropdownItem>
                   <DropdownItem>退出</DropdownItem>
-                  <DropdownItem>炸酱面</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
               <Avatar style="background-color: #87d068;margin-left:15px;" icon="person" />
@@ -52,7 +62,7 @@
         </div>
       </div>
       <div class="tags-con">
-        <tags-page-opened></tags-page-opened>
+        <tags-page-opened :pageTagsList="pageTagsList"></tags-page-opened>
       </div>
     </div>
     <div class="main-content" :style="{left:collapse?'60px':'200px'}">
@@ -69,6 +79,7 @@
   import sidebar from './main-components/sidebar/sidebar'
   import breadcrumbNav from './main-components/breadcrumb-nav'
   import tagsPageOpened from './main-components/tags-page-opened'
+  import http from '../libs/api'
     export default {
         name: "Main",
       components:{
@@ -79,6 +90,10 @@
       data:()=>{
           return {
             collapse:false, //菜单收起状态
+            village:[
+              "力宝大夏","南城都汇","蓝光CoCo","青秀城"
+            ],
+
           }
       },
 
@@ -90,7 +105,13 @@
               return this.$store.state.app.menuList;
           },
           openedSubmenuArr(){
-              return this.$store.state.openedSubmenuArr;
+              return this.$store.state.app.openedSubmenuArr;
+          },
+          pageTagsList(){
+            return this.$store.state.app.pageOpenedList;
+          },
+          curVillage(){
+              return this.$store.state.app.curVillage;
           }
       },
       methods:{
@@ -98,8 +119,17 @@
           this.collapse=!this.collapse;
         },
         init(){
-
           this.$store.commit('updateMenuList');
+        },
+        handleSubmenuChange(val){
+          console.log(val)
+        },
+        //选择小区
+        selectVillage(name){
+          this.$store.commit('setCurVillage',name);
+
+          // this.$store.state.app.curVillage=name;
+          console.log(this.$store.state.app.curVillage)
         }
       },
       mounted(){

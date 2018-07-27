@@ -1,5 +1,5 @@
 <template>
-  <Menu ref="sideMenu" :active-name="$route.name" :open-names="openNames" theme="dark" width="auto">
+  <Menu accordion ref="sideMenu" :active-name="$route.name" :open-names="openNames" theme="dark" width="auto" @on-select="changeMenu">
     <Submenu v-for="item in menuList" :name="item.name" :key="item.name">
       <template slot="title">
         <Icon :type="item.icon" :size="16"></Icon>
@@ -27,7 +27,12 @@
           openNames:Array
       },
       mounted(){
-          console.log()
+          console.log(this.$route.name)
+      },
+      methods:{
+        changeMenu(active){
+          this.$emit('on-change',active);
+        }
       }
     }
 </script>
