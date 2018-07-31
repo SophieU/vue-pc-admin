@@ -26,13 +26,19 @@
           menuList:Array,
           openNames:Array
       },
-      mounted(){
-          console.log(this.$route.name)
-      },
       methods:{
         changeMenu(active){
           this.$emit('on-change',active);
-        }
+        },
+
+      },
+      //手动更新菜单展开项
+      updated(){
+        this.$nextTick(()=>{
+          if(this.$refs.sideMenu){
+            this.$refs.sideMenu.updateOpened();
+          }
+        })
       }
     }
 </script>

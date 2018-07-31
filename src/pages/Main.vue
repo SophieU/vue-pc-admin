@@ -2,6 +2,8 @@
   @import './main.scss';
   .main-header-con{
     background-image:url('./home/header-bg.jpg');
+    background-repeat:no-repeat;
+    background-size:100% 100%;
   }
 </style>
 <template>
@@ -52,7 +54,7 @@
                   <Icon color="#fff" type="arrow-down-b"></Icon>
                 </a>
                 <DropdownMenu slot="list">
-                  <DropdownItem>设置</DropdownItem>
+                  <DropdownItem>个人中心</DropdownItem>
                   <DropdownItem>退出</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -79,7 +81,9 @@
   import sidebar from './main-components/sidebar/sidebar'
   import breadcrumbNav from './main-components/breadcrumb-nav'
   import tagsPageOpened from './main-components/tags-page-opened'
+  import util from '../libs/util'
   import http from '../libs/api'
+
     export default {
         name: "Main",
       components:{
@@ -108,7 +112,7 @@
               return this.$store.state.app.openedSubmenuArr;
           },
           pageTagsList(){
-            return this.$store.state.app.pageOpenedList;
+            return this.$store.state.app.pageOpenedList; //打开的页面标签组合
           },
           curVillage(){
               return this.$store.state.app.curVillage;
@@ -119,7 +123,15 @@
           this.collapse=!this.collapse;
         },
         init(){
-          this.$store.commit('updateMenuList');
+          this.$store.commit('updateMenulist');
+          let pathArr = util.setCurrentPath(this,this.$route.name);
+          if(pathArr.length>=2){
+            this.$store.commit('addOpenSubmenu',pathArr[1].name); //展开子菜单
+          }
+          // this.userName=Cookie.get('user');
+          this.checkTag(this.$route.name);
+          this.checkScreen();
+
         },
         handleSubmenuChange(val){
           console.log(val)
@@ -130,10 +142,46 @@
 
           // this.$store.state.app.curVillage=name;
           console.log(this.$store.state.app.curVillage)
+        },
+        checkTag (name) {
+          //打开一个标签（如关闭一个后，打开最近的）
+          let openpageHasTag = this.pageTagsList.some(item => {
+            if (item.name === name) {
+              return true;
+            }
+          });
+          if (!openpageHasTag) { //  解决关闭当前标签后再点击回退按钮会退到当前页时没有标签的问题
+            util.openNewPage(this, name, this.$route.params || {}, this.$route.query || {});
+          }
+        },
+        checkScreen(){
+          let screenWidth = document.body.clientWidth;
+          if(screenWidth<1200){
+            this.collapse=true;
+          }else{
+            this.collapse=false;
+          }
         }
       },
       mounted(){
           this.init();
+          window.addEventListener('resize',this.checkScreen);
+      },
+      created(){
+        //显示 打开的页面列表
+        this.$store.commit('setOpenedList');
+      },
+
+      watch:{
+          '$route'(to){
+            this.$store.commit('setCurrentPageName',to.name);
+            let pathArr = util.setCurrentPath(this,to.name);
+            if (pathArr.length > 2) {
+              this.$store.commit('addOpenSubmenu', pathArr[1].name);
+            }
+            this.checkTag(to.name);
+            localStorage.currentPageName = to.name;
+          },
       }
     }
 </script>

@@ -45,16 +45,19 @@
         },
       props:{
           pageTagsList:Array,
-        beforePush: {
-          type: Function,
-          default: (item) => {
-            return true;
+          beforePush: {
+            type: Function,
+            default: (item) => {
+              return true;
+            }
           }
-        }
       },
       computed:{
           tagsList(){
             return this.$store.state.app.pageOpenedList;
+          },
+          title(){
+              return this.$store.state.app.currentTitle;
           }
       },
       methods:{
@@ -138,6 +141,17 @@
           }
           this.tagBodyLeft=left;
         },
+        handleTagsOption (type) {
+          if (type === 'clearAll') {
+            this.$store.commit('clearAllTags');
+            this.$router.push({
+              name: 'home_index'
+            });
+          } else {
+            this.$store.commit('clearOtherTags', this);
+          }
+          this.tagBodyLeft = 0;
+        },
       },
       mounted(){
         this.refsTag=this.$refs.tagsPageOpened;
@@ -162,6 +176,7 @@
                 }
               })
             });
+            console.log('lengt====>'+this.tagsList.length);
             this.tagsCount=this.tagsList.length;
           }
       }

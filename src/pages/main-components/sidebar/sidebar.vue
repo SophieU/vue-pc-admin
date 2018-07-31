@@ -1,5 +1,6 @@
 <template>
   <div class="ivu-shrinkable-menu">
+
     <slot name="top"></slot>
     <sidebar-menu v-show="!collapse"
                   :menu-list="menuList"
@@ -53,7 +54,7 @@
         }
         this.$emit('on-change',name)
       }
-    }
+    },
   }
 </script>
 
