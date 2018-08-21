@@ -1,3 +1,4 @@
+/*主页样式*/
 .main{
   position: absolute;
   width: 100%;
@@ -82,7 +83,17 @@
       right: 0;
       top: 0;
       height: 100%;
-      width: 300px;
+      width: 240px;
+      .message-con{
+        display: inline-block;
+        width: 30px;
+        padding: 18px 0;
+        text-align: center;
+        cursor: pointer;
+        i{
+          vertical-align: middle;
+        }
+      }
       .user-dropdown{
         &-menu-con{
           position: absolute;
@@ -164,8 +175,50 @@
       margin: 0 auto;
     }
   }
-
 }
 .taglist-moving-animation-move{
   transition: transform .3s;
 }
+/*btn-text扩展 */
+.primary-text-btn{
+  color: #2d8cf0;
+  &:hover{
+    color: #5cadff;
+  }
+}
+.danger-text-btn{
+  color: #ed4014;
+  &:hover{
+    color: #ff9900;
+  }
+}
+.clearfix{
+  overflow: hidden;
+  &:after{
+    content:"";
+    display: block;
+    width: 0;
+    height: 0;
+    clear:both;
+    visibility: hidden;
+  }
+}
+.mt-15{
+  margin-top: 15px;
+}
+.mb-15{
+  margin-bottom: 15px;
+}
+.filter-form{
+  .ivu-form-item{
+    margin-bottom: 4px;
+  }
+}
+/* sos 报警中未受理表格突出显示 */
+.sos{
+  .ivu-table .danger-sos-row>td{
+    background-color:#ffefe6;
+    color: #ed4014;
+  }
+}
+

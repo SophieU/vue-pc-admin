@@ -5,16 +5,19 @@
   <div class="home-index">
     <Row :gutter="15">
       <Col :xs="24" :sm="12" :md="6" :style="{marginBottom:'10px'}">
-        <info-card></info-card>
+        <info-card title="今日收到报警" :total="20" :deal="15" :wating="5"></info-card>
       </Col>
       <Col :xs="24" :sm="12" :md="6" :style="{marginBottom:'10px'}">
-        <info-card color="#FED478"></info-card>
+        <info-card  title="今日收到投诉" :total="20" :deal="15" :wating="5"
+          color="#FED478" icon="ios-help-buoy"></info-card>
       </Col>
       <Col :xs="24" :sm="12" :md="6" :style="{marginBottom:'10px'}">
-        <info-card color="#68D576"></info-card>
+        <info-card  title="今日受理工单" :total="20" :deal="15" :wating="5"
+          color="#68D576" icon="md-hammer"></info-card>
       </Col>
       <Col :xs="24" :sm="12" :md="6" :style="{marginBottom:'10px'}">
-        <info-card color="#F05B48"></info-card>
+        <info-card title="今日活跃用户" :total="20" :single="true"
+          color="#F05B48" icon="md-person-add"></info-card>
       </Col>
     </Row>
     <Row :gutter="15">
@@ -46,19 +49,19 @@
           <p slot="title">常用操作</p>
           <div class="controls">
             <div class="control-btn">
-              <Icon type="compose" size="40"></Icon>
+              <Icon type="md-calendar"  size="40"/>
               <p>发布公告</p>
             </div>
             <div class="control-btn">
-              <Icon type="settings" size="40"></Icon>
+              <Icon type="md-settings" size="40"/>
               <p>报事报修</p>
             </div>
             <div class="control-btn">
-              <Icon type="easel" size="40"></Icon>
+              <Icon type="md-easel" size="40"/>
               <p>系统管理</p>
             </div>
             <div class="control-btn">
-              <Icon type="pie-graph" size="40"></Icon>
+              <Icon type="md-pie" size="40"/>
               <p>统计查看</p>
             </div>
           </div>

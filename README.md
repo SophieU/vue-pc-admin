@@ -31,6 +31,29 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 
 #参数
-bookConfig.backGroundImgURL 背景图
-bookConfig.BackgroundSoundURL 背景音乐
+let zNodes=[
+    {name:'青秀城',open:true,children:[
+        {name:'维修组',children:[
+            {name:'李世民'},
+            {name:'李隆基'},
+          ]},
+        {name:'财务部',children:[
+            {name:'杨玉环'},
+            {name:'魏璎珞'},
+          ]},
+        {name:'客服部',children:[
+            {name:'武媚娘'},
+            {name:'太平'},
+          ]},
+        {name:'保洁部',children:[
+            {name:'甄嬛'},
+            {name:'芈月'},
+          ]},
+        {name:'保绿部',children:[
+            {name:'锦觅'},
+            {name:'旭凤'},
+          ]},
+
+      ]}
+  ]
 

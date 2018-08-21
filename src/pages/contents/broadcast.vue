@@ -6,13 +6,13 @@
       <Card>
         <div class="form-filter">
           <Form :mode="formFilter" inline>
-            <FormItem prop="小区名称">
-              <Select placeholder="选择小区" v-model="formFilter.village"  style="width:150px">
-                <Option value="beijing">JK 未来城</Option>
-                <Option value="shanghai">力宝大夏</Option>
-                <Option value="shenzhen">南城都汇</Option>
-              </Select>
-            </FormItem>
+            <!--<FormItem prop="小区名称">-->
+              <!--<Select placeholder="选择小区" v-model="formFilter.village"  style="width:150px">-->
+                <!--<Option value="beijing">JK 未来城</Option>-->
+                <!--<Option value="shanghai">力宝大夏</Option>-->
+                <!--<Option value="shenzhen">南城都汇</Option>-->
+              <!--</Select>-->
+            <!--</FormItem>-->
             <FormItem prop="公告标题">
               <Input type="text" style="width:200px" v-model="formFilter.noticeName" placeholder="公告名称">
               </Input>
@@ -24,7 +24,6 @@
               <Button type="primary">搜索</Button>
               <Button style="margin-left: 8px">重置</Button>
             </FormItem>
-
           </Form>
         </div>
       </Card>
@@ -36,10 +35,11 @@
             <Button type="error">删除</Button>
           </div>
         </div>
-        <Table border ref="selection" :columns="noticeTableColumn" :data="noticeTable"></Table>
+        <Table  :loading="tableLoading" border ref="selection" :columns="noticeTableColumn" :data="noticeTable"></Table>
         <div class="pagination">
-            <Page :total="100" :current="1" @on-change="changePage"></Page>
+          <Page :total="40" size="small" show-elevator show-sizer />
         </div>
+
       </Card>
     </div>
 </template>
@@ -49,7 +49,7 @@
         name: "broadcast",
       data(){
           return {
-            test:true,
+            tableLoading:true,
             formFilter:{
               noticeName:'',
               village:'',
@@ -129,13 +129,10 @@
                   return h('div',[
                     h('Button',{
                       props:{
-                        type:'primary',
+                        type:'text',
                         size:'small',
-                        ghost:true,
                       },
-                      style: {
-                        marginRight: '10px'
-                      },
+                      class:'primary-text-btn',
                       on:{
                         click:()=>{
                           console.log('编辑此项'+params.index)
@@ -144,11 +141,10 @@
                     },'编辑'),
                     h('Button',{
                       props:{
-                        type:'error',
+                        type:'text',
                         size:'small',
-                        ghost:true,
                       },
-
+                      class:'danger-text-btn'
                     },'删除')
                   ])
                 }
@@ -187,7 +183,13 @@
       methods:{
         changePage(){
           console.log('change-page')
-        }
+        },
+
+      },
+      mounted(){
+          setTimeout(()=>{
+            this.tableLoading=false
+          },3000)
       }
     }
 </script>

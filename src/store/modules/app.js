@@ -45,6 +45,7 @@ const app = {
       //
       // })
     },
+    //展开子菜单
     addOpenSubmenu (state, name) {
       let hasThisName = false;
       let isEmpty = false;
@@ -71,6 +72,7 @@ const app = {
         state.cachePage=JSON.parse(localStorage.cachePage);
       }
     },
+    //关闭页
     removeTag(state,name){
       state.pageOpenedList.map((item,index)=>{
         if(item.name===name){
@@ -129,11 +131,13 @@ const app = {
     setCurrentPageName(state,name){
       state.currentPageName=name;
     },
+    //新增tag
     increateTag(state,tagObj){
       if(!util.oneOf(tagObj.name,state.dontCache)){
         state.cachePage.push(tagObj.name);
         localStorage.cachePage = JSON.stringify(state.cachePage);
       }
+      console.log(tagObj)
       state.pageOpenedList.push(tagObj);
       localStorage.pageOpenedList=JSON.stringify(state.pageOpenedList);
     }

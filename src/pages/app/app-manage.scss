@@ -1,0 +1,98 @@
+.flow-table{
+  border: 1px solid #e6e6e6;
+  width: 100%;
+  border-collapse: collapse;
+  th,td{
+    padding: 8px 10px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #e6e6e6;
+    user-select: none;
+  }
+  .body-title>td{
+    text-align: left;
+    background: #efefef;
+  }
+  .ivu-icon{
+    font-size: 24px;
+    &:hover{
+      color:#2d8cf0;
+    }
+  }
+}
+.flow{
+  .card-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title{
+    font-size: 24px;
+    text-align: center;
+    font-weight: normal;
+  }
+  .exam-block{
+    display: table-row;
+    border-bottom: 1px solid #e8eaec;
+    //&:not(:first-child){
+    //  border-top: 1px solid #e8eaec;
+    //}
+    .exam-title{
+      display: table-cell;
+      vertical-align: middle;
+      font-size: 15px;
+      padding: 10px;
+    }
+    .exam-box{
+      display: table-cell;
+      padding: 10px;
+    }
+    &.more-setting{
+      .exam-title{
+        vertical-align: top;
+      }
+      .exam-box{
+        padding-top: 30px;
+      }
+      .exam-more{
+        &>span{
+          color: #999;
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}
+//条件弹窗
+.conditionModal{
+  .cond-block{
+    padding: 8px 0;
+    &>p{
+      font-size: 16px;
+      color: #3a3a3a;
+      margin-bottom: 10px;
+    }
+  }
+}
+//审批人弹窗
+.staff-box{
+  display: inline-block;
+}
+//假期余额-excel批量修改弹窗
+.excel-modal{
+  font-size: 15px;
+  .excel-row{
+    padding: 10px;
+    border-bottom: 1px solid #efefef;
+    &:last-child{
+      border-bottom: none;
+    }
+    &>span{
+      margin-right: 15px;
+    }
+    .second-row{
+      margin-top: 15px;
+      padding-left: 20px;
+    }
+  }
+}

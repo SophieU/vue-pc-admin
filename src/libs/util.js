@@ -56,6 +56,7 @@ util.setCurrentPath=function(vm,name){
   //获取 title，并判断当前是否为otherRouter中的组件
   vm.$store.state.app.routers.forEach(item => {
     //只有一个子路由
+
     if (item.children.length === 1) {
       if (item.children[0].name === name) {
         title = util.handleTitle(vm, item);
@@ -75,6 +76,7 @@ util.setCurrentPath=function(vm,name){
       });
     }
   });
+
   let currentPathArr = [];
 //如果当前name为home主页时
   if (name === 'home') {
@@ -102,16 +104,29 @@ util.setCurrentPath=function(vm,name){
   } else {
     //当前 name为左侧菜单栏中的组件
     //获取当前路由对象
+
     let currentPathObj = vm.$store.state.app.routers.filter(item => {
       if (item.children.length <= 1) {
         return item.children[0].name === name;
-      } else {
+      }else {
         let i = 0;
         let childArr = item.children;
         let len = childArr.length;
+
         while (i < len) {
           if (childArr[i].name === name) {
             return true;
+          }else if(childArr[i].children){
+            //有子路由
+            let j=0;
+            let subChildArr = childArr[i].children;
+            let subLen = subChildArr.length;
+            while(j<subLen){
+              if(subChildArr[j].name===name){
+                return true;
+              }
+              j++;
+            }
           }
           i++;
         }
@@ -119,6 +134,7 @@ util.setCurrentPath=function(vm,name){
       }
     })[0];
     if (currentPathObj.children.length <= 1 && currentPathObj.name === 'home') {
+
       currentPathArr = [
         {
           title: '首页',
@@ -140,9 +156,24 @@ util.setCurrentPath=function(vm,name){
         }
       ];
     } else {
-      let childObj = currentPathObj.children.filter((child) => {
-        return child.name === name;
-      })[0];
+      // let childObj = currentPathObj.children.filter((child) => {
+      //   return child.name === name;
+      // })[0];
+      let childObj = null;
+      currentPathObj.children.map((child) => {
+        if(child.name===name) childObj = child;
+        if(child.children){
+          let i = 0;
+          let subChild = child.children;
+          let len = subChild.length;
+          while(i<len){
+            if(subChild[i].name===name){
+              childObj= subChild[i];
+            }
+            i++;
+          }
+        }
+      });
       currentPathArr = [
         {
           title: '首页',
@@ -184,16 +215,33 @@ util.openNewPage = function (vm, name, argu, query) {
     i++;
   }
   if (!tagHasOpened) {
-    let tag = vm.$store.state.app.tagsList.filter((item) => {
-      if (item.children) {
-        return name === item.children[0].name;
-      } else {
-        return name === item.name;
+    // let tag = vm.$store.state.app.tagsList.filter((item) => {
+    //   if (item.children) {
+    //     return name === item.children[0].name;
+    //   } else {
+    //     return name === item.name;
+    //   }
+    // });
+    // tag = tag[0];
+
+    let tag = null;
+    vm.$store.state.app.tagsList.forEach(item=>{
+      if(item.children){
+        item.children.forEach(child=>{
+          if(child.name===name){
+            tag = child;
+          }
+        })
+      }else{
+        if(item.name===name){
+          tag=item;
+        }
       }
     });
-    tag = tag[0];
+
+
     if (tag) {
-      tag = tag.children ? tag.children[0] : tag;
+      // tag = tag.children ? tag.children[0] : tag;
       if (argu) {
         tag.argu = argu;
       }

@@ -7,7 +7,7 @@
         <Dropdown transfer >
           <Button size="small" type="primary">
             标签选项
-            <Icon type="arrow-down-b"></Icon>
+            <Icon type="ios-arrow-down"></Icon>
           </Button>
           <DropdownMenu slot="list">
             <DropdownItem name="clearAll">关闭所有</DropdownItem>
@@ -17,13 +17,13 @@
       </div>
       <div class="tags-inner-scroll-body" ref="scrollBody" :style="{left:tagBodyLeft+'px'}">
         <transition-group name="taglist-moving-animation">
-          <Tag type="dot" closable
+          <Tag type="dot"
             v-for="(item,index) in pageTagsList"
                ref="tagsPageOpened"
                :key="item.name"
                :name="item.name"
                :closable="item.name==='home'?false:true"
-               :color="item.name===currentPage?'blue':'default'"
+               :color="item.name===currentPage?'primary':'default'"
                @on-close="closePage"
                @click.native="linkTo(item)"
           >{{item.title}}</Tag>
@@ -75,7 +75,6 @@
         },
         //关闭标签页,event,name为 iview Tag组件 on-close事件自动传入的参数
         closePage(event,name){
-          console.log(name)
           let pageOpenedList = this.$store.state.app.pageOpenedList;
           let lastPageObj = pageOpenedList[0];
           if(this.currentPage===name){
@@ -168,6 +167,7 @@
       watch:{
           '$route'(to){
             this.currentPage=to.name;
+            //this.$nextTick用于获取数据更新后的DOM结果
             this.$nextTick(()=>{
               this.refsTag.forEach((item,index)=>{
                 if(to.name===item.name){
@@ -176,7 +176,6 @@
                 }
               })
             });
-            console.log('lengt====>'+this.tagsList.length);
             this.tagsCount=this.tagsList.length;
           }
       }

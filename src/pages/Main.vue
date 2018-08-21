@@ -27,15 +27,16 @@
         <!--收缩按钮-->
         <div class="navicon-con">
           <Button type="text" @click="toggleCollapse" :style="{transform:'rotateZ('+(this.collapse?'-90':'0')+'deg)'}">
-            <Icon color="#fff" type="navicon" size="32"></Icon>
+            <Icon color="#fff" type="md-menu" size="32"></Icon>
           </Button>
         </div>
         <div class="header-middle-con">
           <!--面包导航-->
           <Dropdown style="margin-left: 20px" @on-click="selectVillage">
-            <Button type="ghost" :class="'ghost-btn'">
+            <Button ghost type="default" :class="'ghost-btn'">
                 {{!curVillage?'选择小区':curVillage}}
-              <Icon type="arrow-down-b"></Icon>
+
+              <Icon type="ios-arrow-down" />
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem :key="vil" v-for="vil in village" :name="vil">{{vil}}</DropdownItem>
@@ -46,19 +47,21 @@
           <!--</div>-->
         </div>
         <div class="header-avator-con">
+
+          <message-tip v-model="mesCount"></message-tip>
           <div class="user-dropdown-menu-con">
             <Row class="user-dropdown-innercon" type="flex" justify="end" align="middle">
               <Dropdown>
                 <a href="javascript:void(0)">
                   <span class="main-user-name">13708044289</span>
-                  <Icon color="#fff" type="arrow-down-b"></Icon>
+                  <Icon color="#fff" type="ios-arrow-down" />
                 </a>
                 <DropdownMenu slot="list">
                   <DropdownItem>个人中心</DropdownItem>
                   <DropdownItem>退出</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
-              <Avatar style="background-color: #87d068;margin-left:15px;" icon="person" />
+              <Avatar style="background-color: #87d068;margin-left:15px;" icon="ios-person" />
             </Row>
           </div>
         </div>
@@ -81,6 +84,7 @@
   import sidebar from './main-components/sidebar/sidebar'
   import breadcrumbNav from './main-components/breadcrumb-nav'
   import tagsPageOpened from './main-components/tags-page-opened'
+  import messageTip from './main-components/message-tip'
   import util from '../libs/util'
   import http from '../libs/api'
 
@@ -89,11 +93,13 @@
       components:{
         sidebar,
         breadcrumbNav,
-        tagsPageOpened
+        tagsPageOpened,
+        messageTip
       },
       data:()=>{
           return {
             collapse:false, //菜单收起状态
+            mesCount:1,
             village:[
               "力宝大夏","南城都汇","蓝光CoCo","青秀城"
             ],
@@ -134,7 +140,7 @@
 
         },
         handleSubmenuChange(val){
-          console.log(val)
+          // console.log(val)
         },
         //选择小区
         selectVillage(name){
@@ -161,11 +167,44 @@
           }else{
             this.collapse=false;
           }
+        },
+        //全局消息提醒
+        sosTips(){
+          let vm = this;
+          this.$Notice.warning({
+            title:'报警提示',
+            duration: 0,
+            name:'sosTip',
+            render:h=>{
+              return h('div',[
+                h('span','当前有紧急报警信号，请点击确定前往查看！'),
+                h('Button',
+                  {
+                    props:{
+                      type:'primary',size:'small'
+                    },
+                    style:{'marginTop':'15px'},
+                    on:{
+                      click:()=>{
+                        vm.$router.push({name:'sos'})
+                        vm.$Notice.close('sosTip')
+                      }
+                    }
+                  },
+
+                  '前往查看',)
+              ])
+            }
+          })
         }
       },
       mounted(){
           this.init();
           window.addEventListener('resize',this.checkScreen);
+         //测试全局提醒sos功能
+          /*setTimeout(()=>{
+            this.sosTips()
+          })*/
       },
       created(){
         //显示 打开的页面列表

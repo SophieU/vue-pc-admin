@@ -43,6 +43,7 @@ export const otherRouter={
   component:Main,
   children:[
     {path:'home',title:'首页',name:'home',component:()=>import('@/pages/home/Index.vue')},
+    // {path:'flowSetting',title:'审批流程设置',name:'flowSetting',component:()=>import('@/pages/app/flow-setting.vue')}
   ]
 };
 
@@ -55,22 +56,27 @@ export const appRouter=[
     title:'内容管理',
     component:Main,
     children:[
-      {path:'notice',icon:'speakerphone',title:'小区公告',name:'notice',component:()=>import('@/pages/contents/broadcast')},
-      {path:'sos',icon:'flash',title:'报警管理',name:'sos',component:()=>import('@/pages/home/Index')},
-      {path:'assembly',icon:'ios-home',title:'议事厅',name:'assembly',component:()=>import('@/pages/home/Index')},
-      {path:'feedback',icon:'ribbon-a',title:'投诉表扬',name:'feedback',component:()=>import('@/pages/home/Index')},
+      {path:'notice',icon:'md-megaphone',title:'小区公告',name:'notice',component:()=>import('@/pages/contents/broadcast')},
+      {path:'sos',icon:'ios-flash',title:'报警管理',name:'sos',component:()=>import('@/pages/contents/sos')},
+      {path:'assembly',icon:'ios-home',title:'议事厅',name:'assembly',component:()=>import('@/pages/contents/chamber')},
+      {path:'feedback',icon:'md-medal',title:'投诉表扬',name:'feedback',component:()=>import('@/pages/contents/praise')},
     ]
   },{
     path:'/estate',
     icon:'ipad',
     title:'物业App管理',
     name:'app',
+    component:Main,
     children:[
-      {path:'staff',icon:'person-stalker',title:'人员管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')},
-      {path:'chat',icon:'chatbubbles',title:'群聊管理',name:'chat',component:()=>import('@/pages/components/HelloWorld.vue')},
-      {path:'approve',icon:'compose',title:'审批管理',name:'approve',component:()=>import('@/pages/components/HelloWorld.vue')},
-      {path:'holiday',icon:'coffee',title:'假期管理',name:'holiday',component:()=>import('@/pages/components/HelloWorld.vue')},
-      {path:'database',icon:'soup-can',title:'数据导出',name:'database',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'staff',icon:'ios-people',title:'员工管理',name:'staff',component:()=>import('@/pages/app/staff.vue')},
+      {path:'chat',icon:'ios-chatbubbles',title:'群聊管理',name:'chat',component:()=>import('@/pages/app/chat.vue')},
+      {path:'/',name:'check',title:'审批管理',component:()=>import('@/pages/components/parent-view.vue'),children:[
+          {path:'approve',icon:'ios-checkbox-outline',title:'流程管理',name:'flow',component:()=>import('@/pages/app/flow-admin.vue')},
+          {path:'holiday',icon:'ios-boat',title:'假期管理',name:'holiday',component:()=>import('@/pages/app/holiday.vue')},
+          {path:'balance',icon:'ios-boat',title:'余额管理',name:'balance',component:()=>import('@/pages/app/balance.vue')},
+          {path:'database',icon:'ios-cloud-download',group:'审批管理',title:'数据导出',name:'datas',component:()=>import('@/pages/app/export-data.vue')},
+        ]},
+
     ]
   },{
     path:'/source',
@@ -79,7 +85,7 @@ export const appRouter=[
     name:'source',
     component:Main,
     children:[
-      {path:'staff',icon:'person-stalker',title:'业主管理',name:'staff',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'custom',icon:'person-stalker',title:'业主管理',name:'custom',component:()=>import('@/pages/components/HelloWorld.vue')},
     ]
   }
 ];
