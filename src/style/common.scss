@@ -140,6 +140,10 @@
     display: inline-block;
   }
 }
+input[type="file"]{
+  height: 30px;
+}
+
 @keyframes slideLeft {
   0%{
     transform:translateX(30px);

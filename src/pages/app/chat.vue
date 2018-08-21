@@ -59,13 +59,20 @@
     </div>
   </Modal>
   <!--删除提醒-->
-  <Modal v-model="deleteModal" width="350px">
-    <div class="delete-modal">
-      <!--<Icon type="ios-alert" />-->
-      <h4>警告</h4>
-      <p>数据删除后，将不可恢复，确认要删除吗？？</p>
+  <Modal v-model="deleteModal" width="360">
+    <p slot="header" style="color:#f60;text-align:center">
+      <Icon type="ios-information-circle"></Icon>
+      <span>删除提醒</span>
+    </p>
+    <div style="text-align:center">
+      <p>数据删除后，将不可恢复.</p>
+      <p>确认要删除吗？？</p>
+    </div>
+    <div slot="footer">
+      <Button type="error" size="large" long  >删除</Button>
     </div>
   </Modal>
+
 </div>
 </template>
 

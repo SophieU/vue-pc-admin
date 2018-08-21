@@ -85,7 +85,8 @@ export const appRouter=[
     name:'source',
     component:Main,
     children:[
-      {path:'custom',icon:'person-stalker',title:'业主管理',name:'custom',component:()=>import('@/pages/components/HelloWorld.vue')},
+      {path:'custom',icon:'person-stalker',title:'业主管理',name:'custom',component:()=>import('@/pages/source/custom.vue')},
+      {path:'house',icon:'ios-home',title:'房屋管理',name:'house',component:()=>import('@/pages/source/house.vue')},
     ]
   }
 ];
