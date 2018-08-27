@@ -85,8 +85,25 @@ export const appRouter=[
     name:'source',
     component:Main,
     children:[
-      {path:'custom',icon:'person-stalker',title:'业主管理',name:'custom',component:()=>import('@/pages/source/custom.vue')},
+      {path:'custom',icon:'ios-person',title:'业主管理',name:'custom',component:()=>import('@/pages/source/custom.vue')},
       {path:'house',icon:'ios-home',title:'房屋管理',name:'house',component:()=>import('@/pages/source/house.vue')},
+      {path:'carport',icon:'md-car',title:'车位管理',name:'carport',component:()=>import('@/pages/source/carport.vue')},
+    ]
+  },{
+    path:'/repair',
+    title:'报事报修',
+    name:'repair',
+    component:Main,
+    children:[
+      {path:'category',icon:'ios-keypad',name:'category',title:'类目管理',component:()=>import('@/pages/components/parent-view.vue'),
+        children:[
+          {path:'first',icon:'md-keypad',title:'一级类目',name:'first',component:()=>import('@/pages/repair/category-first.vue')},
+          {path:'second',icon:'md-keypad',title:'二级类目',name:'second',component:()=>import('@/pages/repair/category-second.vue')},
+        ]
+      },
+      {path:'rest',name:'rest',icon:'md-cafe',title:'修工期设置',component:()=>import('@/pages/repair/rest.vue')},
+      {path:'emergency',name:'emergency',icon:'ios-construct',title:'紧急报修',component:()=>import('@/pages/repair/emergency.vue')},
+      {path:'order',name:'order',icon:'md-list',title:'报单管理',component:()=>import('@/pages/repair/order.vue')},
     ]
   }
 ];
