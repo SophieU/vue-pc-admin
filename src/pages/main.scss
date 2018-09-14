@@ -59,6 +59,11 @@
       display: inline-block;
       button{
         box-shadow:none;
+        color: #efefef;
+        &:hover{
+          background: transparent;
+          color: #fff;
+        }
       }
     }
     .header-middle-con{
@@ -211,7 +216,7 @@
 }
 .filter-form{
   .ivu-form-item{
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 }
 /* sos 报警中未受理表格突出显示 */
@@ -221,4 +226,46 @@
     color: #ed4014;
   }
 }
-
+i.must{
+  color: #f00;
+  font-style: normal;
+}
+.form-table{
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  width: 100%;
+  td{
+    border: 1px solid #ddd;
+    padding:10px 25px;
+    &:first-child{
+      padding: 6px 15px;
+      text-align: right;
+    }
+  }
+}
+.text-red{
+  color: #f00;
+}
+.grey-head-table{
+  width: 100%;
+  border: 1px solid #e6e6e6;
+  border-collapse: collapse;
+  th{
+    border: 1px solid #e6e6e6;
+    background: #efefef;
+    font-weight: normal;
+    padding: 6px 10px;
+  }
+  td{
+    padding: 6px 10px;
+    text-align: center;
+    border: 1px solid #e6e6e6;
+  }
+  .totalTd{
+    padding: 8px 15px;
+    text-align: left;
+    span{
+      margin-right: 30px;
+    }
+  }
+}

@@ -9,12 +9,22 @@
   justify-content: center;
   padding: 20px;
 }
+/*报警管理*/
+.sos{
+  .form-filter{
+    width: 100%;
+    max-width: 100%;
+    .ivu-input-wrapper,.ivu-select{
+      width: 200px;
+    }
+  }
 
-
+}
 .accept-modal{
   padding:0 20px;
   .sos-info{
     font-size: 14px;
+    margin-bottom: 20px;
     strong{
       color: #ff9900;
     }

@@ -61,9 +61,10 @@
               {title:'完成时间',key:'endTime',align:'center',},
               {title:'审批人',key:'checkLeader',align:'center',},
               {title:'审批类型',key:'checkType',align:'center',width:100},
+              {title:'审批状态',key:'status',align:'center'}
             ],
             exportData:[
-              {id:'12455',startTime:'2018-01-18 11:12',endTime:'2018-01-18 17:00',checkLeader:'李世民、李隆基、杨玉环',checkType:'请假'}
+              {id:'12455',startTime:'2018-01-18 11:12',endTime:'2018-01-18 17:00',checkLeader:'李世民、李隆基、杨玉环',checkType:'请假',status:'审核通过'}
             ]
           }
       }

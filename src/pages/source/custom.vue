@@ -34,9 +34,9 @@
         <Card>
           <div class="clearfix mb-15">
             <div class="pull-right">
-              <Button @click="editModal=true">客户迁入</Button>
-              <Button @click="customEnterModal=true">客户批量导入</Button>
-              <Button @click="customUpdateModal=true">客户批量更新</Button>
+              <Button type="primary" @click="editModal=true">客户迁入</Button>
+              <Button  type="primary" @click="customEnterModal=true">客户批量导入</Button>
+              <Button type="primary" @click="customUpdateModal=true">客户批量更新</Button>
             </div>
           </div>
           <Table :columns="customColumn" :data="customLists"></Table>
@@ -58,7 +58,7 @@
           <input type="file" />
         </FormItem>
         <FormItem label="下载模板：">
-          <a href="##">无锡惠山橡树湾二期小区-客户批量导入模板.xls</a>
+          <a href="##" class="form-text">无锡惠山橡树湾二期小区-客户批量导入模板.xls</a>
         </FormItem>
       </Form>
     </Modal>
@@ -81,30 +81,30 @@
       </Form>
     </Modal>
     <!--编辑客户资料-->
-    <Modal v-model="editModal" title="客户迁入" width="600">
+    <Modal v-model="editModal" title="客户迁入" width="800">
       <Form :inline="true" :label-width="80">
         <Row :gutter="8">
           <Col span="12">
             <FormItem label="小区：">
-              <Input disabled value="JK未来城" style="width: 150px;"/>
+              <Input readonly value="JK未来城-1栋1单元" style="width:200px;"/>
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem label="房屋：">
-              <Input disabled value="1单元103" style="width: 150px;"/>
+              <Input disabled value="1单元103" style="width:200px;"/>
             </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="12">
             <FormItem label="客户姓名：">
-              <Input  style="width: 150px;"/>
+              <Input  style="width: 150px;margin-right: 10px;"/>
               <Checkbox>是否业主</Checkbox>
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem label="性别：">
-              <Select style="width: 150px;">
+              <Select  style="width:200px;">
                 <Option value="0">女</Option>
                 <Option value="1">男</Option>
               </Select>
@@ -114,12 +114,57 @@
          <Row>
           <Col span="12">
             <FormItem label="联系电话：">
-              <Input style="width: 150px;" />
+              <Input style="width:200px;" />
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem label="迁入日期：">
-              <DatePicker style="width: 150px;"></DatePicker>
+              <DatePicker  style="width:200px;"></DatePicker>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="12">
+            <FormItem label="婚姻状况：">
+              <Select  style="width:200px;">
+                <Option value="0">未婚</Option>
+                <Option value="1">已婚</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="文化程度：">
+              <Select  style="width:200px;">
+                <Option value="0">高中以下</Option>
+                <Option value="1">高中</Option>
+                <Option value="1">专科</Option>
+                <Option value="1">本科</Option>
+                <Option value="1">本科以上</Option>
+              </Select>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="12">
+            <FormItem label="客户地址：">
+              <Input style="width:200px;"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="银行类型：">
+              <Input style="width:200px;"/>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="12">
+            <FormItem label="开户姓名：">
+              <Input style="width:200px;"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="银行账号：">
+              <Input style="width:200px;"/>
             </FormItem>
           </Col>
         </Row>
@@ -155,7 +200,7 @@
           </Col>
           <Col span="12">
             <FormItem label="备注：">
-              <Input type="textarea" :autosize="{minRows: 2,maxRows: 5}"/>
+              <Input  style="width:200px;" type="textarea" :autosize="{minRows: 2,maxRows: 5}"/>
             </FormItem>
           </Col>
         </Row>
@@ -226,9 +271,11 @@
           customTree(){
             let customTree=null;
             let setting={
-              check:{
-                enable:true
-              }
+              callback:{
+               onClick:function(event,treeId,treeNode){
+                 console.log('click one')
+               }
+             }
             };
             let zNodes=[
               {name:'JCK_未来城',open:true,children:[

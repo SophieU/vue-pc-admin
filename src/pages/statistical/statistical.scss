@@ -1,0 +1,39 @@
+.repair-statistical{
+  .data-row{
+    display: flex;
+  }
+  .data-block{
+    text-align: center;
+    padding: 20px ;
+    flex: 1;
+    box-sizing: border-box;
+    h3{
+      font-size: 62px;
+      margin-bottom: 15px;
+    }
+    p{
+      font-size: 20px;
+    }
+  }
+  .total-info{
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    margin-right: 40px;
+    img{
+      display: block;
+    }
+    span{
+      margin-left: 20px;
+    }
+  }
+  .data-row2{
+    width: 100%;
+    padding-bottom: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+  }
+}

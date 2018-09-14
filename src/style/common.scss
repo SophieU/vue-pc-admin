@@ -54,6 +54,9 @@
 .mt-15{
   margin-top: 15px;
 }
+.ml-15{
+  margin-left: 15px;
+}
 .form-tag{
   display: inline-block;
   height: 28px;
@@ -137,11 +140,12 @@
 }
 .filter-form{
   .ivu-form-item-content{
-    display: inline-block;
+    //display: inline-block;
   }
 }
 input[type="file"]{
   height: 30px;
+  line-height: 25px;
 }
 
 @keyframes slideLeft {
@@ -224,7 +228,11 @@ input[type="file"]{
     }
   }
 }
-
+.form-text{
+  display: block;
+  padding: 10px 12px 10px 0;
+  line-height: 1em;
+}
 .collapsed-menu .ivu-menu-submenu-title-icon{
   display: none!important;
 }

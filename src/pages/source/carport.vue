@@ -148,19 +148,18 @@
             batchModalTitle:'车位批量更新',
             carportColumn:[
               {type:'selection',width:50,align:'center'},
-              {title:'小区名称',align:'center',key:'estate'},
-              {title:'车位编号',align:'center',key:'carportId'},
-              {title:'车位类型',align:'center',key:'carportType'},
-              {title:'所属区域',align:'center',key:'district'},
-              {title:'关联房屋',align:'center',key:'house'},
+              {title:'小区名称',width:130,align:'center',key:'estate'},
+              {title:'车位编号',width:130,align:'center',key:'carportId'},
+              {title:'车位类型',width:130,align:'center',key:'carportType'},
+              {title:'所属区域',width:130,align:'center',key:'district'},
+              {title:'关联房屋',width:130,align:'center',key:'house'},
               {title:'车主手机号',width:130,align:'center',key:'tel'},
-              {title:'车主姓名',align:'center',key:'customName'},
+              {title:'车主姓名',width:130,align:'center',key:'customName'},
               {title:'计费日期',width:130,align:'center',key:'startFee'},
-              {title:'状态',align:'center',key:'status'},
-              {title:'租赁期限',align:'center',key:'leaseTerm'},
-              {title:'车牌号码',align:'center',key:'carId'},
-              {title:'操作',fixed:'right',align:'center',render:(h,params)=>{
-                console.log(params)
+              {title:'状态',width:130,align:'center',key:'status'},
+              {title:'租赁期限',width:130,align:'center',key:'leaseTerm'},
+              {title:'车牌号码',width:130,align:'center',key:'carId'},
+              {title:'操作',width:130,fixed:'right',align:'center',render:(h,params)=>{
                   if(params.row.status==='闲置'){
                     return h('Button',{
                       props:{

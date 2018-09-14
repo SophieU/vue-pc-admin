@@ -56,7 +56,8 @@ const app = {
         hasThisName = true;
       }
       if (!hasThisName && !isEmpty) {
-        state.openedSubmenuArr.push(name);
+        // state.openedSubmenuArr.push(name);
+        state.openedSubmenuArr=[name];
       }
     },
     //关闭标签页

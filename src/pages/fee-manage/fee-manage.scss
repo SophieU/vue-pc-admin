@@ -1,0 +1,28 @@
+.tab-block{
+  h4{
+    font-size: 16px;
+    font-weight: normal;
+    margin: 6px 0;
+    color: #999;
+  }
+  .tab-table{
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    td{
+      padding: 6px 15px;
+      border: 1px solid #ddd;
+    }
+    .btn-head{
+      th{
+        padding: 10px 15px;
+        text-align: left;
+      }
+    }
+  }
+}
+.rich-editor{
+  max-width: 900px;
+}

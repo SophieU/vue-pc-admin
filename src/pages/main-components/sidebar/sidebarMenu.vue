@@ -5,7 +5,7 @@
   <Menu accordion ref="sideMenu" :active-name="$route.name" :open-names="openNames" theme="dark" width="auto" @on-select="changeMenu">
     <Submenu v-for="item in menuList" :name="item.name" :key="item.name">
       <template slot="title">
-        <Icon :type="item.icon" :size="16"></Icon>
+        <Icon  :type="item.icon" :size="16"></Icon>
         <span class="layout-text">{{item.title}}</span>
       </template>
       <template v-for="child in item.children" >

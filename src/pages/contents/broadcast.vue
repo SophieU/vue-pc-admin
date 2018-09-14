@@ -30,7 +30,7 @@
       <Card style="margin-top:10px;">
         <div class="table-actions" style="overflow:hidden;margin-bottom: 20px;">
           <div style="float:right;">
-            <Button type="primary">发布</Button>
+            <Button type="primary" @click="publishModal=true">发布</Button>
             <Button  type="primary">推送到App</Button>
             <Button type="error">删除</Button>
           </div>
@@ -41,14 +41,31 @@
         </div>
 
       </Card>
+      <Modal title="发布公告" v-model="publishModal">
+        <div class="mb-15">
+          <Form :label-width="60">
+            <FormItem label="标题：">
+              <Input style="width: 250px;"/>
+            </FormItem>
+            <FormItem label="小区：">
+              <Select style="width: 200px;">
+                <Option value="">状元府</Option>
+              </Select>
+            </FormItem>
+          </Form>
+        </div>
+        <div id="editor" style="width:500px ;"></div>
+      </Modal>
     </div>
 </template>
 
 <script>
+  import wangEditor from 'wangeditor';
     export default {
         name: "broadcast",
       data(){
           return {
+            publishModal:false,
             tableLoading:true,
             formFilter:{
               noticeName:'',
@@ -184,9 +201,34 @@
         changePage(){
           console.log('change-page')
         },
+        initEditor(){
+          let E = wangEditor;
+          let editor = new E('#editor');
+          editor.customConfig.uploadImgServer = '/upload';
+          // 自定义菜单配置
+          editor.customConfig.menus = [
+            'head',
+            'bold',
+            'italic',
+            'underline',
+            'fontSize',  // 字号
+            'fontName',  // 字体
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'link',  // 插入链接
+            'justify',  // 对齐方式
+            'image',  // 插入图片
+            'table',  // 表格
+            'undo',  // 撤销
+          ];
+          editor.create();
+        }
 
       },
       mounted(){
+        this.initEditor();
           setTimeout(()=>{
             this.tableLoading=false
           },3000)

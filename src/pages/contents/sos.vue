@@ -1,3 +1,6 @@
+<style scoped lang="scss">
+  @import "./contents.scss";
+</style>
 <template>
   <div class="sos">
     <Card>
@@ -11,7 +14,7 @@
             <!--</Select>-->
           <!--</FormItem>-->
           <FormItem label="报警来源" >
-            <Select v-model="formFilter.from"  style="width:150px">
+            <Select v-model="formFilter.from"  >
               <Option value="beijing">New York</Option>
               <Option value="shanghai">London</Option>
               <Option value="shenzhen">Sydney</Option>
@@ -27,7 +30,7 @@
             <Input placeholder="请输入报警者姓名" v-model="formFilter.phone"></Input>
           </FormItem>
           <FormItem label="状态" >
-            <Select v-model="formFilter.status"  style="width:150px">
+            <Select v-model="formFilter.status"  >
               <Option value="beijing">已受理</Option>
               <Option value="shanghai">未受理</Option>
               <Option value="shenzhen">已解决</Option>
@@ -38,7 +41,7 @@
             <Input placeholder="请输入报警内容" v-model="formFilter.phone"></Input>
           </FormItem>
           <FormItem label="报警时间" >
-            <DatePicker type="date" show-week-numbers placeholder="选择报警时间" style="width: 150px"></DatePicker>
+            <DatePicker type="daterange" show-week-numbers placeholder="选择报警时间" style="width: 200px;"></DatePicker>
           </FormItem>
           <FormItem label="受理人电话" >
             <Input placeholder="请输入受理人电话" v-model="formFilter.phone"></Input>
@@ -47,7 +50,7 @@
             <Input placeholder="请输入受理人姓名" v-model="formFilter.phone"></Input>
           </FormItem>
           <FormItem label="解决时间" >
-            <DatePicker type="date" show-week-numbers placeholder="选择解决时间" style="width: 150px"></DatePicker>
+            <DatePicker type="date" show-week-numbers placeholder="选择解决时间" style="width: 200px;"></DatePicker>
           </FormItem>
           <FormItem>
             <Button type="primary">搜索</Button>
@@ -274,9 +277,6 @@
       }
     }
 </script>
-<style scoped lang="scss">
-  @import "./contents.scss";
 
-</style>
 
 

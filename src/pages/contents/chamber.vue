@@ -27,7 +27,9 @@
         <Tabs type="card">
           <TabPane label="发布">
             <div class="clearfix">
-              <Button type="primary" style="float:right;margin-bottom: 15px;" >发布PK</Button>
+              <Button type="primary" style="float:right;margin-bottom: 15px;" >
+                <router-link :to="{path:'/publish-pk'}" style="color: #fff;">发布PK</router-link>
+              </Button>
             </div>
             <div class="publish-table">
               <Table :columns="pkTableColumn" :data="pkTable"></Table>

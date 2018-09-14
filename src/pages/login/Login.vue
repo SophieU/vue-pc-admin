@@ -181,7 +181,8 @@
               let tel = this.formLogin.username;
               let password = this.formLogin.password;
               iView.LoadingBar.start();
-              Cookie.set('user',tel)
+              Cookie.set('user',tel);
+              this.$Message.success('登录成功');
               setTimeout(()=>{
                 this.$router.push({name:'home'})
                 iView.LoadingBar.finish();

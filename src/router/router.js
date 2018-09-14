@@ -43,15 +43,15 @@ export const otherRouter={
   component:Main,
   children:[
     {path:'home',title:'首页',name:'home',component:()=>import('@/pages/home/Index.vue')},
-    // {path:'flowSetting',title:'审批流程设置',name:'flowSetting',component:()=>import('@/pages/app/flow-setting.vue')}
+    {path:'addCalc',title:'添加计费公式',name:'addCalc',component:()=>import('@/pages/fee-manage/add-calc.vue')},
+    {path:'publish-pk',title:'发布PK',name:'publishPK',component:()=>import('@/pages/contents/publish-pk.vue')},
   ]
 };
-
 //3、作为Main组件的子页面展示 并且在菜单中显示 （appRouter）
 export const appRouter=[
   {
     path:'/content',
-    icon:'home',
+    icon:'md-clipboard',
     name:'content',
     title:'内容管理',
     component:Main,
@@ -63,14 +63,14 @@ export const appRouter=[
     ]
   },{
     path:'/estate',
-    icon:'ipad',
+    icon:'ios-appstore',
     title:'物业App管理',
     name:'app',
     component:Main,
     children:[
       {path:'staff',icon:'ios-people',title:'员工管理',name:'staff',component:()=>import('@/pages/app/staff.vue')},
       {path:'chat',icon:'ios-chatbubbles',title:'群聊管理',name:'chat',component:()=>import('@/pages/app/chat.vue')},
-      {path:'/',name:'check',title:'审批管理',component:()=>import('@/pages/components/parent-view.vue'),children:[
+      {path:'check',name:'check',title:'审批管理',component:()=>import('@/pages/components/parent-view.vue'),children:[
           {path:'approve',icon:'ios-checkbox-outline',title:'流程管理',name:'flow',component:()=>import('@/pages/app/flow-admin.vue')},
           {path:'holiday',icon:'ios-boat',title:'假期管理',name:'holiday',component:()=>import('@/pages/app/holiday.vue')},
           {path:'balance',icon:'ios-boat',title:'余额管理',name:'balance',component:()=>import('@/pages/app/balance.vue')},
@@ -80,7 +80,7 @@ export const appRouter=[
     ]
   },{
     path:'/source',
-    icon:'arrow-shrink',
+    icon:'md-aperture',
     title:'资源管理',
     name:'source',
     component:Main,
@@ -94,6 +94,7 @@ export const appRouter=[
     title:'报事报修',
     name:'repair',
     component:Main,
+    icon:'md-build',
     children:[
       {path:'category',icon:'ios-keypad',name:'category',title:'类目管理',component:()=>import('@/pages/components/parent-view.vue'),
         children:[
@@ -105,10 +106,64 @@ export const appRouter=[
       {path:'emergency',name:'emergency',icon:'ios-construct',title:'紧急报修',component:()=>import('@/pages/repair/emergency.vue')},
       {path:'order',name:'order',icon:'md-list',title:'报单管理',component:()=>import('@/pages/repair/order.vue')},
     ]
+  },{
+  path:'/fee',
+    title:'收费管理',
+    name:'fee',
+    component:Main,
+    icon:'md-cash',
+    children:[
+      {path:'pay-setting',name:'pay',icon:'md-pricetag',title:'支付设置',component:()=>import('@/pages/fee-manage/pay-setting.vue')},
+      {path:'calc-fee',name:'calc',icon:'ios-calculator',title:'计费标准设置',component:()=>import('@/pages/fee-manage/calc-fee.vue')},
+      {path:'estate-fee',name:'estateFee',icon:'ios-bookmarks-outline',title:'物业计费',component:()=>import('@/pages/fee-manage/estate-fee.vue')},
+      {path:'due-search',name:'due',icon:'md-analytics',title:'应收查询',component:()=>import('@/pages/fee-manage/due-search.vue')},
+      {path:'fact-search',name:'fact',icon:'ios-analytics',title:'实收查询',component:()=>import('@/pages/fee-manage/infact-search.vue')},
+      {path:'return-search',name:'return',icon:'ios-leaf',title:'退费查询',component:()=>import('@/pages/fee-manage/return-search.vue')},
+      {path:'charging-search',name:'charging',icon:'ios-notifications-outline',title:'催费查询',component:()=>import('@/pages/fee-manage/charging-search.vue')},
+      {path:'bill',name:'bill',icon:'md-paper',title:'票据管理',component:()=>import('@/pages/components/parent-view.vue'),
+        children:[
+          {path:'distribute',name:'distribute',title:'票据分配',icon:'md-print',component:()=>import('@/pages/fee-manage/distribute-bill.vue')},
+          {path:'searchBill',name:'searchBill',title:'票据查询',icon:'md-search',component:()=>import('@/pages/fee-manage/search-bill.vue')},
+        ]
+      },
+    ]
+  },{
+    path:'/financial',
+    title:'财务结算',
+    name:'financial',
+    component:Main,
+    icon:'logo-yen',
+    children:[
+      {path:'financialRec',name:'financialRec',icon:'md-filing',title:'财务对账',component:()=>import('@/pages/financial/financial.vue')},
+      {path:'billTotal',name:'billTotal',icon:'ios-funnel',title:'票据统计',component:()=>import('@/pages/financial/bill-total.vue')},
+      {path:'reportQuery',name:'reportQuery',title:'报表查询',icon:'ios-easel',component:()=>import('@/pages/components/parent-view.vue'),
+        children:[
+          {path:'subjectDetail',name:'subjectDetail',icon:'ios-link',title:'科目明细',component:()=>import('@/pages/financial/subject-detail.vue')},
+          {path:'subjectTotal',name:'subjectTotal',icon:'ios-podium',title:'科目汇总',component:()=>import('@/pages/financial/subject-total.vue')},
+        ]
+      },
+    ]
+  },{
+  path:'/statistical',
+    title:'统计查看',
+    name:'statistical',
+    component:Main,
+    icon:'ios-flower',
+    children:[
+      {path:'repair-statistical',name:'repair-statistical',icon:'ios-hammer',title:'报事报修统计',component:()=>import('@/pages/statistical/repair-statistical.vue')},
+    ]
+  },{
+    path:'/system',
+    title:'系统管理',
+    name:'system',
+    component:Main,
+    icon:'md-boat',
+    children:[
+      {path:'role-admin',name:'role-admin',icon:'ios-body',title:'角色管理',component:()=>import('@/pages/system/role-admin.vue')},
+      {path:'organization-admin',name:'organization-admin',icon:'ios-color-filter',title:'组织管理',component:()=>import('@/pages/system/organization-admin.vue')},
+    ]
   }
 ];
-
-
 //所有路由汇总
 export const routers=[
   loginRouter,
