@@ -1,0 +1,66 @@
+
+.info-card-con{
+  height: 100px;
+  .height-100{
+    height: 100%;
+  }
+  .infor-card-total-con{
+    height: 100%;
+  }
+  .infor-card-total{
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .total-count{
+      width: 100%;
+      font-size: 30px;
+    }
+    .total-text{
+      width: 100%;
+      font-size: 12px;
+    }
+  }
+  .infor-intro-text{
+    font-size:14px;
+    font-weight:500;
+    color:#999;
+  }
+
+  strong{
+    font-size: 18px;
+  }
+  .data-card{
+    padding: 10px 15px;
+  }
+}
+//新建工单
+.new_order_wrapper,.create_service{
+  padding: 0 30px;
+  .search-wrap{
+    position: relative;
+    .search-result{
+      position: absolute;
+      top: 38px;
+      left: 0;
+      right: 0;
+      max-height: 140px;
+      overflow-y: auto;
+      border-radius: 4px;
+      background: #fff;
+      z-index: 9;
+      border: 1px solid #ddd;
+      li{
+        padding: 0 10px;
+        user-select: none;
+        &:hover{
+          background: #2d8cf0;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+

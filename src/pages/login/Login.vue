@@ -1,0 +1,101 @@
+<style scoped lang="scss">
+  @import './login.scss';
+</style>
+<template>
+    <div class="login-page">
+      <div class="login-container">
+        <img class="top-circle" src="./img_2.png" alt="">
+          <div class="left-img"></div>
+          <div class="right-form">
+            <div class="login-title">
+              <h3>呼叫中心管理系统 <span class="text-grey">V1.0.0</span></h3>
+              <p class="text-grey welcome">欢迎您，请登录</p>
+            </div>
+            <div class="login-form">
+              <Form ref="loginForm" :model="formLogin" :rules="ruleLogin" label-position="top">
+                <FormItem class="form-group" prop="username">
+                  <label :class="focus==='账号'?'focus form-label':'form-label'">账号</label>
+                  <!--<input @blur="validateInput" @focus="focus='账号'" class="form-control" type="text" v-model="formLogin.username" />-->
+                  <Input  @on-blur="focus=''" v-model="formLogin.username" @on-focus="focus='账号'"/>
+                </FormItem>
+                <FormItem class="form-group" prop="password">
+                  <label :class="focus==='密码'?'focus form-label':'form-label'">密码</label>
+                  <Input @on-blur="focus=''"  @on-focus="focus='密码'" type="password" v-model="formLogin.password" />
+                </FormItem>
+                <Button class="loginBtn" @click="validateLogin(formLogin)" type="primary" long>登录</Button>
+                <!--<FormItem label="账号">
+                  <Input v-model=""></Input>
+                </FormItem>
+                <FormItem label="密码">
+                  <Input v-model="formLogin.password"></Input>
+                </FormItem>
+                <Button class="loginBtn" type="primary" long>登录</Button>-->
+              </Form>
+            </div>
+            <div class="copyright">
+              Copyright © 2018 一生约 yishengyue.cn 版权所有
+            </div>
+          </div>
+
+      </div>
+    </div>
+</template>
+
+<script>
+  import iView from 'iview'
+  import Cookie from 'js-cookie'
+
+    export default {
+        name: "Login",
+        data:()=>{
+          //自定义验证手机号
+          const validateTel=(rule,value,callback)=>{
+            let telReg = /^1[3456789]\d{9}/;
+            if(!telReg.test(value)){
+              callback(new Error('请输入正确的手机号码'))
+            }else{
+              callback();
+            }
+          };
+          return {
+            focus:'',
+            formLogin:{
+              username:'13708044289',
+              password:'',
+            },
+            ruleLogin:{
+              username:[
+                {required:true,message:'请输入手机号',trigger:'blur'},
+                {validator:validateTel,trigger:'blur'},
+              ],
+              password:[
+                {required:true,message:'请输入密码',trigger:'blur'},
+                {type:'string',min:6,message:'密码至少6位'}
+              ]
+            },
+          }
+        },
+      methods:{
+        //验证登录
+        validateLogin(){
+          this.$refs.loginForm.validate((valid)=>{
+            if(valid){
+              let tel = this.formLogin.username;
+              let password = this.formLogin.password;
+              iView.LoadingBar.start();
+              Cookie.set('user',tel);
+              this.$Message.success('登录成功');
+              setTimeout(()=>{
+                this.$router.push({name:'home'});
+                iView.LoadingBar.finish();
+              },2000)
+            }else{
+              this.$Message.error('输入有误，请重试')
+            }
+          })
+        }
+      },
+    }
+</script>
+
+

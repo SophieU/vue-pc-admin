@@ -1,0 +1,35 @@
+<template>
+    <div @click="showMessage" class="message-con">
+      <Tooltip :content="value>0?`有${value}条未读消息`:`无未读消息`" placement="bottom">
+        <Badge :count="value" dot>
+          <Icon type="ios-notifications" :size="22"/>
+        </Badge>
+      </Tooltip>
+    </div>
+</template>
+
+<script>
+  import util from '@/libs/util.js'
+    export default {
+        name: "message-tip",
+        props:{
+            value:{
+              type:Number,
+              default:0
+            }
+        },
+      methods:{
+        showMessage(){
+          console.log('跳转到新页面')
+          // util.openNewPage(tihs,'message_index');
+          // this.$router.push({
+          //   name: 'message_index'
+          // });
+        }
+      }
+    }
+</script>
+
+<style scoped>
+
+</style>
