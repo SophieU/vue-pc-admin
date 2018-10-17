@@ -59,7 +59,7 @@
         </Form>
       </div>
       <div slot="footer">
-        <Button>取消</Button>
+        <Button @click="activeModal=false">取消</Button>
         <Button type="primary">发送至服务网点</Button>
       </div>
     </Modal>

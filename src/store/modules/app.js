@@ -49,15 +49,22 @@ const app = {
     addOpenSubmenu (state, name) {
       let hasThisName = false;
       let isEmpty = false;
+      let isArr = false;
       if (name.length === 0) {
         isEmpty = true;
       }
       if (state.openedSubmenuArr.indexOf(name) > -1) {
         hasThisName = true;
       }
-      if (!hasThisName && !isEmpty) {
-        // state.openedSubmenuArr.push(name);
-        state.openedSubmenuArr=[name];
+      if(name instanceof Array){
+        isArr=true
+      }
+      if (!hasThisName && !isEmpty&&!isArr) {
+        state.openedSubmenuArr.push(name);
+        // state.openedSubmenuArr=[name];
+      }else if(!hasThisName && !isEmpty&&isArr){
+        console.log(name)
+        state.openedSubmenuArr=name
       }
     },
     //关闭标签页

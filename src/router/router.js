@@ -42,7 +42,33 @@ export const otherRouter={
   redirect:'/home',
   component:Main,
   children:[
-    {path:'roleControl',title:'首页',name:'home',component:()=>import('@/pages/home/Index.vue')},
+    {path:'/systems/system/roleControl',title:'新建角色',name:'roleControl',component:()=>import('@/pages/system/role-control')},
+    {path:'/newOut',title:'新建出库',name:'newOut',component:()=>import('@/pages/source/new-out')},
+    {path:'/outDetail',title:'出库详情',name:'outDetail',component:()=>import('@/pages/source/storage-detail')},
+    {path:'/inDetail',title:'入库详情',name:'inDetail',component:()=>import('@/pages/source/storage-detail')},
+    {path:'/inventoryDetail',title:'盘点详情',name:'inventoryDetail',component:()=>import('@/pages/source/inventory-detail')},
+    {path:'/inventoryNew',title:'新建盘点',name:'inventoryNew',component:()=>import('@/pages/source/inventory-new')},
+    {path:'/staffDetail',title:'员工详情',name:'staffDetail',component:()=>import('@/pages/staff/staff-detail'),
+      children:[
+        {path:'/',name:'staffBase',component:()=>import('@/pages/staff/staff-component/staff-base')},
+        {path:'/serviceTypeStaff',name:'serviceTypeStaff',component:()=>import('@/pages/staff/staff-component/staff-service')},
+        {path:'/accountInfo',name:'accountInfo',component:()=>import('@/pages/staff/staff-component/staff-account')},
+        {path:'/orderIncome',name:'orderIncome',component:()=>import('@/pages/staff/staff-component/staff-order-income')},
+        {path:'/orderInfo',name:'orderInfo',component:()=>import('@/pages/staff/staff-component/staff-order-info')},
+      ]
+    },
+    {
+      path:'/order-detail',title:"订单详情",name:'order-detail',component:()=>import('@/pages/order/order-detail'),
+        children:[
+          {path:'',name:'orderFlow',component:()=>import('@/pages/order/order-com/order-flow')},
+          {path:'/fee-detail',name:'feeDetail',component:()=>import('@/pages/order/order-com/fee-detail')},
+          {path:'/after-service',name:'afterService',component:()=>import('@/pages/order/order-com/after-service')},
+          {path:'/order-income',name:'orderDetailIncome',component:()=>import('@/pages/order/order-com/order-income')},
+          {path:'/visited-info',name:'visitedInfo',component:()=>import('@/pages/order/order-com/visited-info')},
+          {path:'/order-prove',name:'orderProve',component:()=>import('@/pages/order/order-com/order-prove')},
+          {path:'/order-control',name:'orderControl',component:()=>import('@/pages/order/order-com/order-control')},
+        ]
+    }
   ]
 };
 //3、作为Main组件的子页面展示 并且在菜单中显示 （appRouter）
@@ -55,7 +81,6 @@ export const appRouter=[
     component:Main,
     children:[
       {path:'home',title:'首页',name:'home',component:()=>import('@/pages/home/Index.vue')},
-      {path:'/system/system/roleControl',title:'新建角色',name:'roleControl',component:()=>import('@/pages/system/role-admin')},
     ]
   },{
     path:'/systems',
@@ -66,7 +91,7 @@ export const appRouter=[
     children:[
           {path:'type',name:'type',title:'分类管理',component:()=>import('@/pages/main-components/parent-view.vue'),
             children:[
-              {path:'repair',title:'报修分类',name:'repair',component:()=>import('@/pages/system/repair-type.vue')},
+              {path:'repair',title:'报修分类',meta:{hideInMenu:true},name:'repair',component:()=>import('@/pages/system/repair-type.vue')},
               {path:'serviceType',title:'服务分类',name:'serviceType',component:()=>import('@/pages/system/service-type.vue')},
               {path:'fault',title:'故障原因管理',name:'fault',component:()=>import('@/pages/system/fault-type.vue')},
               {path:'materials',title:'辅材分类',name:'materials',component:()=>import('@/pages/system/materials-type.vue')},
@@ -75,18 +100,18 @@ export const appRouter=[
           {path:'role',title:'角色管理',name:'role',component:()=>import('@/pages/system/role-admin')},
           {path:'account',title:'账号管理',name:'account',component:()=>import('@/pages/system/account-admin.vue')},
           {path:'workingTime',title:'工作时间设置',name:'workingTime',component:()=>import('@/pages/system/working-time.vue')},
-          {path:'tips',title:'温馨提示',name:'tips',component:()=>import('@/pages/home/Index.vue')},
+          {path:'tips',title:'温馨提示',name:'tips',component:()=>import('@/pages/system/tips-admin.vue')},
         ]},
     ]
   },{
     path:'/service',
     icon:'logo-codepen',
-    title:'服务网点管理',
+    title:'网点管理',
     name:'service-address',
     component:Main,
     children:[
-      {path:'address',icon:'md-locate',title:'服务网点管理',name:'address',component:()=>import('@/pages/home/Index.vue')},
-      {path:'district',icon:'ios-compass',title:'区域设置',name:'district',component:()=>import('@/pages/home/Index.vue')},
+      {path:'address',meta:{hideInMenu:true},icon:'md-locate',title:'服务网点管理',name:'address',component:()=>import('@/pages/service/service-port.vue')},
+      {path:'district',icon:'ios-compass',title:'区域设置',name:'district',component:()=>import('@/pages/service/area-admin.vue')},
     ]
   },{
     path:'/materialsAdmin',
@@ -95,11 +120,11 @@ export const appRouter=[
     component:Main,
     icon:'ios-construct',
     children:[
-      {path:'storage',icon:'ios-cloud',title:'辅材库存管理',name:'storage',component:()=>import('@/pages/home/Index.vue')},
-      {path:'collar',icon:'ios-clipboard',title:'员工领用汇总',name:'collar',component:()=>import('@/pages/home/Index.vue')},
-      {path:'output',icon:'md-log-out',title:'辅材出库管理',name:'output',component:()=>import('@/pages/home/Index.vue')},
-      {path:'import',icon:'md-log-in',title:'辅材入库管理',name:'import',component:()=>import('@/pages/home/Index.vue')},
-      {path:'inventory',icon:'md-clipboard',title:'辅料盘点',name:'flow',component:()=>import('@/pages/home/Index.vue')},
+      {path:'storage',title:'辅材库存管理',name:'storage',component:()=>import('@/pages/source/storage-admin.vue')},
+      {path:'collar',title:'员工领用汇总',name:'collar',component:()=>import('@/pages/source/draw-pool.vue')},
+      {path:'output',title:'辅材出库管理',name:'output',component:()=>import('@/pages/source/out-admin.vue')},
+      {path:'import',title:'辅材入库管理',name:'import',component:()=>import('@/pages/source/import-admin.vue')},
+      {path:'inventory',title:'辅料盘点',name:'inventory',component:()=>import('@/pages/source/inventory-admin.vue')},
     ]
   },{
   path:'/financial',
@@ -108,9 +133,9 @@ export const appRouter=[
     component:Main,
     icon:'md-cash',
     children:[
-      {path:'financial-total',icon:'md-contract',title:'财务概况',name:'financial-total',component:()=>import('@/pages/home/Index.vue')},
-      {path:'materials-calc',icon:'ios-create',title:'辅材核算',name:'materials-calc',component:()=>import('@/pages/home/Index.vue')},
-      {path:'income-detail',icon:'ios-easel',title:'盈收详情',name:'income-detail',component:()=>import('@/pages/home/Index.vue')},
+      {path:'financial-total',icon:'md-contract',title:'财务概况',name:'financial-total',component:()=>import('@/pages/finance/finance-view.vue')},
+      {path:'materials-calc',icon:'ios-create',title:'辅材核算',name:'materials-calc',component:()=>import('@/pages/finance/materials-calc.vue')},
+      {path:'income-detail',icon:'ios-easel',title:'盈收详情',name:'income-detail',component:()=>import('@/pages/finance/income-detail.vue')},
     ]
   },{
     path:'/staff',
@@ -119,7 +144,7 @@ export const appRouter=[
     component:Main,
     icon:'logo-yen',
     children:[
-      {path:'staff-admin',icon:'ios-people',title:'人员管理',name:'staff-admin',component:()=>import('@/pages/home/Index.vue')},
+      {path:'staff-admin',icon:'ios-people',title:'人员管理',name:'staff-admin',component:()=>import('@/pages/staff/staff-admin.vue')},
 
     ]
   },{
@@ -128,7 +153,7 @@ export const appRouter=[
     name:'visit',
     component:Main,
     children:[
-      {path:'visit-admin',icon:'ios-call',title:'回访管理',name:'visit-admin',component:()=>import('@/pages/home/Index.vue')},
+      {path:'visit-admin',icon:'ios-call',title:'回访管理',name:'visit-admin',component:()=>import('@/pages/visite/return-visite.vue')},
     ]
   },{
     path:'/information',
@@ -136,7 +161,7 @@ export const appRouter=[
     name:'information',
     component:Main,
     children:[
-      {path:'approve',icon:'md-notifications',title:'消息管理',name:'flow',component:()=>import('@/pages/home/Index.vue')},
+      {path:'approve',icon:'md-notifications',title:'消息管理',name:'flow',component:()=>import('@/pages/message/message-admin.vue')},
     ]
   },{
     path:'/order',
@@ -145,7 +170,7 @@ export const appRouter=[
     component:Main,
     icon:'ios-briefcase',
     children:[
-      {path:'order-filter',icon:'ios-briefcase',title:'工单查询',name:'order-filter',component:()=>import('@/pages/home/Index.vue')},
+      {path:'order-filter',icon:'ios-briefcase',title:'工单查询',name:'order-filter',component:()=>import('@/pages/order/order-search.vue')},
     ]
   },{
     path:'/statistic',
@@ -154,8 +179,8 @@ export const appRouter=[
     component:Main,
     icon:'md-analytics',
     children:[
-      {path:'materials-sta',icon:'ios-analytics',title:'辅材使用统计',name:'materials-sta',component:()=>import('@/pages/home/Index.vue')},
-      {path:'statistic-chart',icon:'md-analytics',title:'统计报表',name:'statistic-chart',component:()=>import('@/pages/home/Index.vue')},
+      {path:'materials-sta',icon:'ios-analytics',title:'辅材使用统计',name:'materials-sta',component:()=>import('@/pages/statistical/materials-use.vue')},
+      {path:'statistic-chart',icon:'md-analytics',title:'统计报表',name:'statistic-chart',component:()=>import('@/pages/statistical/statistical-chart.vue')},
     ]
   },
 ];

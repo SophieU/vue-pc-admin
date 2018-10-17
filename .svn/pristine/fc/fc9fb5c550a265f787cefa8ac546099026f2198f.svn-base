@@ -1,0 +1,19 @@
+.ivu-menu-item-group{
+  &>ul{
+    padding-left: 10px!important;
+  }
+
+}
+.menu-icon{
+  &:hover{
+    background: transparent;
+  }
+}
+.sidebarMenuCollapse{
+  .ivu-select-dropdown{
+    width:auto;
+    max-height: none;
+    overflow: visible;
+  }
+}
+

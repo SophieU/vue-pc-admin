@@ -1,15 +1,45 @@
 import axios from 'axios';
+import router from '../router/index';
+import iView from 'iview';
 
 let baseUrl = '';
 let domin = window.location.hostname;
 if(domin==='localhost'){ //本地
-  baseUrl='192.168.0.24';
+  baseUrl='http://101.132.99.21:8109/repair/call/center/v1/';
 }else if(domin==='xxx'){ //正式
   baseUrl=''
 }else{ //测试
 
 }
+axios.defaults.headers.common['Content-Type']='application/json';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.baseURL =baseUrl;
+axios.defaults.timeout =10000;
+axios.defaults.withCredentials = true; //让ajax携带cookie
 
-axios.default.baseUrl=baseUrl;
+//请求拦截器
+axios.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  return config;
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error);
+});
+
+// 响应拦截器
+axios.interceptors.response.use(function (response) {
+  let code = response.data.code;
+  let method = response.config.method;
+  if(code===904&&method!=='option'){
+    iView.Message.error(response.data.msg);
+    router.push({name:'login'})
+  }
+  // Do something with response data
+  return response;
+}, function (error) {
+  // Do something with response error
+  console.log('interceptor error--------'+error);
+  return Promise.reject(error);
+});
 
 export default axios;

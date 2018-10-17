@@ -1,0 +1,108 @@
+<template>
+    <Card>
+      <div class="mb-15">
+        <Button @click="showModal=true" type="primary" class="lang-btn">新建</Button>
+      </div>
+      <Table :columns="columns" :data="lists"></Table>
+      <div class="pagination">
+        <Page :total="40" show-sizer show-elevator=""> </Page>
+      </div>
+
+      <Modal width="700" v-model="showModal" title="新建消息">
+        <Form label-position="top">
+          <Row :gutter="25">
+            <Col span="12">
+              <FormItem label="消息主题">
+                <Input />
+              </FormItem>
+              <FormItem label="消息内容">
+                <Input type="textarea" :rows="5"/>
+              </FormItem>
+            </Col>
+            <Col span="12">
+              <FormItem label="发送服务网点">
+                <div>
+                  <Checkbox
+                    :indeterminate="indeterminate"
+                    :value="checkAll"
+                    @click.prevent.native="checkAllHandle"
+                    >全选</Checkbox>
+                </div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+                  <Checkbox v-for="item in servicePort" :label="item"></Checkbox>
+                </CheckboxGroup>
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
+
+        <div slot="footer">
+          <Button>取消</Button>
+          <Button type="primary">确认并发送</Button>
+        </div>
+      </Modal>
+    </Card>
+</template>
+
+<script>
+    export default {
+        name: "message-admin",
+      data(){
+          return {
+            indeterminate:true,
+            checkAll:false,
+            showModal:false,
+            checkAllGroup:[],
+            columns:[
+              {title:'序号',type:'index',align:'center'},
+              {title:'消息主题',key:'index',align:'center'},
+              {title:'发送时间',key:'index',align:'center'},
+              {title:'操作人',key:'index',align:'center'},
+              {title:'操作',align:'center',render:(h,params)=>{
+                    return h('Button',{
+                      props:{
+                        type:'text'
+                      }
+                    },'查看')
+                }},
+            ],
+            lists:[{}],
+            servicePort:['24','25','26','27']
+          }
+      },
+      methods:{
+          //全选网点
+        checkAllHandle(){
+          console.log(this.indeterminate);
+          if (this.indeterminate) {
+            this.checkAll = false;
+          } else {
+            this.checkAll = !this.checkAll;
+          }
+          this.indeterminate = false;
+
+          if(this.checkAll){
+            this.checkAllGroup=this.servicePort;
+          }else{
+            this.checkAllGroup = [];
+          }
+        },
+        checkAllGroupChange(data){
+          if(data.length===this.servicePort.length){
+            this.indeterminate=false;
+            this.checkAll=true;
+          }else if(data.length>0){
+            this.indeterminate=true;
+            this.checkAll=false;
+          }else{
+            this.indeterminate=false;
+            this.checkAll=false;
+          }
+        }
+      }
+    }
+</script>
+
+<style scoped>
+
+</style>

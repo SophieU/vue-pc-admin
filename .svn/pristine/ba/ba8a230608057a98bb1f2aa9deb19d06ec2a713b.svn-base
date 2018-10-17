@@ -1,0 +1,92 @@
+
+<style scoped lang="scss">
+  @import './service';
+</style>
+<template>
+    <div>
+      <Card>
+        <div class="clearfix mb-15">
+          <div class="pull-left">
+            <Button type="primary" @click="portSetting=true">新建</Button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <Table :data="portLists" :columns="columns"></Table>
+        </div>
+      </Card>
+      <Modal v-model="portSetting" title="添加服务网点" >
+        <Form :label-width="120" label-position="right">
+          <FormItem label="服务网点名称">
+            <Input class="form-input"/>
+          </FormItem>
+          <FormItem label="服务网点地址">
+            <Input  class="form-input"/>
+          </FormItem>
+          <FormItem label="服务网点电话">
+            <Input  class="form-input"/>
+          </FormItem>
+          <FormItem label="服务区域设置">
+            <ul class="column_3">
+              <li><Checkbox>24小区</Checkbox></li>
+              <li><Checkbox>23小区</Checkbox></li>
+              <li><Checkbox>26小区</Checkbox></li>
+              <li><Checkbox>27小区</Checkbox></li>
+              <li><Checkbox>27小区</Checkbox></li>
+              <li><Checkbox>27小区</Checkbox></li>
+            </ul>
+          </FormItem>
+          <FormItem label="管理员账号">
+            <Input  class="form-input"/>
+          </FormItem>
+          <FormItem label="登陆密码">
+            <Input  class="form-input"/>
+          </FormItem>
+          <FormItem label="备用网点">
+            <i-switch>否</i-switch>
+          </FormItem>
+        </Form>
+        <div slot="footer">
+          <div class="inner-center">
+            <Button>取消</Button>
+            <Button type="primary">确认</Button>
+            <!--查看-->
+            <!--<Button type="primary">编辑</Button>
+            <Button >返回</Button>-->
+          </div>
+        </div>
+      </Modal>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: "service-port",
+      data(){
+          return{
+            columns:[
+              {title:'网点名称',key:'portName',align:'center'},
+              {title:'备用网点',key:'backPort',align:'center'},
+              {title:'网点地址',key:'portAdd',align:'center'},
+              {title:'联系电话',key:'contact',align:'center'},
+              {title:'服务区域数量',key:'serviceNum',align:'center'},
+              {title:'操作',align:'center',render:(h,params)=>{
+                  let _this = this;
+                  return h('div',[
+                    h('Button',{
+                      props:{type:'text'}
+                    },'查看'),
+                    h('Button',{
+                      props:{type:'text'}
+                    },'编辑'),
+                  ])
+                }},
+            ],
+            portLists:[
+              {portName:'24小时服务网点',backPort:'是',portAdd:'北山路一段289号',contact:'8666666',serviceNum:'0',}
+            ],
+            portSetting:false,
+          }
+      }
+    }
+</script>
+

@@ -60,13 +60,13 @@
           return {
             focus:'',
             formLogin:{
-              username:'13708044289',
-              password:'',
+              username:'admin',
+              password:'123456',
             },
             ruleLogin:{
               username:[
-                {required:true,message:'请输入手机号',trigger:'blur'},
-                {validator:validateTel,trigger:'blur'},
+                {required:true,message:'请输入用户名',trigger:'blur'},
+                // {validator:validateTel,trigger:'blur'},
               ],
               password:[
                 {required:true,message:'请输入密码',trigger:'blur'},
@@ -78,17 +78,34 @@
       methods:{
         //验证登录
         validateLogin(){
+
+
           this.$refs.loginForm.validate((valid)=>{
             if(valid){
-              let tel = this.formLogin.username;
+              let userName = this.formLogin.username;
               let password = this.formLogin.password;
               iView.LoadingBar.start();
-              Cookie.set('user',tel);
-              this.$Message.success('登录成功');
-              setTimeout(()=>{
-                this.$router.push({name:'home'});
-                iView.LoadingBar.finish();
-              },2000)
+              this.$http.defaults.withCredentials=true;
+              // this.$http.headers['Content-Type']='application/x-www-form-urlencoded';
+              this.$http.post(`/user/login?loginName=${userName}&password=${password}`)
+                .then(res=>{
+                  let data = res.data;
+
+                  console.log(res)
+
+                  if(data.code===0){
+                    //登录成功
+                    Cookie.set('user',userName);
+                    // Cookie.set('sessionIdCookie','2a246a44-46bd-44ad-9e79-76e7dd55fcec');
+                    // let seesionIdCookie =  Cookie.get('sessionIdCookie');
+                    // this.$http.defaults.headers[]
+                    // Cookie.set('sessionIdCookie','63e8ac0a-4c43-4c92-af8f-c5f9486c9051');
+                    this.$Message.success('登录成功');
+                    this.$router.push({name:'home'});
+                    iView.LoadingBar.finish();
+                  }
+                });
+
             }else{
               this.$Message.error('输入有误，请重试')
             }

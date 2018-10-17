@@ -4,9 +4,9 @@ const user = {
   state:{},
   mutations:{
     logout(state,vm){
-      Cookie.remove('user');
-      Cookie.remove('password');
-      Cookie.remove('access');
+      Cookies.remove('user');
+      Cookies.remove('password');
+      Cookies.remove('access');
     }
   }
 };

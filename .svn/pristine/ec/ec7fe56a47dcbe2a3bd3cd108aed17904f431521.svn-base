@@ -1,0 +1,46 @@
+<style scoped lang="scss">
+  @import './service.scss';
+</style>
+<template>
+    <Card class="area-setting">
+      <Row :gutter="30">
+        <Col span="12">
+          <Card>
+            <p slot="title">区域列表</p>
+            <Button slot="extra" type="primary" style="margin-top: -5px;">添加区域</Button>
+            <div>
+              <ul class="area-lists">
+                <li>24小区</li>
+                <li>24小区</li>
+                <li>24小区</li>
+                <li class="active">新建小区</li>
+              </ul>
+            </div>
+          </Card>
+        </Col>
+        <Col span="12">
+          <Card>
+            <p slot="title">区域信息</p>
+            <Button slot="extra" type="error" style="margin-top: -5px;">删除区域</Button>
+            <div>
+              <Form :label-width="100">
+                <FormItem label="区域名称">
+                  <Input style="width: 300px;"/>
+                </FormItem>
+                <div class="inner-center">
+                  <Button class="lang-btn" type="primary">保存</Button>
+                </div>
+              </Form>
+            </div>
+          </Card>
+        </Col>
+      </Row>
+    </Card>
+</template>
+
+<script>
+    export default {
+        name: "area-admin"
+    }
+</script>
+

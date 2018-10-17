@@ -1,6 +1,18 @@
 .text-right{
   text-align:right;
 }
+.text-blue{
+  color: #2d8cf0;
+}
+.text-red{
+  color: #f00;
+}
+.text-info{
+  color: #2db7f5;
+}
+.text-grey{
+  color: #999;
+}
 /*transition定义动画*/
 /* 设置持续时间和动画函数 */
 .slide-fade-enter-active {
@@ -222,9 +234,7 @@ input[type="file"]{
   color:#999;
   font-size: 14px;
 }
-.text-info{
-  color: #2db7f5;
-}
+
 .btn-link{
   border: none;
   text-decoration: none;
@@ -239,6 +249,107 @@ input[type="file"]{
     opacity: .7;
   }
 }
+.lang-btn{
+  padding: 6px 30px;
+}
+.inner-center{
+  text-align: center;
+}
 .ivu-divider-horizontal{
   margin: 10px 0;
 }
+
+.native-table{
+  border: 1px solid #e8eaec;
+  border-collapse: collapse;
+  width: 100%;
+  th{
+    height: 35px;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: #f8f8f9;
+    border:1px solid #e8eaec ;
+    text-align: center;
+  }
+  td{
+    border:1px solid #e8eaec ;
+    text-align: center;
+    white-space: nowrap;
+    height: 35px;
+  }
+}
+
+.native-input{
+  border: 1px solid #e8eaec;
+  border-radius: 4px;
+  padding: 4px 10px;
+  outline: none;
+  &:read-only{
+    background-color: #f8f8f9;
+  }
+}
+
+.card{
+  border: 1px solid #e8eaec;
+  .card-header{
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e8eaec;
+    .card-title{
+      font-weight: bold;
+      font-size: 14px;
+    }
+  }
+  .card-body{
+    padding: 15px;
+  }
+  &.no-border{
+    border: none;
+    .card-header{
+      border-bottom: none;
+    }
+  }
+}
+
+.tab-nav{
+  white-space: nowrap;
+  overflow-x:auto;
+  border-bottom: 1px solid #dcdee2;
+  li{
+    height: 36px;
+    display: inline-block;
+    padding: 8px 20px;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    transition: color .3s ease-in-out;
+    &:hover{
+      color: #57a3f3;
+    }
+    &>span{
+      margin-right: 10px;
+    }
+    &.nav-active{
+      color: #2d8cf0;
+      border-bottom: 2px solid #2d8cf0;
+    }
+    .nav-title{
+      position: relative;
+      display: block;
+      height: 100%;
+    }
+    .ivu-badge-count{
+      position: absolute;
+      top: -8px;
+      right: -15px;
+    }
+  }
+}
+.table-wrapper{
+  width: 100%;
+  overflow: auto;
+}
+

@@ -49,10 +49,10 @@
               <Dropdown  transfer trigger="click" @on-click="handleUserDropdown">
                 <a href="javascript:void(0)">
                   <span class="main-user-name">13708044289</span>
-                  <Icon color="#fff" type="ios-arrow-down" />
+                  <Icon type="md-arrow-dropdown" />
                 </a>
                 <DropdownMenu slot="list">
-                  <DropdownItem name="ownSpace">个人中心</DropdownItem>
+                  <!--<DropdownItem name="ownSpace">个人中心</DropdownItem>-->
                   <DropdownItem name="logOut">退出</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -84,6 +84,7 @@
   import messageTip from './main-components/message-tip'
   import util from '../libs/util'
   import http from '../libs/api'
+  import Cookies from 'js-cookie'
 
     export default {
         name: "Main",
@@ -130,10 +131,16 @@
         init(){
           this.$store.commit('updateMenulist');
           let pathArr = util.setCurrentPath(this,this.$route.name);
-          if(pathArr.length>=2){
-            this.$store.commit('addOpenSubmenu',pathArr[1].name); //展开子菜单
+          if(pathArr.length>=3){
+            let arr = [pathArr[0].name,pathArr[1].name];
+            this.$store.commit('addOpenSubmenu',arr,true); //展开子菜单
+          }else if(pathArr.length>=2){
+            this.$store.commit('addOpenSubmenu',pathArr[0].name); //展开子菜单
           }
-          // this.userName=Cookie.get('user');
+          // if(pathArr.length>=2){
+          //   this.$store.commit('addOpenSubmenu',pathArr[1].name); //展开子菜单
+          // }
+          this.userName=Cookies.get('user');
           // this.checkTag(this.$route.name);
           this.checkScreen();
 
@@ -142,17 +149,7 @@
           // console.log(val)
         },
 
-        // checkTag (name) {
-        //   //打开一个标签（如关闭一个后，打开最近的）
-        //   let openpageHasTag = this.pageTagsList.some(item => {
-        //     if (item.name === name) {
-        //       return true;
-        //     }
-        //   });
-        //   if (!openpageHasTag) { //  解决关闭当前标签后再点击回退按钮会退到当前页时没有标签的问题
-        //     util.openNewPage(this, name, this.$route.params || {}, this.$route.query || {});
-        //   }
-        // },
+
         checkScreen(){
           let screenWidth = document.body.clientWidth;
           if(screenWidth<1200){
@@ -163,13 +160,14 @@
         },
         //退出
         handleUserDropdown(name){
-          console.log(name)
-          if (name === 'ownSpace') {
-           //个人中心
-            this.$router.push({
-              name: 'index'
-            });
-          } else if (name === 'logOut') {
+          //
+          // if (name === 'ownSpace') {
+          //  //个人中心
+          //   this.$router.push({
+          //     name: 'index'
+          //   });
+          // } else
+            if (name === 'logOut') {
             // 退出登录
             this.$store.commit('logout', this);
             // this.$store.commit('clearOpenedSubmenu');
@@ -182,10 +180,6 @@
       mounted(){
           this.init();
           window.addEventListener('resize',this.checkScreen);
-         //测试全局提醒sos功能
-          /*setTimeout(()=>{
-            this.sosTips()
-          })*/
       },
       created(){
         //显示 打开的页面列表
@@ -196,10 +190,14 @@
           '$route'(to){
             this.$store.commit('setCurrentPageName',to.name);
             let pathArr = util.setCurrentPath(this,to.name);
-            if (pathArr.length > 2) {
-              this.$store.commit('addOpenSubmenu', pathArr[1].name);
+            console.log(pathArr)
+            if(pathArr.length>=3){
+              let arr = [pathArr[0].name,pathArr[1].name];
+              this.$store.commit('addOpenSubmenu',arr,true); //展开子菜单
+            }else if(pathArr.length>=2){
+              this.$store.commit('addOpenSubmenu', pathArr[0].name);
             }
-            // this.checkTag(to.name);
+
             localStorage.currentPageName = to.name;
           },
       }

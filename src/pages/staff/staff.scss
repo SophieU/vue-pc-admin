@@ -1,0 +1,41 @@
+.nav-ul{
+  display: flex;
+  li{
+    white-space: nowrap;
+    padding: 5px 15px;
+    user-select: none;
+    cursor: pointer;
+  }
+}
+.form-ul{
+  li{
+    padding: 4px 0;
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    align-items:center;
+  }
+  .label{
+    display: inline-block;
+    vertical-align: top;
+    width: 100px;
+    text-align: right;
+    margin-right: 15px;
+  }
+}
+.service-lists{
+  li{
+    padding: 10px 20px;
+    display: inline-block;
+  }
+}
+.form-ul_column2{
+  display: flex;
+  flex-wrap: wrap;
+  li{
+    flex: 50% 0 0;
+    padding: 4px 15px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+}

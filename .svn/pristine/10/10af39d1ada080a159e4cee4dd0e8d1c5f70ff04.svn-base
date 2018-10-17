@@ -1,0 +1,33 @@
+.column_3{
+  display: flex;
+  flex-wrap: wrap;
+  li{
+    flex: 33.3% 0 0;
+  }
+}
+.form-input{
+  width: 300px;
+}
+.area-setting{
+
+  .area-lists{
+    border: 1px solid #ddd;
+    max-width: 400px;
+    margin: 0 auto;
+    li{
+      user-select: none;
+      padding: 8px 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      &:last-child{
+        border-bottom: 0;
+      }
+      &.active{
+        background: #039dff;
+        color: #fff;
+      }
+    }
+
+  }
+
+}

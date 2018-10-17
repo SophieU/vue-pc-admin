@@ -56,8 +56,8 @@ util.setCurrentPath=function(vm,name){
   //获取 title，并判断当前是否为otherRouter中的组件
   vm.$store.state.app.routers.forEach(item => {
     //只有一个子路由
-
     if (item.children.length === 1) {
+      //匹配设置的name
       if (item.children[0].name === name) {
         title = util.handleTitle(vm, item);
         if (item.name === 'otherRouter') {
@@ -65,7 +65,7 @@ util.setCurrentPath=function(vm,name){
         }
       }
     } else {
-      //多个子路由
+      //多个子路由【只考虑一级子路由】
       item.children.forEach(child => {
         if (child.name === name) {
           title = util.handleTitle(vm, child);
@@ -77,6 +77,7 @@ util.setCurrentPath=function(vm,name){
     }
   });
 
+//获取当前页面 完整路径值
   let currentPathArr = [];
 //如果当前name为home主页时
   if (name === 'home') {
@@ -87,8 +88,12 @@ util.setCurrentPath=function(vm,name){
         name: 'home'
       }
     ];
+    /*
+    * else if ((name.indexOf('_index') >= 0 || isOtherRouter) && name !== 'home')
+    *  _index：匹配“个人中心，消息中心等单独页面）
+    * */
     //当前 name为不在菜单栏中显示的Main组件子菜单index时
-  } else if ((name.indexOf('_index') >= 0 || isOtherRouter) && name !== 'home') {
+  } else if (isOtherRouter&& name !== 'home') {
     currentPathArr = [
       {
         title: '首页',
@@ -103,9 +108,10 @@ util.setCurrentPath=function(vm,name){
     ];
   } else {
     //当前 name为左侧菜单栏中的组件
-    //获取当前路由对象
 
+    //获取当前路由对象所属一级路由
     let currentPathObj = vm.$store.state.app.routers.filter(item => {
+      //单个菜单如首页
       if (item.children.length <= 1) {
         return item.children[0].name === name;
       }else {
@@ -117,7 +123,7 @@ util.setCurrentPath=function(vm,name){
           if (childArr[i].name === name) {
             return true;
           }else if(childArr[i].children){
-            //有子路由
+            //有二级路由
             let j=0;
             let subChildArr = childArr[i].children;
             let subLen = subChildArr.length;
@@ -160,6 +166,7 @@ util.setCurrentPath=function(vm,name){
       //   return child.name === name;
       // })[0];
       let childObj = null;
+      let thirdChildObj = null;
       currentPathObj.children.map((child) => {
         if(child.name===name) childObj = child;
         if(child.children){
@@ -168,33 +175,58 @@ util.setCurrentPath=function(vm,name){
           let len = subChild.length;
           while(i<len){
             if(subChild[i].name===name){
-              childObj= subChild[i];
+              childObj=child;
+              thirdChildObj= subChild[i];
             }
             i++;
           }
         }
       });
-      currentPathArr = [
-        // {
-        //   title: '首页',
-        //   path: '/home',
-        //   name: 'home'
-        // },
-        {
-          title: currentPathObj.title,
-          path: '',
-          name: currentPathObj.name
-        },
-        {
-          title: childObj.title,
-          path: currentPathObj.path + '/' + childObj.path,
-          name: name
-        }
-      ];
+      if(thirdChildObj){
+        currentPathArr = [
+          // {
+          //   title: '首页',
+          //   path: '/home',
+          //   name: 'home'
+          // },
+          {
+            title: currentPathObj.title,
+            path: '',
+            name: currentPathObj.name
+          },
+          {
+            title: childObj.title,
+            path: currentPathObj.path + '/' + childObj.path,
+            name: childObj.name
+          },
+          {
+            title:thirdChildObj.title,
+            name:thirdChildObj.name,
+            path:currentPathObj.path + '/' + childObj.path+'/'+thirdChildObj.path,
+          }
+        ];
+      }else{
+        currentPathArr = [
+          // {
+          //   title: '首页',
+          //   path: '/home',
+          //   name: 'home'
+          // },
+          {
+            title: currentPathObj.title,
+            path: '',
+            name: currentPathObj.name
+          },
+          {
+            title: childObj.title,
+            path: currentPathObj.path + '/' + childObj.path,
+          }
+        ];
+      }
+
     }
   }
   vm.$store.commit('setCurrentPath', currentPathArr);
-
   return currentPathArr;
 };
 util.openNewPage = function (vm, name, argu, query) {

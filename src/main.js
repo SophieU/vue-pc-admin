@@ -8,8 +8,13 @@ import store from './store'
 import {appRouter} from './router/router'
 import util from './libs/util'
 import 'iview/dist/styles/iview.css'
+import axios from './libs/api';
 
 Vue.config.productionTip = false
+
+// axios.defaults.baseURL='http://101.132.99.21:8109';
+// axios.defaults.timeout=10000;
+Vue.prototype.$http = axios;
 
 Vue.use(iView)
 
