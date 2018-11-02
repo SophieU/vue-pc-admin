@@ -1,0 +1,64 @@
+.w300{
+  width: 300px;
+}
+.w400{
+  width: 400px;
+}
+.type-lists{
+  max-height: 200px;
+  overflow-y: auto;
+  li{
+    cursor: pointer;
+    padding: 5px;
+    text-align: center;
+    white-space: nowrap;
+    &:hover{
+      background: #039dff;
+      color: #fff;
+    }
+    &.active{
+      background: #039dff;
+      color: #fff;
+    }
+  }
+}
+
+.storage-detail{
+  .native-input{
+    border: 1px solid #e8eaec;
+    border-radius: 4px;
+    padding: 4px 10px;
+    &:read-only{
+      background-color: #f8f8f9;
+    }
+  }
+}
+
+.new-inventory{
+  .inventory-step{
+    justify-content: center;
+    display:flex;
+    align-items: center;
+    .step-content{
+      padding: 5px 15px;
+    }
+    .step-target{
+      display: block;
+      color: #2d8cf0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .step{
+      text-align: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      line-height: 34px;
+      border: 1px solid #039dff;
+      color: #fff;
+      background: #039dff;
+      border-radius: 100%;
+    }
+  }
+
+}

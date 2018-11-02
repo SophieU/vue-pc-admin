@@ -1,0 +1,143 @@
+<template>
+  <div>
+    <Card>
+      <div class="clearfix mb-15">
+        <div class="pull-left">
+          <Button type="primary" @click="goback()">返回上一页</Button>
+        </div>
+      </div>
+      <div class="role-panel">
+        <Form :model="roleInfo" label-position="top">
+          <Row :gutter="40">
+            <Col span="12">
+              <h4>基础信息</h4>
+                <FormItem label="角色名称">
+                  <Input :disabled="viewInfo" v-model="roleInfo.name"/>
+                </FormItem>
+                <FormItem label="角色描述">
+                  <Input :disabled="viewInfo" v-model="roleInfo.description" type="textarea" :rows="10"/>
+                </FormItem>
+            </Col>
+            <Col span="12">
+              <h4>功能权限</h4>
+              <ul class="auth-lists">
+                <li><Checkbox :disabled="viewInfo">服务网点管理</Checkbox></li>
+                <li>
+                  <CheckboxGroup >
+                    <Checkbox :disabled="viewInfo" label="查看服务网点"></Checkbox>
+                    <Checkbox :disabled="viewInfo" label="编辑服务网点"></Checkbox>
+                    <Checkbox :disabled="viewInfo" label="添加服务网点"></Checkbox>
+                  </CheckboxGroup>
+                </li>
+                <li >
+                  <Checkbox :disabled="viewInfo">管理服务区域</Checkbox>
+                </li>
+              </ul>
+            </Col>
+          </Row>
+        </Form>
+
+        <div class="footer-right">
+          <Button @click="goback" v-if="!viewInfo">取消</Button>
+          <Button type="primary" v-if="viewInfo" @click="viewInfo=false">编辑</Button>
+          <Button v-if="!viewInfo" type="primary" @click="saveThis">保存</Button>
+        </div>
+      </div>
+    </Card>
+  </div>
+</template>
+
+<script>
+    export default {
+        name: "role-control",
+      data(){
+        return {
+          type:1, //页面操作类型—— 1:新建，0：编辑，2：查看
+          id:'',
+          viewInfo:false, //查看/编辑 状态
+          roleInfo:{
+            name:'',
+            description:'',
+            resourceList:'',
+            id:'',
+            callCenterId:'',
+          },
+          authLists:[]
+        }
+      },
+      methods:{
+        goback(){
+          this.$router.back();
+        },
+        getRoleInfo(id){
+          this.$http.get(`/role/info?id=${id}`)
+            .then(res=>{
+              if(res.data.code===0){
+                this.roleInfo=res.data.data;
+              }else{
+                this.$Message.error(res.data.msg)
+              }
+            })
+        },
+        saveThis(){
+          console.log(111)
+
+          let type = this.type;
+          let url='';
+          let params=this.roleInfo;
+          if(type===1){
+            url='/role/add'
+          }else{
+            url='/role/edit'
+          }
+          this.$http.post(url,{
+            name:params.name,
+            description:params.description,
+            id:params.id
+          }).then(res=>{
+            if(res.data.code===0){
+              this.$Message.success('保存成功');
+              this.$router.push({name:'role'});
+            }else{
+              this.$Message.error(res.data.msg);
+            }
+          })
+        }
+      },
+      mounted(){
+          /*
+          type:角色类型  1:新建，0：编辑，2：查看
+          * */
+          this.type = this.$route.params.type;
+          this.id = this.$route.params.id;
+
+          if(this.type===0){
+            this.getRoleInfo(this.id);
+          }else if(this.type===2){
+            this.viewInfo=true;
+            this.getRoleInfo(this.id);
+          }
+
+          // this.$store.app.
+      }
+    }
+</script>
+
+<style scoped lang="scss">
+  h4{
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+  .role-panel{
+    position: relative;
+    .footer-right{
+      position: absolute;
+      bottom: 15px;
+      right: 50%;
+      transform: translateX(335%);
+    }
+    .auth-lists{
+      margin-bottom: 50px;
+    }
+  }
+</style>

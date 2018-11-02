@@ -9,25 +9,30 @@
   width: 300px;
 }
 .area-setting{
-
   .area-lists{
-    border: 1px solid #ddd;
-    max-width: 400px;
-    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
     li{
-      user-select: none;
-      padding: 8px 15px;
+      flex: 30% 0 0;
+      height: 34px;
+      line-height: 34px;
       text-align: center;
+      border-radius: 4px;
+      margin: 5px 0;
+      border:1px solid #dcdee2;
+      user-select: none;
       border-bottom: 1px solid #ddd;
-      &:last-child{
-        border-bottom: 0;
+      &:nth-child(3n+2){
+        margin: 5px 15px;
       }
       &.active{
-        background: #039dff;
-        color: #fff;
+        border: 1px solid #2d8cf0;
+        color: #2d8cf0;
       }
     }
 
   }
 
 }
+
+

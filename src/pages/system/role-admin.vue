@@ -25,45 +25,77 @@
                 align:'center'
               },{
               title:'角色描述',
-                key:'desc',
+                key:'description',
                 align:'center'
               },{
               title:'操作',
                 align:'center',
                 render:(h,params)=>{
                   let _this = this;
+                  let id = params.row.id;
                   return h('div',[
                     h('Button',{
                       props:{
-                        type:'text'
+                        type:'text',
+                        size:'small'
+                      },
+                      on:{
+                        click(){
+                          _this.viewInfo=true;
+                          _this.goControl(2,id);
+                        }
                       }
                     },'查看'),
                      h('Button',{
                       props:{
-                        type:'text'
-                      }
+                        type:'text',
+                        size:'small'
+                      },
+                       on:{
+                         click(){
+                           _this.viewInfo=true;
+                           _this.goControl(0,id);
+                         }
+                       }
                     },'编辑'),
 
                   ])
                 }
               }
             ],
-            roleLists:[
-              {
-                name:'admin',
-                desc:'管理员'
-              }
-            ],
+            roleLists:[],
+
           }
       },
       methods:{
-          goControl(type){
-            console.log(type)
+          goControl(type,id){
             /*
             * @params: type:跳转类型，1:新建，0：编辑，2：查看
             * */
-            this.$router.push({name:'roleControl'})
-          }
+            this.$router.push({name:'roleControl',params:{type:type,id:id}});
+          },
+        getRoleLists(){
+          this.$http.get(`/role/list`)
+            .then(res=>{
+              if(res.data.code===0){
+                let data = res.data.data;
+                this.roleLists=data;
+              }
+            })
+        },
+       /* getRoleInfo(id){
+            this.$http.get(`/role/info?id=${id}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  this.roleInfo={
+
+                  }
+                }
+              })
+        }*/
+      },
+      mounted(){
+        this.getRoleLists();
       }
     }
 </script>

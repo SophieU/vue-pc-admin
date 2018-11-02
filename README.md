@@ -30,30 +30,29 @@ npm test
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 
-#参数
-let zNodes=[
-    {name:'青秀城',open:true,children:[
-        {name:'维修组',children:[
-            {name:'李世民'},
-            {name:'李隆基'},
-          ]},
-        {name:'财务部',children:[
-            {name:'杨玉环'},
-            {name:'魏璎珞'},
-          ]},
-        {name:'客服部',children:[
-            {name:'武媚娘'},
-            {name:'太平'},
-          ]},
-        {name:'保洁部',children:[
-            {name:'甄嬛'},
-            {name:'芈月'},
-          ]},
-        {name:'保绿部',children:[
-            {name:'锦觅'},
-            {name:'旭凤'},
-          ]},
+# 七牛上传地址
+```
+测试：ozwtk38pw.bkt.clouddn.com
+生产：tfresource.yishengyue.cn
+```
+```
+##  七牛上传token获取地址
+/base/qiniu/token
+## 上传地址
+http://upload.qiniup.com/
+```
+13112341234
+# 工单状态：
+```
+EXCEPTION("EXCEPTION","异常"),
+ASSIGNED("ASSIGNED","待分配")
+CANCEL("CANCEL","已取消"),
+WAIT_DOOR("WAIT_DOOR","待上门"),
+WAITING_DOOR("WAITING_DOOR","已上门"),
+STAY_PAY("STAY_PAY","待付款"),
+WAIT_SERVICE("WAIT_SERVICE","待服务"),
+FINISH("FINISH","已完成"),
+AFTER_SALE("AFTER_SALE","售后中"),
+CLOSED("CLOSED","已关闭"),
 
-      ]}
-  ]
-
+```

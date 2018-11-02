@@ -8,12 +8,9 @@
           <Card>
             <p slot="title">区域列表</p>
             <Button @click="addArea" slot="extra" type="primary" style="margin-top: -5px;">添加区域</Button>
-            <div>
-              <ul class="area-lists">
-                <li @click="editThis(ind)" :class="editInd===ind?'active':''" v-for="(area,ind) in areaLists">{{area.name}}</li>
-                <!--<li class="active">新建小区</li>-->
-              </ul>
-            </div>
+            <ul class="area-lists">
+              <li @click="editThis(ind)" :class="editInd===ind?'active':''" v-for="(area,ind) in areaLists">{{area.name}}</li>
+            </ul>
           </Card>
         </Col>
         <Col span="12">
@@ -23,10 +20,10 @@
             <div>
               <Form :label-width="100">
                 <FormItem label="区域名称">
-                  <Input style="width: 300px;" v-model="areaName"/>
+                  <Input :maxlength="32" style="width: 300px;" v-model="areaName"/>
                 </FormItem>
                 <div class="inner-center">
-                  <Button @click="saveThis" class="lang-btn" type="primary">保存</Button>
+                  <Button :loading="loadingSave" @click="saveThis" class="lang-btn" type="primary" >保存</Button>
                 </div>
               </Form>
             </div>
@@ -45,6 +42,8 @@
             editInd:0,
             areaName:'',
             editId:'', //编辑的Id
+            radioCheck:'',
+            loadingSave:false,
           }
         },
       methods:{
@@ -84,14 +83,17 @@
                 paramStr=`name=${name}`;
                 control='add'
               }
+              this.loadingSave=true;
               this.$http.post(`${apiUrl}?${paramStr}`)
                 .then(res=>{
                   let data = res.data;
                   if(data.code===0){
                     this.$Message.success('保存成功');
                     this.getAreaLists();
+                    this.loadingSave=false;
                   }else{
-                    this.$Message.error(`保存失败,${data.msg}`)
+                    this.$Message.error(`保存失败,${data.msg}`);
+                    this.loadingSave=false;
                   }
                 })
           },
@@ -108,7 +110,7 @@
             if(!id){
               this.areaLists.splice(len-1,1);
             }else{
-              this.$http.get(`/repair/region/list?id=${id}`)
+              this.$http.delete(`/repair/region/delete?id=${id}`)
                 .then(res=>{
                   let data = res.data;
                   if(data.code===0){

@@ -8,40 +8,43 @@
       <Card>
         <div class="clearfix mb-15">
           <div class="pull-left">
-            <Button type="primary" icon="md-add-circle" @click="openModal(1)">新建</Button>
+            <Button type="primary" icon="md-add-circle" @click="openModalNew">新建</Button>
           </div>
         </div>
         <div class="table-wrapper">
           <Table :data="accountList" :columns="column"></Table>
           <div class="pagination">
-            <Page :total="40" show-sizer show-elevator></Page>
+            <Page :total="totalCount" :page-size="pageSize" show-sizer show-elevator></Page>
           </div>
         </div>
       </Card>
       <Modal v-model="activeModal"
-             :title="modalStatus===1?'新建账号':'编辑账号'">
+             :title="modalTitle"
+              @on-visible-change="modalChange"
+      >
         <div class="modal_wrap_form">
-          <Form v-model="accountForm" label-position="top">
-            <FormItem label="登陆账号">
-              <Input />
+          <Form ref="accountForm" :model="accountForm" :rules="accountRule" label-position="top">
+            <FormItem label="登陆账号" prop="loginName">
+              <Input :disabled="view" v-model="accountForm.loginName"/>
             </FormItem>
-            <FormItem label="登陆密码">
-              <Input />
+            <FormItem label="登陆密码" prop="password">
+              <Input :disabled="view||!editPwdInput" type="password" v-model="accountForm.password">
+                <Button v-show="modalTitle!=='新建账号'" :disabled="view" slot="append" @click="editPwd">修改密码</Button>
+              </Input>
             </FormItem>
-            <FormItem label="账户角色">
-              <Select>
-                <Option value="1">管理员</Option>
-                <Option value="1">超级管理员</Option>
+            <FormItem label="账户角色" prop="roleId">
+              <Select  :disabled="view" v-model="accountForm.roleId">
+                <Option :key="role.id" v-for="role in roleLists" :value="role.id">{{role.name}}</Option>
               </Select>
             </FormItem>
-            <FormItem label="手机号">
-              <Input />
+            <FormItem label="手机号" prop="mobile">
+              <Input :maxlength="11" :disabled="view" v-model="accountForm.mobile"/>
             </FormItem>
             <FormItem >
               <Row>
                 <Col span="4">账号状态</Col>
                 <Col span="12">
-                  <i-switch size="large">
+                  <i-switch  :disabled="view" size="large" v-model="accountForm.isOpen">
                     <span slot="open">开启</span>
                     <span slot="close">关闭</span>
                   </i-switch>
@@ -51,6 +54,11 @@
 
           </Form>
         </div>
+        <div slot="footer">
+          <Button  @click="activeModal=false">取消</Button>
+          <Button v-if="view" type="primary" @click="view=false;modalTitle='编辑账号'">编辑</Button>
+          <Button v-if="!view" type="primary" @click="saveAccount">确定</Button>
+        </div>
       </Modal>
     </div>
 </template>
@@ -59,69 +67,211 @@
     export default {
         name: "account-admin",
       data(){
+          const validateTel = function(rule,value,callback){
+            let telReg=/^1[3456789]\d{9}/;
+           if(telReg.test(value)){
+             callback();
+           }else{
+             callback(new Error('请输入正确的手机号'))
+            }
+          };
           return{
+            editPwdInput:false,//修改密码
+            view:false, //查看状态
+            pageNo:1,
+            hasNextPage:true,
+            totalCount:0,
+            pageSize:10,
             activeModal:false,
-            modalStatus:1,
+            modalTitle:'新建账号',
             column:[
               {
                 title:'账号',
-                key:'account',
+                key:'loginName',
                 align:'center'
               },{
                 title:'手机',
-                key:'tel',
+                key:'mobile',
                 align:'center'
               },{
                 title:'角色',
-                key:'role',
+                key:'roleName',
                 align:'center'
               },{
                 title:'状态',
-                key:'status',
+                key:'state',
                 align:'center'
               },{
                 title:'操作',
                 align:'center',
                 render:(h,params)=>{
                   let _this = this;
-                  return h('Button',{
-                    props:{
-                      type:'text'
-                    },
-                    on:{
-                      click(){
-                        _this.openModal(0);
-                        console.log('编辑')
+
+                  return h('div',[
+                    h('Button',{
+                      props:{
+                        type:'text',
+                        size:'small'
+                      },
+                      on:{
+                        click(){
+                          let id =params.row.id;
+                          _this.activeModal=true;
+                          _this.editPwdInput=false;
+                          _this.view=true;
+                          _this.modalTitle='查看账号';
+                          _this.getAccountInfo(id);
+                        }
                       }
-                    }
-                  },'编辑');
+                    },'查看'),
+                    h('Button',{
+                      props:{
+                        type:'text',
+                        size:'small'
+                      },
+                      on:{
+                        click(){
+                          let id =params.row.id;
+                          _this.activeModal=true;
+                          _this.editPwdInput=false;
+                          _this.view=false;
+                          _this.modalTitle='编辑账号';
+                          _this.getAccountInfo(id);
+                        }
+                      }
+                    },'编辑')
+                  ]);
 
                 }
               }
             ],
-            accountList:[
-              {
-                account:'admin',
-                tel:'13688888888',
-                role:'系统管理员',
-                status:'正常'
-              },{
-                account:'admin',
-                tel:'13688888888',
-                role:'系统管理员',
-                status:'停用'
-              },
-            ],
+            accountList:[],
+            roleLists:[],
             accountForm:{
-
+              loginName:'',
+              password:'',
+              mobile:'',
+              type:'',
+              isOpen:true,
+              roleId:'',
+              callCenterId:'',
+              id:'',
+            },
+            accountRule:{
+              loginName:[{required:true,message:'请输入账号名',trigger:'blur'}],
+              password:[{required:true,message:'请输入密码',trigger:'blur'}],
+              mobile:[
+                {required:true,message:'请输入手机号',trigger:'blur'},
+                {validator:validateTel,trigger:'blur'}
+              ],
+              roleId:[{required:true,message:'请选择账户角色',trigger:'change'}]
             }
           }
+
       },
       methods:{
-        openModal(type){
+        openModalNew(){
           this.activeModal=true;
-          this.modalStatus=type;
+          this.view=false;
+          this.editPwdInput=true;
+          this.modalTitle='新建账号';
+          this.accountForm={
+              loginName:'',
+              password:'',
+              mobile:'',
+              isOpen:true,
+              roleId:'',
+              id:'',
+              callCenterId:'',
+              type:''
+          }
+        },
+        getLists(){
+          this.$http.get(`/user/list`)
+            .then(res=>{
+              if(res.data.code===0){
+                let data = res.data.data;
+                this.totalCount=data.totalCount;
+                this.hasNextPage=data.hasNextPage;
+                if(this.hasNextPage){
+                  this.pageNo=data.nextPage;
+                }
+                this.accountList=data.list;
+              }else{
+                this.$Message.error(res.data.msg);
+              }
+            })
+        },
+        //获取账号信息
+        getAccountInfo(id){
+          this.$http.get(`/user/info?id=${id}`)
+            .then(res=>{
+              if(res.data.code===0){
+                this.accountForm=res.data.data;
+
+                this.accountForm.isOpen=this.accountForm.isOpen==='Y'?true:false;
+              }else{
+                this.$Message.error(res.data.msg);
+              }
+            })
+        },
+        //获取角色列表
+        getRoleLists(){
+          this.$http.get(`/role/list`)
+            .then(res=>{
+              if(res.data.code===0){
+                let data = res.data.data;
+                this.roleLists=data;
+              }
+            })
+        },
+        //保存账号
+        saveAccount(){
+          let account = this.accountForm;
+          let url = '';
+          if(account.id.length>0){
+            url='/user/edit'
+          }else{
+            url='/user/add'
+          }
+          this.$refs['accountForm'].validate(valid=>{
+            if(valid){
+              this.$http.post(url,{
+                loginName:account.loginName,
+                password:this.editPwdInput?account.password:'',
+                mobile:account.mobile,
+                isOpen:account.isOpen?'Y':'N',
+                roleId:account.roleId,
+                id:account.id,
+                callCenterId: account.callCenterId,
+              }).then(res=>{
+                if(res.data.code===0){
+                  this.$Message.success('保存成功');
+                  this.activeModal=false;
+                  this.editPwdInput=false;
+                  this.getLists();
+                }else{
+                  this.$Message.error(res.data.msg);
+                }
+              })
+            }
+          })
+
+        },
+        editPwd(){
+          this.accountForm.password='';
+          this.editPwdInput=true;
+        },
+        modalChange(visible){
+          if(!visible){
+            this.$refs['accountForm'].resetFields();
+          }
         }
+
+      },
+      mounted(){
+          this.getLists();
+          this.getRoleLists();
       }
     }
 </script>

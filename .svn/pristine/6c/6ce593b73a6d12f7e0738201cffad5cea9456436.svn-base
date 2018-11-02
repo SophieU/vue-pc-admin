@@ -1,0 +1,85 @@
+<template>
+    <div>
+      <Card class="mb-15">
+        <p slot="title">服务时间提示</p>
+        <div>
+          <Input v-model="serviceTime" type="textarea" :rows="5"/>
+        </div>
+      </Card>
+      <Card class="mb-15">
+        <p slot="title">服务费用提示</p>
+        <div>
+          <Input  v-model="serviceFee" type="textarea" :rows="5"/>
+        </div>
+      </Card>
+      <Card class="mb-15">
+        <p slot="title">其他提示</p>
+        <div>
+          <Input  v-model="other" type="textarea" :rows="5"/>
+        </div>
+      </Card>
+      <Card>
+        <div class="inner-center">
+          <Button class="lang-btn" @click="cancel">取消</Button>
+          <Button @click="save" class="lang-btn" type="primary">保存</Button>
+        </div>
+      </Card>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: "tips-admin",
+      data(){
+        return {
+          serviceTime:'',
+          serviceFee:'',
+          other:''
+        }
+      },
+      methods:{
+          getTips(){
+            this.$http.get('/repair/reminder/info')
+              .then(res=>{
+                if(res.data.code===0){
+                  let data = res.data.data;
+                  this.serviceTime=data.serviceTime;
+                  this.serviceFee=data.serviceFee;
+                  this.other=data.other;
+                }else{
+                  this.$Message.error('获取信息失败')
+                }
+              })
+          },
+        save(){
+            let params = {
+              serviceTime:this.serviceTime,
+              serviceFee:this.serviceFee,
+              other:this.other
+            };
+            this.$http.post(`/repair/reminder/save`,{
+              ...params
+            }).then(res=>{
+              if(res.data.code===0){
+                this.$Message.success('保存成功');
+                this.getTips();
+              }else{
+                this.$Message.error(res.data.msg);
+              }
+            })
+        },
+        cancel(){
+            this.getTips();
+        }
+      },
+      created(){
+          this.getTips();
+      }
+    }
+</script>
+
+<style scoped>
+  .inner-center{
+    text-align: center;
+  }
+</style>

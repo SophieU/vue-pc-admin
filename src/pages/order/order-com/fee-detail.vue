@@ -17,11 +17,11 @@
         </thead>
         <tbody>
         <tr>
-          <td>90.00</td>
-          <td>90.00</td>
-          <td>微信</td>
-          <td>2923279373</td>
-          <td>2018/08/28  20:39:40</td>
+          <td>{{detail.totalAmount}}</td>
+          <td>{{detail.receivedAmount}}</td>
+          <td>{{detail.payType}}</td>
+          <td>{{detail.paySn}}</td>
+          <td>{{detail.payTime}}</td>
         </tr>
         </tbody>
       </table>
@@ -43,27 +43,13 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>上门费</td>
-          <td>上门费</td>
-          <td>1</td>
-          <td>20.00</td>
-          <td>20.00</td>
-        </tr>
-        <tr>
-          <td>服务费</td>
-          <td>软管检查</td>
-          <td>1</td>
-          <td>20.00</td>
-          <td>20.00</td>
-        </tr>
-        <tr>
-          <td>辅材费</td>
-          <td>软管，PVC</td>
-          <td>1</td>
-          <td>20.00</td>
-          <td>20.00</td>
-        </tr>
+          <tr v-for="(item,index) in detail.offerPlanVos" :key="index">
+            <td>{{item.planType}}</td>
+            <td>{{item.planName	}}</td>
+            <td>{{item.serviceNum}}</td>
+            <td>{{item.serviceCost}}</td>
+            <td>{{item.amount}}</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -73,7 +59,28 @@
 
 <script>
     export default {
-        name: "fee-detail"
+        name: "fee-detail",
+      data(){
+          return {
+            detail:{}
+          }
+      },
+      methods:{
+          getFeeDetail(id){
+            this.$http.get(`/repair/order/charge/list?id=${id}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  this.detail=res.data.data;
+                }else{
+                  console.log('工单收费明细获取：'+res.data.msg);
+                }
+              })
+          }
+      },
+      mounted(){
+          let id = this.$route.query.id;
+          this.getFeeDetail(id);
+      }
     }
 </script>
 

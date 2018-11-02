@@ -1,48 +1,87 @@
 <template>
-    <Card>
-      <Tabs value="name1">
-        <TabPane :label="waitting" name="name1">
-          <Table :columns="waitColumns" :data="waitData"></Table>
-        </TabPane>
-        <TabPane :label="visited" name="name2">
+    <Card style="padding-bottom: 30px;">
+      <Tabs v-model="tabActive" :animated="false">
+        <TabPane :label="visited" name="visited">
           <div class="mb-15 clearfix">
             <div class="pull-right">
               <Button type="primary" @click="filter=true">筛选</Button>
             </div>
           </div>
-          <Table :columns="visitedColumns" :data="visitedData"></Table>
+          <!--<Table :columns="visitedColumns" :data="lists"></Table>-->
+        </TabPane>
+        <TabPane :label="waiting" name="waiting">
+          <!--<Table :columns="waitColumns" :data="lists"></Table>-->
         </TabPane>
       </Tabs>
+      <table class="native-table">
+        <thead>
+        <tr>
+          <th>工单编号</th>
+          <th>售后回访</th>
+          <th>工单状态</th>
+          <th>报修类型</th>
+          <th>服务网点</th>
+          <th>接单师傅</th>
+          <th>创建日期</th>
+          <th v-if="tabActive==='visited'">回访结果</th>
+          <th v-if="tabActive==='visited'">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in lists" :key="item.orderId">
+          <td>{{item.orderSn}}</td>
+          <td>{{item.afterSaleVisit}}</td>
+          <td>{{item.orderState}}</td>
+          <td>{{item.repairCategoryName}}</td>
+          <td>{{item.repairStationName}}</td>
+          <td>{{item.receiveUserName}}</td>
+          <td>{{item.createTime}}</td>
+          <td v-if="tabActive==='visited'">{{item.returnVisitResult}}</td>
+          <td  v-if="tabActive==='visited'">
+            <router-link :to="{name:'orderDetail',query:{id:item.orderId}}"></router-link>
+            <Button  type="text">查看</Button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="pagination" v-if="totalCount>0">
+        <Page :total="totalCount" show-sizer show-elevator
+              @on-change="pageChange"
+              @on-page-size-change="pageSizeChange"
+        ></Page>
+      </div>
 
-      <Drawer width="425" title="工单筛选"  v-model="filter">
+      <Drawer width="450" title="工单筛选"  v-model="filter" @on-close="clearFilter">
         <div class="clearfix mb-15">
           <div class="pull-left">
-            <Button>清空筛选条件</Button>
+            <Button @click="clearFilter">清空筛选条件</Button>
           </div>
           <div class="pull-right">
-            <Button type="primary">确定</Button>
+            <Button @click="sureFilter" type="primary">确定</Button>
           </div>
         </div>
-        <Form>
+        <Form :model="filterForm" ref="filterForm">
           <FormItem label="回访结果">
-            <Select>
-              <Option value="">五一</Option>
+            <Select v-model="filterForm.returnVisitResult">
+              <Option value="PASS">通过</Option>
+              <Option value="NOT_PASS">不通过</Option>
             </Select>
           </FormItem>
           <FormItem label="工单编号">
-            <Input search enter-button/>
+            <Input v-model="filterForm.orderSn"/>
           </FormItem>
           <FormItem label="创建时间">
-            <DatePicker type="daterange" style="width:100%;"></DatePicker>
+            <DatePicker  v-model="filterForm.dateRange" @on-change="dateRangeChange" type="daterange" style="width:100%;"></DatePicker>
           </FormItem>
           <FormItem label="服务网点">
-            <Select>
-              <Option value="1">1111</Option>
+            <Select v-model="filterForm.repairStationId">
+              <Option v-for="item in stationLists" :key="item.id" :value="item.id">{{item.name}}</Option>
             </Select>
           </FormItem>
           <FormItem label="售后回访">
-            <Select>
-              <Option value="">123456</Option>
+            <Select v-model="filterForm.isReturnVisit">
+              <Option value="Y">是</Option>
+              <Option value="N">否</Option>
             </Select>
           </FormItem>
         </Form>
@@ -51,17 +90,18 @@
 </template>
 
 <script>
+  import util from '../../libs/util'
     export default {
         name: "visite",
         data () {
+
           return {
-            filter:false,
-            waitting: (h) => {
+            waiting: (h) => {
               return h('div', [
                 h('span', '待回访'),
                 h('Badge', {
                   props: {
-                    count: 1
+                    count: this.stateCount.N
                   },
                   style:{
                     marginLeft:'10px'
@@ -74,7 +114,7 @@
                 h('span','已回访'),
                 h('Badge',{
                   props:{
-                    count:1
+                    count:this.stateCount.Y
                   },
                   style:{
                     marginLeft:'10px'
@@ -82,7 +122,9 @@
                 })
               ])
             },
-            waitColumns:[
+            filter:false,
+            tabActive:'visited',
+           /* waitColumns:[
               {title:'工单编号',key:'id',align:'center'},
               {title:'售后回访',key:'id',align:'center'},
               {title:'工单状态',key:'id',align:'center'},
@@ -93,25 +135,135 @@
             ],
             waitData:[],
             visitedColumns:[
-              {title:'工单编号',key:'id',align:'center'},
-              {title:'售后回访',key:'id',align:'center'},
-              {title:'工单状态',key:'id',align:'center'},
-              {title:'报修类型',key:'id',align:'center'},
-              {title:'服务网点',key:'id',align:'center'},
-              {title:'接单师傅',key:'id',align:'center'},
-              {title:'创建日期',key:'id',align:'center'},
-              {title:'回访结果',key:'id',align:'center'},
+              {title:'工单编号',key:'orderSn',align:'center'},
+              {title:'售后回访',key:'afterSaleVisit',align:'center'},
+              {title:'工单状态',key:'orderState',align:'center'},
+              {title:'报修类型',key:'repairCategoryName',align:'center'},
+              {title:'服务网点',key:'repairStationName',align:'center'},
+              {title:'接单师傅',key:'receiveUserName',align:'center'},
+              {title:'创建日期',key:'createTime',align:'center'},
+              {title:'回访结果',key:'returnVisitResult',align:'center'},
               {title:'操作',align:'center',render:(h,params)=>{
+                let _this = this;
                     return h('Button',{
                       props:{
                         type:'text'
+                      },
+                      on:{
+                        click:()=>{
+                          let id = params.row.id;
+                          _this.$router.push({name:'visitedInfo',params:{id:id}})
+                        }
                       }
                     },'查看')
                 }},
-            ],
-            visitedData:[]
+            ],*/
+            lists:[],
+            stationLists:[], //服务网点下拉
+            stateCount:{
+              Y:0,
+              N:0
+            },
+            pageNo:1,
+            pageSize:10,
+            totalCount:0,
+            filterForm:{}
           }
+        },
+      methods:{
+          getLists(filter){
+            let query = `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+            let param=util.formatterParams(filter);
+            this.$http.post(`/repair/return/visit/list?${query}&${param}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  let data= res.data.data;
+                  this.pageSize=data.pageSize;
+                  this.totalCount= data.totalCount;
+                  this.lists=data.list;
+                 this.filter=false;
+
+                }else{
+                  console.log('回访列表获取失败：'+res.data.msg);
+                }
+              })
+          },
+        pageChange(val){
+            this.pageNo=val;
+          let isReturnVisit='';
+          switch(this.tabActive){
+            case 'visited':
+              isReturnVisit='Y';
+              break;
+            case 'waiting':
+              isReturnVisit='N';
+              break;
+          }
+            this.getLists({isReturnVisit});
+        },
+        pageSizeChange(val){
+            this.pageSize=val;
+          let isReturnVisit='';
+          switch(this.tabActive){
+            case 'visited':
+              isReturnVisit='Y';
+              break;
+            case 'waiting':
+              isReturnVisit='N';
+              break;
+          }
+          this.getLists({isReturnVisit});
+        },
+        dateRangeChange(val){
+            this.filterForm.startTime=val[0];
+            this.filterForm.endTime=val[1];
+        },
+        clearFilter(){
+            this.filterForm={};
+            this.filter=false;
+            this.getLists({isReturnVisit:'Y'});
+        },
+        sureFilter(){
+            let filterForm ={...this.filterForm};
+            delete filterForm.dateRange;
+            this.getLists(filterForm);
+        },
+        getCount(){
+            this.$http.get(`/repair/return/visit/state/count`)
+              .then(res=>{
+                if(res.data.code===0){
+                  let data = res.data.data;
+                  data.map(item=>{
+                    switch(item.state){
+                      case 'N':
+                        this.stateCount.N=item.countNum;
+                        break;
+                      case 'Y':
+                        this.stateCount.Y=item.countNum;
+                        break;
+                    }
+                  })
+                }
+              })
         }
+      },
+      mounted(){
+        this.getLists({isReturnVisit:'Y'});
+        this.getCount();
+        util.getStationLists(data=>{
+          this.stationLists=data;
+        })
+      },
+      watch:{
+          tabActive(newVal){
+            let isReturnVisit='Y';
+            if(newVal==='waiting'){
+              isReturnVisit='N'
+            }
+            this.lists=[];
+            this.getLists({isReturnVisit});
+          }
+      }
     }
 </script>
 

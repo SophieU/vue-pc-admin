@@ -2,39 +2,55 @@
   @import './source.scss';
 </style>
 <template>
-    <Card class="new-inventory">
-      <Form class="mb-15" :label-width="100">
-        <FormItem label="组织名称">
-          <Select style="width: 300px;">
-            <Option value="">24小区服务网点</Option>
-          </Select>
-        </FormItem>
-      </Form>
+  <div class="new-inventory">
+    <Card class="mb-15" style="padding-bottom:20px;">
+      <p slot="title">盘点步骤</p>
+      <div slot="extra">
+        <Button style="margin-top: -5px;" type="primary" @click="$router.back()">返回上一页</Button>
+      </div>
       <Row  :gutter="15" class="mb-15">
         <Col span="8">
           <div class="inventory-step">
             <span class="step">1</span>
-            <span>下载服务网点库存数据</span>
-            <a class="text-blue" href="##">下载数据</a>
+            <div class="step-content">
+              <Button @click="downTpl"  class="step-target"  style="margin-bottom: 4px;">
+                下载数据
+              </Button>
+              <span>下载服务网点库存数据</span>
+            </div>
+
           </div>
         </Col>
         <Col span="8">
           <div class="inventory-step">
             <span class="step">2</span>
-            <span>盘点并上传盘点数据</span>
-            <a class="text-blue" href="##">上传数据</a>
+            <div class="step-content">
+              <Upload :action="uploadLink"
+                :with-credentials="true"
+                      :show-upload-list="false"
+                      :on-success="uploadSuccess"
+
+              >
+                <Button class="step-target">上传数据</Button>
+              </Upload>
+              <span>盘点并上传盘点数据</span>
+            </div>
           </div>
         </Col>
         <Col span="8">
           <div class="inventory-step">
             <span  class="step">3</span>
-            <span>确认盘点</span>
-            <a class="text-blue" href="##">确认完成</a>
+            <div class="step-content">
+              <Button style="margin-bottom: 4px;" @click="sureInvent" class="step-target" >确认完成</Button>
+              <span>确认盘点</span>
+            </div>
           </div>
         </Col>
       </Row>
-      <div>
-        <h4 class="mb-15">盘点预览</h4>
+    </Card>
+    <Card v-if="uploadExcel">
+      <p slot="title">盘点预览</p>
+      <div class="table-wrapper">
         <table class="native-table mb-15">
           <thead>
           <tr>
@@ -48,12 +64,12 @@
           </thead>
           <tbody>
           <tr>
-            <td>24小区服务中</td>
-            <td>24342424</td>
-            <td>2018/08/20</td>
-            <td>-1</td>
-            <td>-5.00</td>
-            <td>张某</td>
+            <td>{{uploadExcel.departmentName}}</td>
+            <td>{{uploadExcel.orderSn}}</td>
+            <td>{{uploadExcel.createTime}}</td>
+            <td>{{uploadExcel.diffNum}}</td>
+            <td>{{uploadExcel.amount}}</td>
+            <td>{{uploadExcel.creator}}</td>
           </tr>
           </tbody>
         </table>
@@ -71,25 +87,74 @@
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <td>软管</td>
-            <td>PVC25</td>
-            <td>米</td>
-            <td>5.00</td>
-            <td>20</td>
-            <td>19</td>
-            <td>-1</td>
-            <td>-5.00</td>
+          <tr v-for="item in uploadExcel.detailList">
+            <td>{{item.materialName}}</td>
+            <td>{{item.materialSpec}}</td>
+            <td>{{item.unit}}</td>
+            <td>{{item.price}}</td>
+            <td>{{item.num}}</td>
+            <td>{{item.checkedNum}}</td>
+            <td>{{item.diffNum}}</td>
+            <td>{{item.amount}}</td>
           </tr>
           </tbody>
         </table>
       </div>
     </Card>
+  </div>
 </template>
 
 <script>
     export default {
-        name: "inventory-new"
+        name: "inventory-new",
+      computed:{
+          downLink(){
+            let baseUrl = localStorage.getItem('baseURL');
+            return baseUrl+'/repair/material/check/order/export';
+          },
+          uploadLink(){
+            let baseUrl = localStorage.getItem('baseURL');
+            return baseUrl+'/repair/material/check/order/import';
+          }
+      },
+      data(){
+          return {
+            departmentId:'',
+            uploadExcel:null,
+            sureId:null,
+          }
+      },
+      methods:{
+        downTpl(){
+          window.location.href=this.downLink;
+        },
+        uploadSuccess(res, file, fileList){
+            if(res.code===0){
+              this.uploadExcel=res.data;
+              this.sureId=res.data.id;
+            }else{
+              this.$Message.error(res.msg);
+            }
+        },
+        sureInvent(){
+            let id = this.sureId;
+            if(!id){
+              this.$Message.warning('请先上传盘点数据');
+            }else{
+              this.$http.post(`/repair/material/check/order/verify?id=${id}`)
+                .then(res=>{
+                  if(res.data.code===0){
+                    this.$Message.success('盘点成功');
+                    this.$router.push({name:'inventory'});
+                  }else{
+                    this.$Message.error(res.data.msg);
+                  }
+                })
+            }
+        }
+      },
+      mounted(){
+      }
     }
 </script>
 

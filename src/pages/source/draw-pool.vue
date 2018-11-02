@@ -2,20 +2,20 @@
     <Card>
       <div class="clearfix mb-15">
         <div class="pull-left">
-          <Button>筛选</Button>
+          <Button @click="filter=true">筛选</Button>
         </div>
         <div class="pull-right">
-          <Button type="primary">excel导出</Button>
+          <Button @click="exportExcel" type="primary">excel导出</Button>
         </div>
       </div>
       <Card style="max-width:400px;margin-bottom:15px;">
         <p slot="title">使用总数</p>
-        <p class="text-blue" slot="extra">2018/08/20-2018/08/21</p>
+        <p class="text-blue" slot="extra" v-if="filterForm.startDate&&filterForm.endDate">{{filterForm.startDate}}-{{filterForm.endDate}}</p>
         <div>
           <count-up
             class="infor-card-count user-created-count"
             id-name="total"
-            :end-val="200"
+            :end-val="materialTotal"
             color="#039dff"
             countSize="60px"
             :countWeight="700"
@@ -27,36 +27,42 @@
         <p slot="title">明细</p>
         <div class="table-wrapper">
           <Table :columns="columns" :data="lists"></Table>
+          <div class="pagination">
+            <Page :total="totalCount" show-elevator show-sizer
+              @on-change="pageChange"
+                  @on-page-size-change="pageSizeChange"
+            ></Page>
+          </div>
         </div>
       </Card>
-      <Drawer title="领用筛选" width="425"  v-model="filter">
+      <Drawer title="领用筛选" width="425"  v-model="filter" @on-close="clearFilter">
         <div class="clearfix mb-15">
           <div class="pull-left">
-            <Button>清空筛选条件</Button>
+            <Button @click="clearFilter">清空筛选条件</Button>
           </div>
           <div class="pull-right">
-            <Button type="primary">确定</Button>
+            <Button @click="sureFilter" type="primary">确定筛选</Button>
           </div>
         </div>
         <div>
-          <Form>
+          <Form ref="filterForm" :model="filterForm" label-position="top">
             <FormItem label="报修类型">
-              <Select>
-                <Option value="">类型1</Option>
+              <Select v-model="filterForm.repairCategoryId" prop="repairCategoryId">
+                <Option v-for="item in repairLists" :key="item.id" :value="item.id">{{item.name}}</Option>
               </Select>
             </FormItem>
-            <FormItem label="服务人员">
-              <Input search enter-button />
+            <FormItem label="服务人员" prop="serverName">
+              <Input v-model="filterForm.serverName" />
             </FormItem>
-            <FormItem label="辅材名称">
-              <Input search enter-button />
+            <FormItem label="辅材名称" prop="materialName">
+              <Input v-model="filterForm.materialName" />
             </FormItem>
             <FormItem label="创建时间">
-              <DatePicker type="daterange"></DatePicker>
+              <DatePicker style="width:100%;"  v-model="filterForm.dateRange" @on-change="dateRangeChange" type="daterange"></DatePicker>
             </FormItem>
-            <FormItem label="服务网点">
-              <Select>
-                <Option value="">234小区</Option>
+            <FormItem label="服务网点" prop="departmentId">
+              <Select v-model="filterForm.departmentId">
+                <Option v-for="item in departmentLists" :key="item.id" :value="item.id">{{item.name}}</Option>
               </Select>
             </FormItem>
           </Form>
@@ -66,6 +72,7 @@
 </template>
 
 <script>
+  import util from '../../libs/util'
   import countUp from '../home/component/countUp';
     export default {
         name: "draw-pool",
@@ -76,27 +83,150 @@
           return{
             filter:false,
             columns:[
-              {title:'名称',key:'name',align:'center'},
-              {title:'工单号',key:'orderNum',align:'center'},
-              {title:'报修分类',key:'type',align:'center'},
-              {title:'型号',key:'version',align:'center'},
-              {title:'师傅',key:'staff',align:'center'},
-              {title:'报修使用',key:'repairUse',align:'center'},
-              {title:'售后使用',key:'afterUse',align:'center'},
-              {title:'日期',key:'date',align:'center'},
-              {title:'组织名称',key:'organName',align:'center'},
+              {title:'名称',key:'materialName',align:'center'},
+              {title:'工单号',key:'orderSn',align:'center',width:190},
+              {title:'报修分类',key:'repairCategoryName',align:'center'},
+              {title:'型号',key:'materialSpec',align:'center'},
+              {title:'师傅',key:'serverName',align:'center'},
+              {title:'报修使用',key:'orderUseNum',align:'center'},
+              {title:'售后使用',key:'afterSaleUseNum',align:'center'},
+              {title:'日期',key:'payTime',align:'center'},
+              {title:'成本合计',key:'amount',align:'center'},
+              {title:'组织名称',key:'departmentName',align:'center'},
               {title:'操作',align:'center',render:(h,params)=>{
+                let _this = this;
                 return h('Button',{
                     props:{
                       type:'text'
-                    }
+                    },
+                  on:{
+                      click:()=>{
+                        let id = params.row.id;
+                        _this.$router.push({name:'orderDetail',query:{id:id}})
+                      }
+                  }
                   },'查看订单')
                 }},
             ],
-            lists:[
-              {name:'11',orderNum:'11',type:'11',version:'11',staff:'11',afterUse:'11',date:'11',organName:'11'}
-            ]
+            materialTotal:0,
+            lists:[],
+            pageNo:1,
+            pageSize:10,
+            totalCount:0,
+            filterForm:{
+              repairCategoryId:'',
+              serverName:'',
+              materialName:'',
+              departmentId:'',
+              startDate:'',
+              endDate:'',
+              dateRange:[],
+            },
+            repairLists:[],
+            departmentLists:[],
           }
+      },
+      methods:{
+          dateRangeChange(val){
+            this.filterForm.startDate=val[0];
+            this.filterForm.endDate=val[1];
+          },
+          getCount(filter){
+            let query = `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+            let param = '';
+            if(filter){
+              param = util.formatterParams(this.filterForm);
+            }
+
+            this.$http.post(`/repair/material/storage/use/count?${query}&${param}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  this.materialTotal=res.data.data;
+                }else{
+                  console.log('员工领用Count:'+res.data.msg);
+                }
+              })
+          },
+        getLists(filter){
+          let query = `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+          let param = '';
+
+          if(filter){
+            param = util.formatterParams(this.filterForm);
+          }
+          this.$http.post(`/repair/material/storage/use/list?${query}&${param}`)
+            .then(res=>{
+              if(res.data.code===0){
+                let data = res.data.data;
+                this.pageSize=data.pageSize;
+                this.totalCount=data.totalCount;
+                this.lists=data.list;
+                this.filter=false;
+              }else{
+                console.log('员工领用列表:'+res.data.msg);
+              }
+            })
+        },
+          pageChange(val){
+              this.pageNo=val;
+              let filterForm = this.filterForm;
+              delete filterForm.dateRange;
+              this.getCount(filterForm);
+              this.getLists(filterForm);
+          },
+          pageSizeChange(val){
+              this.pageSize=val;
+            let filterForm = this.filterForm;
+            delete filterForm.dateRange;
+            this.getLists(filterForm);
+            this.getCount(filterForm);
+          },
+        sureFilter(){
+            let filterForm = {...this.filterForm};
+            delete filterForm.dateRange;
+            this.getLists(filterForm);
+            this.getCount(filterForm);
+        },
+        clearFilter(){
+          this.$refs['filterForm'].resetFields();
+          this.filterForm={
+            repairCategoryId:'',
+            serverName:'',
+            materialName:'',
+            departmentId:'',
+            startDate:'',
+            endDate:'',
+            dateRange:[]
+          };
+          this.getLists();
+        },
+        exportExcel(){
+            let filterForm={...this.filterForm};
+          delete filterForm.dateRange;
+          let param = util.formatterParams(filterForm);
+            this.$http.post(`/repair/material/storage/use/list/export?${param}`,null,{responseType:'blob'})
+              .then(res=>{
+                let blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'}); //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
+                let downloadElement = document.createElement('a');
+                let href = window.URL.createObjectURL(blob); //创建下载的链接
+                downloadElement.href = href;
+                downloadElement.download = '员工领用记录.xlsx'; //下载后文件名
+                document.body.appendChild(downloadElement);
+                downloadElement.click(); //点击下载
+                document.body.removeChild(downloadElement); //下载完成移除元素
+                window.URL.revokeObjectURL(href); //释放掉blob对象
+              })
+        }
+      },
+      mounted(){
+          util.getRepairType(data=>{
+            this.repairLists=data;
+          });
+          util.getDepartment(data=>{
+            this.departmentLists=data;
+          });
+        this.getLists();
+          this.getCount();
       }
     }
 </script>

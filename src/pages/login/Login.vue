@@ -16,27 +16,19 @@
                 <FormItem class="form-group" prop="username">
                   <label :class="focus==='账号'?'focus form-label':'form-label'">账号</label>
                   <!--<input @blur="validateInput" @focus="focus='账号'" class="form-control" type="text" v-model="formLogin.username" />-->
-                  <Input  @on-blur="focus=''" v-model="formLogin.username" @on-focus="focus='账号'"/>
+                  <Input @on-enter="validateLogin(formLogin)"  @on-blur="focus=''" v-model="formLogin.username" @on-focus="focus='账号'"/>
                 </FormItem>
                 <FormItem class="form-group" prop="password">
                   <label :class="focus==='密码'?'focus form-label':'form-label'">密码</label>
-                  <Input @on-blur="focus=''"  @on-focus="focus='密码'" type="password" v-model="formLogin.password" />
+                  <Input   @on-enter="validateLogin(formLogin)" @on-blur="focus=''"  @on-focus="focus='密码'" type="password" v-model="formLogin.password" />
                 </FormItem>
                 <Button class="loginBtn" @click="validateLogin(formLogin)" type="primary" long>登录</Button>
-                <!--<FormItem label="账号">
-                  <Input v-model=""></Input>
-                </FormItem>
-                <FormItem label="密码">
-                  <Input v-model="formLogin.password"></Input>
-                </FormItem>
-                <Button class="loginBtn" type="primary" long>登录</Button>-->
               </Form>
             </div>
             <div class="copyright">
               Copyright © 2018 一生约 yishengyue.cn 版权所有
             </div>
           </div>
-
       </div>
     </div>
 </template>
@@ -44,6 +36,7 @@
 <script>
   import iView from 'iview'
   import Cookie from 'js-cookie'
+  import {appRouter} from '@/router/router'
 
     export default {
         name: "Login",
@@ -60,12 +53,12 @@
           return {
             focus:'',
             formLogin:{
-              username:'admin',
-              password:'123456',
+              username:'',
+              password:'',
             },
             ruleLogin:{
               username:[
-                {required:true,message:'请输入用户名',trigger:'blur'},
+                {required:true,message:'请输入账号',trigger:'blur'},
                 // {validator:validateTel,trigger:'blur'},
               ],
               password:[
@@ -73,13 +66,12 @@
                 {type:'string',min:6,message:'密码至少6位'}
               ]
             },
+            loginSuccess:false
           }
         },
       methods:{
         //验证登录
         validateLogin(){
-
-
           this.$refs.loginForm.validate((valid)=>{
             if(valid){
               let userName = this.formLogin.username;
@@ -90,28 +82,80 @@
               this.$http.post(`/user/login?loginName=${userName}&password=${password}`)
                 .then(res=>{
                   let data = res.data;
-
-                  console.log(res)
-
                   if(data.code===0){
                     //登录成功
                     Cookie.set('user',userName);
-                    // Cookie.set('sessionIdCookie','2a246a44-46bd-44ad-9e79-76e7dd55fcec');
-                    // let seesionIdCookie =  Cookie.get('sessionIdCookie');
-                    // this.$http.defaults.headers[]
-                    // Cookie.set('sessionIdCookie','63e8ac0a-4c43-4c92-af8f-c5f9486c9051');
-                    this.$Message.success('登录成功');
-                    this.$router.push({name:'home'});
-                    iView.LoadingBar.finish();
+                    this.loading=this.$Message.loading({
+                      content:'登录成功，页面即将跳转...',
+                      duration:0
+                    });
+                    setTimeout(()=>{
+                      this.$router.push({name:'home'});
+                    },1000)
+                    this.getBaseInfo();
+                    this.getQiNiuToken();
+                  }else{
+                    this.$Message.error(res.data.msg);
                   }
+                  iView.LoadingBar.finish();
                 });
 
-            }else{
-              this.$Message.error('输入有误，请重试')
             }
           })
+        },
+        getQiNiuToken(){
+          this.$http.get(`/base/qiniu/token`).then(res=>{
+            if(res.data.code===0){
+              let token = res.data.data.token;
+              let qnPrefix=res.data.data.imagePrefix;
+              localStorage.setItem('qnToken',token);
+              localStorage.setItem('qnPrefix',qnPrefix)
+            }
+          })
+        },
+        getBaseInfo(){
+
+          this.$http.get(`/user/basicInfo`).then(res=>{
+            let menuList=[];
+            if(res.data.code===0){
+              let menu =res.data.data.resourceList;
+              console.log(menu)
+              menuList= appRouter.map(item=>{
+
+                item.children.forEach(child=>{
+
+                  menu.map(menuItem=>{
+                    if(menuItem.path===child.name){
+                      child.meta.hideInMenu=false;
+                      item.meta.hideInMenu=false;
+                    }else if(child.children&&child.children.length>0){
+                      child.children.map(ground=>{
+                        menu.map(groundMenu=>{
+                          if(groundMenu.path===ground.name){
+                            ground.meta.hideInMenu=false;
+                            child.meta.hideInMenu=false;
+                            item.meta.hideInMenu=false;
+                          }
+                        })
+                      })
+                    }
+                  })
+                });
+                return item;
+              });
+              // console.log(menuList)
+            }else{
+              menuList=appRouter;
+              console.log('菜单获取失败');
+            }
+            this.$store.commit('updateMenulist',menuList);
+          });
         }
+
       },
+      beforeDestroy(){
+          this.loading();
+      }
     }
 </script>
 

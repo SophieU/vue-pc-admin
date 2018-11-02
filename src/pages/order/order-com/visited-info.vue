@@ -4,9 +4,10 @@
 </style>
 <template>
   <div>
-    <div class="card no-border mb-15">
+    <div class="empty-slot" v-if="lists.length===0">暂无回访消息</div>
+    <div class="card no-border mb-15" v-for="(item,index) in lists" :key="index">
       <div class="card-header">
-        <div class="card-title">回访信息1</div>
+        <div class="card-title">回访信息{{index+1}}</div>
       </div>
       <div class="card-body">
         <table class="native-table mb-15">
@@ -19,9 +20,9 @@
           </thead>
           <tbody>
           <tr>
-            <td>2018/08/20  20:00</td>
-            <td>admin</td>
-            <td>通过</td>
+            <td>{{item.returnVisitTime}}</td>
+            <td>{{item.returnVisitUser}}</td>
+            <td>{{item.returnVisitResult}}</td>
           </tr>
           </tbody>
         </table>
@@ -30,61 +31,57 @@
           <div class="visite-item">
             <div>
               <span class="label">满意度：</span>
-              <span>5</span>
+              <span>{{item.satisfaction}}</span>
             </div>
             <div class="text-grey">
               <span class="label">备注：</span>
-              <span>这是备注</span>
+              <span>{{item.satisfactionRemarks}}</span>
             </div>
           </div>
           <div class="visite-item">
             <div>
               <span class="label">材料更换：</span>
-              <span>5</span>
+              <span>{{item.materialChange==='Y'?'是':'否'}}</span>
             </div>
             <div class="text-grey">
               <span class="label">备注：</span>
-              <span >这是备注</span>
+              <span >{{item.materialChangeRemarks}}</span>
             </div>
           </div>
           <div class="visite-item">
             <div>
               <span class="label">取消订单：</span>
-              <span>5</span>
+              <span>{{item.cancelOrder==='N'?'否':(item.cancelOrder==='ACTIVE_REQUIREMENT'?'主动要求':'师傅要求')}}</span>
             </div>
             <div class="text-grey">
               <span class="label">备注：</span>
-              <span >这是备注</span>
+              <span >{{item.cancelOrderRemarks}}</span>
             </div>
           </div>
           <div class="visite-item">
             <div>
               <span class="label">私自收费：</span>
-              <span>5</span>
+              <span>{{item.privateCharge==='Y'?'是':'否'}}</span>
             </div>
             <div class="text-grey">
               <span class="label">备注：</span>
-              <span >这是备注</span>
+              <span >{{item.privateChargeRemarks}}</span>
             </div>
           </div>
           <div class="visite-item">
             <div>
               <span class="label">关闭订单：</span>
-              <span>5</span>
+              <span>{{item.closeOrder==='N'?'否':(item.closeOrder==='ACTIVE_REQUIREMENT '?'主动要求':'师傅要求')}}</span>
             </div>
             <div class="text-grey">
               <span class="label">备注：</span>
-              <span >这是备注</span>
+              <span >{{item.closeOrderRemarks}}</span>
             </div>
           </div>
           <div class="visite-item">
             <div>
               <span class="label">其他：</span>
-              <span>5</span>
-            </div>
-            <div class="text-grey">
-              <span class="label">备注：</span>
-              <span >这是备注</span>
+              <span>{{item.other}}</span>
             </div>
           </div>
 
@@ -96,7 +93,28 @@
 
 <script>
     export default {
-        name: "visited-info"
+        name: "visited-info",
+      data(){
+          return{
+            lists:[]
+          }
+      },
+      methods:{
+          getLists(id){
+            this.$http.get(`/repair/order/return/visit/list?id=${id}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  this.lists=res.data.data;
+                }else{
+                  console.log('回访信息：'+res.data.msg)
+                }
+              })
+          }
+      },
+      mounted(){
+          let id = this.$route.query.id;
+          this.getLists(id);
+      }
     }
 </script>
 

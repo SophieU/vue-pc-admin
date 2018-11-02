@@ -1,26 +1,23 @@
 import {otherRouter,appRouter} from '@/router/router'
 import util from '@/libs/util'
 import Vue from 'vue'
+import axios from 'axios'
 
 const app = {
   state:{
     cachePage:[], //缓存页
     openedSubmenuArr:[], //要展开的菜单数组
-    pageOpenedList:[{  //已经打开的tag列表
-      title:'首页123456789',
+   /* pageOpenedList:[{  //已经打开的tag列表
+      title:'首页',
       path:'/',
       name:'home'
-    },{
-      title:'小区公告',
-      path:'/content/notice',
-      name:'notice'
-    }],
+    }],*/
     currentPageName: '',
     currentPath:[ //面包屑数组
       {
         title:'首页',
         path:'',
-        name:'home_index'
+        name:'home'
       }
     ],
     menuList:[],//菜单
@@ -28,28 +25,54 @@ const app = {
       otherRouter,
       ...appRouter
     ], //路由
-    dontCache:['notice'], //这里定义不要缓存的页面，如notice，见router中的name
-    curVillage:localStorage.getItem('village'), //当前选中的小区
+    // dontCache:['notice'], //这里定义不要缓存的页面，如notice，见router中的name
+    // curVillage:localStorage.getItem('village'), //当前选中的小区
     tagsList:[...otherRouter.children],
+    staffServiceType:[], //员工服务类型id列表
+    staffAccount:{},//员工账号信息
+    deleteModal:{
+      model:false,
+      callback:function(){
+      }
+    }, //删除弹窗
   },
   mutations:{
+    setDeleteModal(state,control){
+      if(control.model){
+        state.deleteModal={
+          model:control.model,
+          callback:control.callback
+        }
+      }else{
+        state.deleteModal={
+          model:control.model,
+          callback:function(){}
+        };
+      }
+    },
+    setStaffServiceType(state,list){
+      state.staffServiceType=list;
+    },
+    setStaffAccount(state,account){
+      state.staffAccount=account;
+    },
     setTagsList (state, list) {
       state.tagsList.push(...list);
     },
     //更新菜单，以及权限设定
-    updateMenulist(state){
-      let accessCode = 102;
-      let menuList = [];
-      state.menuList=appRouter;
-      // appRouter.forEach((item,index)=>{
-      //
-      // })
+    updateMenulist(state,menuLists){
+      // let accessCode = 102;
+      // let menuList = [];
+
+
+      state.menuList=menuLists;
+
     },
     //展开子菜单
     addOpenSubmenu (state, name) {
-      let hasThisName = false;
+      let hasThisName = false; //判定是否有这个name
       let isEmpty = false;
-      let isArr = false;
+      let isArr = false; //用于判断是否为三级菜单子目录
       if (name.length === 0) {
         isEmpty = true;
       }
@@ -59,13 +82,18 @@ const app = {
       if(name instanceof Array){
         isArr=true
       }
+      // 普通二级子菜单
       if (!hasThisName && !isEmpty&&!isArr) {
-        state.openedSubmenuArr.push(name);
-        // state.openedSubmenuArr=[name];
+        // state.openedSubmenuArr.push(name);
+        state.openedSubmenuArr=[name];
       }else if(!hasThisName && !isEmpty&&isArr){
-        console.log(name)
+        //三级子菜单
         state.openedSubmenuArr=name
       }
+    },
+    //退出登录后，清空子菜单
+    clearOpenSubmenu(state,name){
+      state.openedSubmenuArr=[]
     },
     //关闭标签页
     closePage(state,name){

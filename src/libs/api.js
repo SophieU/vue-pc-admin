@@ -1,15 +1,18 @@
 import axios from 'axios';
 import router from '../router/index';
 import iView from 'iview';
+import Cookies from 'js-cookie';
 
 let baseUrl = '';
 let domin = window.location.hostname;
 if(domin==='localhost'){ //本地
   baseUrl='http://101.132.99.21:8109/repair/call/center/v1/';
+  localStorage.setItem('baseURL','http://101.132.99.21:8109/repair/call/center/v1/')
 }else if(domin==='xxx'){ //正式
   baseUrl=''
 }else{ //测试
-
+  baseUrl='http://101.132.99.21:8109/repair/call/center/v1/';
+  localStorage.setItem('baseURL','http://101.132.99.21:8109/repair/call/center/v1/');
 }
 axios.defaults.headers.common['Content-Type']='application/json';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -27,15 +30,24 @@ axios.interceptors.request.use(function (config) {
 });
 
 // 响应拦截器
+let countRes = 0;
 axios.interceptors.response.use(function (response) {
   let code = response.data.code;
   let method = response.config.method;
   if(code===904&&method!=='option'){
-    iView.Message.error(response.data.msg);
-    router.push({name:'login'})
+    if(countRes<1){
+      iView.Message.error(response.data.msg);
+    }
+    countRes++;
+    Cookies.remove('user');
+    router.push({name:'login'});
+  }else{
+    countRes=0;
   }
-  // Do something with response data
+
   return response;
+
+  // Do something with response data
 }, function (error) {
   // Do something with response error
   console.log('interceptor error--------'+error);

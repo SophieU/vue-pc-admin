@@ -1,6 +1,9 @@
 <template>
-  <Card>
+  <Card v-if="detail">
     <div class="clearfix mb-15">
+      <div class="pull-left">
+        <Button type="primary" @click="$router.back()">返回上一页</Button>
+      </div>
       <div class="pull-right">
         <Button type="primary">excel导出</Button>
       </div>
@@ -19,12 +22,12 @@
         </thead>
         <tbody>
         <tr>
-          <td>24小区服务中</td>
-          <td>24342424</td>
-          <td>2018/08/20</td>
-          <td>-1</td>
-          <td>-5.00</td>
-          <td>张某</td>
+          <td>{{detail.departmentName}}</td>
+          <td>{{detail.orderSn}}</td>
+          <td>{{detail.createTime}}</td>
+          <td>{{detail.diffNum}}</td>
+          <td>{{detail.amount}}</td>
+          <td>{{detail.creator}}</td>
         </tr>
         </tbody>
       </table>
@@ -42,6 +45,19 @@
           <th>盈亏成本</th>
         </tr>
         </thead>
+        <tbody>
+          <tr v-for="(item,index) in detail.detailList" :key="index">
+            <td>{{item.materialName}}</td>
+            <td>{{item.repairCategoryName}}</td>
+            <td>{{item.materialSpec}}</td>
+            <td>{{item.unit}}</td>
+            <td>{{item.price}}</td>
+            <td>{{item.num}}</td>
+            <td>{{item.checkedNum}}</td>
+            <td>{{item.diffNum}}</td>
+            <td>{{item.amount}}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </Card>
@@ -50,7 +66,49 @@
 
 <script>
     export default {
-        name: "inventory-detail"
+        name: "inventory-detail",
+      data(){
+        return {
+          detail:null
+        }
+      },
+      methods:{
+          getDetail(id){
+            this.$http.get(`/repair/material/check/order/info?id=${id}`)
+              .then(res=>{
+                /*if(res.data.code===0){
+                  this.detail=res.data.data;
+                }else{
+                  console.log('盘点详情：'+res.data.msg);
+                }*/
+                this.detail={
+                  "id": "c1388d059fc44c8e875cad01bff5c150",
+                  "departmentName": "test",
+                  "sn": "4581245",
+                  "createTime": "2018-10-16 20:31",
+                  "diffNum": "1",
+                  "amount": "5.00",
+                  "creator": "admin",
+                  "detailList": [
+                    {
+                      "materialName": "辅材1",
+                      "repairCategoryName": "燃气服务",
+                      "materialSpec": "型号1",
+                      "price": 5,
+                      "num": 10,
+                      "checkedNum": 11,
+                      "diffNum": 1,
+                      "amount": 5
+                    }
+                  ]
+                }
+              })
+          }
+      },
+      mounted(){
+          let id = this.$route.params.id;
+          this.getDetail(id);
+      }
     }
 </script>
 

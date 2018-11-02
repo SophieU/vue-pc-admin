@@ -1,19 +1,20 @@
 <template>
-  <div class="card">
-    <div class="card-header">
-      <p class="card-title">服务类型：</p>
-    </div>
-    <div class="card-body">
-      <ul class="lists">
-        <li><Checkbox>用气服务</Checkbox> </li>
-        <li><Checkbox>用电服务</Checkbox></li>
-      </ul>
-    </div>
-  </div>
+  <Card>
+    <p slot="title">服务类型：</p>
+    <ul class="lists">
+      <li  v-for="repair in repairLists"  :key="repair" ><Checkbox :value="true" disabled>{{repair}}</Checkbox> </li>
+    </ul>
+  </Card>
 </template>
 <script>
+  import util from '../../../libs/util'
     export default {
-        name: "staff-service"
+        name: "staff-service",
+      computed:{
+        repairLists(){
+          return this.$store.state.app.staffServiceType;
+        }
+      }
     }
 </script>
 

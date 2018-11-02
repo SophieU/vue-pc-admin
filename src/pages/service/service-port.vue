@@ -13,11 +13,14 @@
         <div class="table-wrapper">
           <Table :loading="loading" :data="portLists" :columns="columns"></Table>
           <div class="pagination">
-            <Page :page-size="pageSize" :total="totalCount" show-sizer show-elevator></Page>
+            <Page :page-size="pageSize" :total="totalCount" show-sizer show-elevator
+                  @on-change="pageToggle"
+                  @on-page-size-change="pageSizeToggle"
+            ></Page>
           </div>
         </div>
       </Card>
-      <Modal v-model="portSetting" title="添加服务网点" >
+      <Modal v-model="portSetting" :title="modalTitle+'服务网点'" >
         <Form ref="portSet" :model="portSettingForm" :rules="portSettingRule" :label-width="120" label-position="right">
           <FormItem label="服务网点名称" prop="name">
             <Input :disabled="viewInfo" v-model="portSettingForm.name" class="form-input"/>
@@ -32,11 +35,6 @@
             <CheckboxGroup v-model="portSettingForm.regionList" >
               <ul class="column_3">
                 <li v-for="station in stationLists"><Checkbox :disabled="viewInfo" :label="station.id" >{{station.name}}</Checkbox></li>
-                <!--<li><Checkbox>23小区</Checkbox></li>-->
-                <!--<li><Checkbox>26小区</Checkbox></li>-->
-                <!--<li><Checkbox>27小区</Checkbox></li>-->
-                <!--<li><Checkbox>27小区</Checkbox></li>-->
-                <!--<li><Checkbox>27小区</Checkbox></li>-->
               </ul>
             </CheckboxGroup>
 
@@ -102,10 +100,9 @@
           };
           return{
             viewInfo:false, //查看网点信息时，所有项 不可编辑
+            modalTitle:'添加',
             pageNo:1,
             loading:true,
-            hasNextPage:true,
-            nextPage:1,
             totalCount:0,
             pageSize:10,
             columns:[
@@ -123,6 +120,7 @@
                         click:()=>{
                           let id = params.row.id;
                           _this.viewInfo=true;
+                          _this.modalTitle='查看';
                           _this.getStation(id);
                           _this.getStationInfo(id);
                         }
@@ -134,6 +132,7 @@
                         click:()=>{
                           let id=params.row.id;
                           _this.viewInfo=false;
+                          _this.modalTitle='编辑';
                           _this.getStation(id);
                           _this.getStationInfo(id);
                         }
@@ -169,32 +168,42 @@
           }
       },
       methods:{
+          //获取列表
           getLists(){
-            if(this.hasNextPage){
-              this.$http.get(`/repair/station/list`)
-                .then(res=>{
-                  let data = res.data;
-                  if(data.code===0){
-                    this.loading=false;
-                    this.portLists=data.data.list;
-                    this.pageSize=data.data.pageSize;
-                    this.totalCount = data.data.totalCount;
-                    this.hasNextPage=data.data.hasNextPage;
-                    if(this.hasNextPage) this.nextPage=data.data.nextPage
-                  }
-
-                })
-            }
-          },
-          getStation(id){
-            this.$http.get(`/repair/station/region/list?id=${id}`)
+            let params = `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+            this.$http.get(`/repair/station/list?${params}`)
               .then(res=>{
-                if(res.data.code===0){
-                  let data=res.data.data;
-                  this.stationLists=data;
+                let data = res.data;
+                if(data.code===0){
+                  this.loading=false;
+                  this.portLists=data.data.list;
+                  this.pageSize=data.data.pageSize;
+                  this.totalCount = data.data.totalCount;
+
                 }
+
               })
           },
+        //页码变化
+        pageToggle(page){
+            console.log(page)
+          this.pageNo=page;
+          this.getLists();
+        },
+        //每页条数变化
+        pageSizeToggle(size){
+          this.pageSize=size;
+          this.getLists();
+        },
+        getStation(id){
+          this.$http.get(`/repair/station/region/list?id=${id}`)
+            .then(res=>{
+              if(res.data.code===0){
+                let data=res.data.data;
+                this.stationLists=data;
+              }
+            })
+        },
         //新增或修改网点
         saveStation(name){
           let formData= this.portSettingForm;
@@ -291,9 +300,11 @@
               password:'',
           };
           this.getStation();
+          this.modalTitle='添加';
           this.viewInfo=false;
           this.portSetting=true;
-        }
+        },
+
       },
       mounted(){
           this.getLists();

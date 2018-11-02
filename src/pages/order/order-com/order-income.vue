@@ -17,11 +17,12 @@
           </thead>
           <tbody>
           <tr>
-            <td>90.00</td>
-            <td>90.00</td>
-            <td>0.00</td>
-            <td>35.00</td>
-            <td>55.00</td>
+            <td>{{orderRecord.totalAmount}}</td>
+            <td>{{orderRecord.realAmount}}</td>
+            <td>{{orderRecord.totalPlatformCommission}}</td>
+            <td>{{orderRecord.totalEmployeeCommission}}</td>
+            <td>{{orderRecord.companyCommission}}</td>
+
           </tr>
           </tbody>
         </table>
@@ -46,35 +47,15 @@
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <td>上门费</td>
-            <td>上门费</td>
-            <td>1</td>
-            <td>20.00</td>
-            <td>20.00</td>
-            <td>5.00</td>
-            <td>0%</td>
-            <td>0.00</td>
-          </tr>
-          <tr>
-            <td>服务费</td>
-            <td>软管检查</td>
-            <td>1</td>
-            <td>20.00</td>
-            <td>20.00</td>
-            <td>5.00</td>
-            <td>0%</td>
-            <td>0.00</td>
-          </tr>
-          <tr>
-            <td>辅材费</td>
-            <td>软管，PVC</td>
-            <td>1</td>
-            <td>20.00</td>
-            <td>20.00</td>
-            <td>5.00</td>
-            <td>0%</td>
-            <td>0.00</td>
+          <tr v-for="(item,index) in offerPlanList" :key="index">
+            <td>{{item.planType}}</td>
+            <td>{{item.planName}}</td>
+            <td>{{item.serviceNum}}</td>
+            <td>{{item.serviceCost}}</td>
+            <td>{{item.amount}}</td>
+            <td>{{item.employeeCommission}}</td>
+            <td>{{item.rate}}</td>
+            <td>{{item.platformCommission}}</td>
           </tr>
           </tbody>
         </table>
@@ -85,7 +66,31 @@
 
 <script>
     export default {
-        name: "order-income"
+        name: "order-income",
+      data(){
+          return {
+            offerPlanList:[],
+            orderRecord:{}
+          }
+      },
+      methods:{
+          getIncome(id){
+            this.$http.get(`/repair/order/earning/list?id=${id}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  let data = res.data.data;
+                  this.offerPlanList=data.offerPlanList;
+                  this.orderRecord=data.orderRecord;
+                }else{
+                  console.log('工单收益：'+res.data.msg)
+                }
+              })
+          }
+      },
+      mounted(){
+          let id = this.$route.query.id;
+          this.getIncome(id);
+      }
     }
 </script>
 

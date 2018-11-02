@@ -1,0 +1,69 @@
+.inline-upload{
+  display: inline-block;
+}
+.modal_wrap_form{
+  padding: 10px 30px;
+}
+.two_column_form{
+  padding: 10px 15px;
+  .flex_form{
+    display: flex;
+    .left,.right{
+      flex: 50% 0 0;
+    }
+    .left{
+      padding-right: 20px;
+      box-sizing: border-box;
+    }
+  }
+  .imgWrap{
+    text-align: center;
+    img{
+      display: block;
+      margin: 15px auto;
+      width: 250px;
+      height: 250px;
+
+    }
+  }
+}
+//工作时间管理
+.working-time{
+  .special-date{
+    .top-title{
+      padding: 10px;
+      text-align: center;
+      position: relative;
+      .right-btn{
+        position: absolute;
+        right: 15px;
+        top: 0;
+      }
+    }
+  }
+}
+.table{
+  width: 100%;
+  border: 1px solid #e8eaec;
+  border-collapse: collapse;
+  th{
+    height: 30px;
+    text-align: center;
+    font-weight: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: #f8f8f9;
+    border: 1px solid #e8eaec;
+  }
+  td{
+    min-width: 0;
+    text-align: center;
+    height: 40px;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    border-bottom: 1px solid #e8eaec;
+
+  }
+}

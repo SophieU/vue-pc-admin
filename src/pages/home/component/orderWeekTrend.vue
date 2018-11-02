@@ -11,43 +11,63 @@
         },
         mounted(){
           this.$nextTick(()=>{
-            var orderWeekTrend = echarts.init(document.getElementById('order_week_trend'))
-            const option = {
-              xAxis: {
-                type: 'category',
-                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-              },
-              tooltip: {
-                trigger: 'axis'
-              },
-              yAxis: {
-                type: 'value'
-              },
-              series: [{
-                data: [120, 200, 150, 80, 70, 110, 130],
-                type: 'line',
-                symbol: 'triangle',
-                symbolSize: 20,
-                lineStyle: {
-                  normal: {
-                    color: '#2d8cf0',
-                    width: 4,
-                    type: 'dashed'
-                  }
-                },
-                itemStyle: {
-                  normal: {
-                    borderWidth: 3,
-                    borderColor: '#2d8cf0',
-                    color: '#fff'
-                  }
+            let orderWeekTrend = echarts.init(document.getElementById('order_week_trend'));
+            this.$http.get(`/index/7days/order/increment/report`)
+              .then(res=>{
+                if(res.data.code===0){
+                  let data = res.data.data;
+                  let dataLists=data.detailList;
+                  let xAxis=dataLists.map(item=>{
+                    return item.name;
+                  });
+                  let lists = dataLists.map(item=>{
+                    return item.value;
+                  });
+                  let option = {
+                    title : {
+                      text: '近7日工单走势',
+                      x:'center'
+                    },
+                    tooltip: {
+                      trigger: 'axis'
+                    },
+                    xAxis: {
+                      type: 'category',
+                      data: xAxis
+                    },
+                    yAxis: {
+                      type: 'value'
+                    },
+                    series: [{
+                      name:'工单金额',
+                      data: lists,
+                      type: 'line',
+                      symbol: 'triangle',
+                      symbolSize: 20,
+                      lineStyle: {
+                        normal: {
+                          color: '#2d8cf0',
+                          width: 4,
+                          type: 'dashed'
+                        }
+                      },
+                      itemStyle: {
+                        normal: {
+                          borderWidth: 3,
+                          borderColor: '#2d8cf0',
+                          color: '#fff'
+                        }
+                      }
+                    }]
+                  };
+                  orderWeekTrend.setOption(option);
                 }
-              }]
-            };;
-            orderWeekTrend.setOption(option);
-            window.addEventListener('resize', function () {
-              orderWeekTrend.resize();
-            });
+                window.addEventListener('resize', function () {
+                  orderWeekTrend.resize();
+                });
+              })
+
+
           });
 
         }

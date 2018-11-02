@@ -1,100 +1,248 @@
+
+<style scoped lang="scss">
+  @import "../order.scss";
+</style>
 <template>
 <div>
   <div class="card no-border ">
     <div class="card-header">
-      <div class="card-title">服务类</div>
+      <div class="card-title">工单证据</div>
+    </div>
+    <div class="card-body">
+      <ul class="prov-lists">
+        <li>
+          <h4 class="prov-title">上门证据</h4>
+          <div  v-if="orderImg.confirmPresentImage[0]" class="prov-img">
+            <img  @click="showCarousel(orderImg.confirmPresentImage)" :src="orderImg.confirmPresentImage[0]?orderImg.confirmPresentImage[0].imageName:''" alt="">
+          </div>
+        </li>
+       <li>
+          <h4 class="prov-title">检修前证据</h4>
+          <div  v-if="orderImg.beforeOverhaulImage[0]" class="prov-img">
+            <img @click="showCarousel(orderImg.beforeOverhaulImage)" :src="orderImg.beforeOverhaulImage[0]?orderImg.beforeOverhaulImage[0].imageName:''" alt="">
+          </div>
+        </li>
+        <li>
+           <h4 class="prov-title">辅材证据</h4>
+           <div  v-if="orderImg.materialImage[0]" class="prov-img">
+             <img @click="showCarousel(orderImg.materialImage)" :src="orderImg.materialImage[0]?orderImg.materialImage[0].imageName:''" alt="">
+           </div>
+         </li>
+          <li>
+             <h4 class="prov-title">完工证据</h4>
+             <div  v-if="orderImg.closingImage[0]" class="prov-img">
+               <img @click="showCarousel(orderImg.closingImage)" :src="orderImg.closingImage[0]?orderImg.closingImage[0].imageName:''" alt="">
+             </div>
+           </li>
+          <li>
+             <h4 class="prov-title">电子签名</h4>
+             <div  v-if="orderImg.customerConfirmImage" class="prov-img not-lists">
+               <img :src="orderImg.customerConfirmImage" alt="">
+             </div>
+           </li>
+      </ul>
+    </div>
+  </div>
 
+  <div class="card no-border " v-for="(item,index) in afterOrderImgList" :key="index">
+    <Divider />
+    <div class="card-header">
+      <div class="card-title">售后{{index+1}}</div>
     </div>
     <div class="card-body">
       <ul class="prov-lists">
         <li>
           <h4 class="prov-title">上门证据</h4>
           <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
+            <img   @click="showCarousel(item.confirmPresentImage)" :src="item.confirmPresentImage[0]?item.confirmPresentImage[0].imageName:''" alt="">
           </div>
         </li>
         <li>
           <h4 class="prov-title">检修前证据</h4>
           <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
+            <img @click="showCarousel(item.beforeOverhaulImage)" :src="item.beforeOverhaulImage[0]?item.beforeOverhaulImage[0].imageName:''" alt="">
           </div>
         </li>
         <li>
           <h4 class="prov-title">辅材证据</h4>
           <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
+            <img @click="showCarousel(item.materialImage)" :src="item.materialImage[0]?item.materialImage[0].imageName:''" alt="">
+          </div>
+        </li>
+        <li>
+          <h4 class="prov-title">完工证据</h4>
+          <div class="prov-img">
+            <img @click="showCarousel(item.closingImage)" :src="item.closingImage[0]?item.closingImage[0].imageName:''" alt="">
+          </div>
+        </li>
+        <li>
+          <h4 class="prov-title">电子签名</h4>
+          <div class="prov-img not-lists">
+            <img :src="item.customerConfirmImage" alt="">
           </div>
         </li>
       </ul>
     </div>
   </div>
   <Divider />
-  <div class="card no-border ">
-    <div class="card-header">
-      <div class="card-title">售后1</div>
+  <Modal class="carouse_wrap" v-model="carouselModal" title="证明图片" width="700" @on-visible-change="modalHide">
+    <Carousel :value="0" loop v-model="carouselVal" :height="400" style="width: 600px;margin:0 auto;">
+      <CarouselItem v-for="(item,index) in carouselLists" :key="index">
+        <div class="carousel" >
+          <img :src="item.imageName" alt="">
+        </div>
+      </CarouselItem>
+    </Carousel>
+    <div slot="footer">
+      <div class="carousel_footer" >
+        <span>{{carouselVal+1}}/{{carouselLists.length}}</span>
+      </div>
+    </div>
+  </Modal>
 
-    </div>
-    <div class="card-body">
-      <ul class="prov-lists">
-        <li>
-          <h4 class="prov-title">上门证据</h4>
-          <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
-          </div>
-        </li>
-        <li>
-          <h4 class="prov-title">检修前证据</h4>
-          <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
-          </div>
-        </li>
-        <li>
-          <h4 class="prov-title">辅材证据</h4>
-          <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <Divider />
-  <div class="card no-border ">
-    <div class="card-header">
-      <div class="card-title">售后2</div>
-
-    </div>
-    <div class="card-body">
-      <ul class="prov-lists">
-        <li>
-          <h4 class="prov-title">上门证据</h4>
-          <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
-          </div>
-        </li>
-        <li>
-          <h4 class="prov-title">检修前证据</h4>
-          <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
-          </div>
-        </li>
-        <li>
-          <h4 class="prov-title">辅材证据</h4>
-          <div class="prov-img">
-            <img src="../../../assets/imgs/404.png" alt="">
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
 </div>
 </template>
 
 <script>
     export default {
-        name: "order-prove"
+        name: "order-prove",
+      data(){
+          return {
+            carouselModal:false,
+            carouselLists:[],
+            carouselVal:0,
+            orderImg:{
+              confirmPresentImage:[],
+              beforeOverhaulImage:[],
+              materialImage:[],
+              closingImage:[],
+              customerConfirmImage:'',
+            },
+            afterOrderImgList:[]
+          }
+      },
+      methods:{
+          getProve(id){
+            this.$http.get(`/repair/order/prove/list?id=${id}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  let data = res.data.data;
+
+                 /* let data =  {
+                      "orderImg": {
+                        "confirmPresentImage":  [
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          },
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          }
+                        ],
+                        "beforeOverhaulImage":  [
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          },
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          }
+                        ],
+                        "materialImage":  [
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          },
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          }
+                        ],
+                        "closingImage":  [
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          },
+                          {
+                            "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                            "sortIndex": 0
+                          }
+                        ],
+                        "customerConfirmImage":  "http://ozwtcaj06.bkt.clouddn.com/Screenshot_2018-10-17-18-23-35-256_com.youku.phone.png_compress",
+                      },
+                      "afterOrderImgList": [
+                        {
+                          "confirmPresentImage": [
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                              "sortIndex": 0
+                            },
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/61078664a52d8f620f1f1bb7c9633dc8.jpg_compress",
+                              "sortIndex": 0
+                            }
+                          ],
+                          "beforeOverhaulImage":[
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/f8c415217c845a79539560d4c0c243a0.jpg",
+                              "sortIndex": 0
+                            },
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/f8c415217c845a79539560d4c0c243a0.jpg",
+                              "sortIndex": 0
+                            }
+                          ],
+                          "materialImage": [
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/f8c415217c845a79539560d4c0c243a0.jpg",
+                              "sortIndex": 0
+                            },
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/f8c415217c845a79539560d4c0c243a0.jpg",
+                              "sortIndex": 0
+                            }
+                          ],
+                          "closingImage": [
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/Screenshot_2018-10-17-18-23-35-256_com.youku.phone.png_compress",
+                              "sortIndex": 0
+                            },
+                            {
+                              "imageName": "http://ozwtcaj06.bkt.clouddn.com/Screenshot_2018-10-17-18-23-35-256_com.youku.phone.png_compress",
+                              "sortIndex": 0
+                            }
+                          ],
+                          "customerConfirmImage": "http://ozwtcaj06.bkt.clouddn.com/Screenshot_2018-10-17-18-23-35-256_com.youku.phone.png_compress"
+                        }
+                      ]
+                    };*/
+                  this.orderImg=data.orderImg;
+                  this.afterOrderImgList=data.afterOrderImgList;
+                }else{
+                  console.log('工单证明获取失败：'+res.data.msg);
+                }
+              })
+          },
+          showCarousel(arr){
+            if(arr.length>0){
+              this.carouselLists=arr;
+              this.carouselModal=true;
+            }
+          },
+        modalHide(visible){
+            if(!visible){
+              this.carouselLists=[];
+              this.carouselVal=0;
+            }
+
+        }
+      },
+      mounted(){
+          let id = this.$route.query.id;
+          this.getProve(id);
+      }
     }
 </script>
 
-<style scoped>
-
-</style>

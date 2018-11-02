@@ -285,4 +285,99 @@ util.openNewPage = function (vm, name, argu, query) {
   }
   vm.$store.commit('setCurrentPageName', name);
 };
+
+//格式化get请求参数
+util.formatterParams=function(obj){
+  let params = '';
+  for(let key in obj){
+    if(obj[key]){
+      if(obj[key].length>0||obj[key]>0){
+        let item = key+'='+obj[key]+'&';
+        params+=item;
+      }
+    }
+
+  }
+  params = params.substr(0,params.length-1);
+  return params;
+};
+//格式化时间
+util.formateTime=function(date,isDate){
+  let dateParam = new Date(date);
+  let year = dateParam.getFullYear();
+  let month = dateParam.getMonth()+1;
+  let day = dateParam.getDate()<10?'0'+dateParam.getDate():dateParam.getDate();
+  let hh = dateParam.getHours()<10?'0'+dateParam.getHours():dateParam.getHours();
+  let mm = dateParam.getMinutes()<10?'0'+dateParam.getMinutes():dateParam.getMinutes();
+  if(isDate){
+    return `${year}-${month}-${day}`
+  }else{
+    return `${year}-${month}-${day} ${hh}:${mm}`
+  }
+};
+/*格式化参数，将'Y'转化为true
+  params:
+      obj:待转对象
+      prop:属性名称，转化后，将生成 prop+'Bool'属性用于承载值
+      toBoolean: 为true则转化为Bool值，为false则转为’Y/N'
+ */
+util.formateParamBool=function(obj,prop,toBoolean){
+  if(toBoolean){
+    obj=obj.map(item=>{
+      if(obj[prop]==='Y'){
+        obj[prop+'Bool']=true;
+      }else{
+        obj[prop+'Bool']=true;
+      }
+      return obj;
+    })
+  }else{
+    obj=obj.map(item=>{
+      if(obj[prop+'Bool']){
+        obj[prop]='Y'
+      }else{
+        obj[prop]='N'
+      }
+      delete obj[prop+'Bool'];
+      return obj;
+    })
+  }
+  return obj;
+};
+// 获取报修分类下拉
+util.getRepairType=function(cb){
+  axios.get('/repair/category/list')
+    .then(res=>{
+      if(res.data.code===0){
+        typeof cb==='function'&&cb(res.data.data);
+      }else{
+        console.log('util.getRepairType失败：'+res.data.msg);
+      }
+    })
+};
+//获取服务网点下拉
+util.getStationLists=function(cb){
+  axios.get('/repair/station/select/list')
+    .then(res=>{
+      if(res.data.code===0){
+        typeof cb==='function'&&cb(res.data.data);
+      }else{
+        console.log('util.getStationLists失败：'+res.data.msg);
+      }
+    })
+};
+//获取组织列表下拉（包含 网点和组织）
+util.getDepartment=function(cb){
+  axios.get('/common/departmentList')
+    .then(res=>{
+      if(res.data.code===0){
+        typeof cb==='function'&&cb(res.data.data);
+      }else{
+        console.log('util.getDepartment组织列表失败：'+res.data.msg);
+      }
+    })
+};
+
+
+
 export default util;

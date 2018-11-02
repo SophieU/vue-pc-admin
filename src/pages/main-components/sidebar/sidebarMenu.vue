@@ -4,17 +4,17 @@
 <template>
   <Menu accordion ref="sideMenu" :active-name="$route.name" :open-names="openNames" theme="dark" width="auto" @on-select="changeMenu">
     <template v-for="item in menuList">
-      <MenuItem v-if="item.children.length<=1" :name="item.children[0].name" :key="'menuitem' + item.name">
+      <MenuItem v-show="!item.meta.hideInMenu" v-if="item.meta.single" :name="item.children[0].name" :key="'menuitem' + item.name">
         <Icon :type="item.children[0].icon || item.icon" :size="16" :key="'menuicon' + item.name"></Icon>
         <span class="layout-text" :key="'title' + item.name">{{ item.children[0].title }}</span>
       </MenuItem>
-      <Submenu v-if="item.children.length>1" :name="item.name" :key="item.name">
+      <Submenu v-else  :name="item.name" :key="item.name">
         <template slot="title">
           <Icon  :type="item.icon" :size="16"></Icon>
           <span class="layout-text">{{item.title}}</span>
         </template>
         <template v-for="child in item.children" >
-          <MenuItem :name="child.name" :key="'menuitem'+child.name" v-if="!child.children">
+          <MenuItem :name="child.name?child.name:child.children[0].name" :key="'menuitem'+child.name+child.path" v-if="!child.children||child.meta.hideChild">
             <Icon size="16" :type="child.icon" :key="'icon'+child.name"></Icon>
             <span class="layout-text" :key="'title'+child.name">{{child.title}}</span>
           </MenuItem>
@@ -24,7 +24,7 @@
               <span class="layout-text">{{child.title}}</span>
             </template>
             <template v-for="sub in child.children" >
-              <MenuItem :name="sub.name" :key="'menuitem'+sub.name" >
+              <MenuItem v-show="!sub.meta.hideInMenu"  :name="sub.name" :key="'menuitem'+sub.name" >
                 <Icon size="16" :type="sub.icon" :key="'icon'+sub.name"></Icon>
                 <span class="layout-text" :key="'title'+sub.name">{{sub.title}}</span>
               </MenuItem>
@@ -58,6 +58,7 @@
       },
       //手动更新菜单展开项
       updated(){
+
         this.$nextTick(()=>{
           if(this.$refs.sideMenu){
             this.$refs.sideMenu.updateOpened();

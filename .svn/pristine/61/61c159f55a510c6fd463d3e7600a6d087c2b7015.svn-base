@@ -1,0 +1,183 @@
+<template>
+  <Card>
+    <div class="clearfix mb-15">
+      <div class="pull-left">
+        <Button type="primary" @click="newInvent">新建盘点</Button>
+        <Button @click="filter=true">筛选</Button>
+      </div>
+      <div class="pull-right">
+        <Button @click="downloadExcel" type="primary">excel导出</Button>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <Table :columns="columns" :data="lists"></Table>
+      <div class="pagination">
+        <Page :total="totalCount" show-sizer show-elevator
+          @on-change="pageChange"
+              @on-page-size-change="pageSizeChange"
+        ></Page>
+      </div>
+    </div>
+
+    <!--筛选-->
+    <Drawer title="出库筛选" width="425" v-model="filter">
+      <div class="clearfix mb-15">
+        <div class="pull-left">
+          <Button @click="clearFilter">清空筛选条件</Button>
+        </div>
+        <div class="pull-right">
+          <Button @click="filterList" type="primary">确定筛选</Button>
+        </div>
+      </div>
+      <div>
+        <Form :model="filterForm" label-position="top">
+          <FormItem label="创建时间">
+            <DatePicker v-model="filterForm.dateRange" type="daterange" style="width: 100%;"></DatePicker>
+          </FormItem>
+          <FormItem label="组织名称">
+            <Select v-model="filterForm.departmentId">
+              <Option v-for="department in departmentLists" :key="department.id" :value="department.id">{{department.name}}</Option>
+            </Select>
+          </FormItem>
+        </Form>
+      </div>
+    </Drawer>
+  </Card>
+</template>
+
+<script>
+  import util from '../../libs/util'
+    export default {
+        name: "inventory-admin",
+      computed:{
+        downlink(){
+          let baseUrl = localStorage.getItem('baseURL');
+          let url = baseUrl+'/repair/material/check/order/export';
+        }
+      },
+      data(){
+          return {
+            filter:false,
+            columns:[
+              {title:'组织名称',key:'departmentName',align:'center'},
+              {title:'单号',key:'orderSn',align:'center'},
+              {title:'创建时间',key:'createTime',align:'center'},
+              {title:'盈亏数',key:'diffNum',align:'center'},
+              {title:'盈亏成本',key:'amount',align:'center'},
+              {title:'操作',align:'center',render:(h,params)=>{
+                let _this= this;
+                return h('Button',{
+                    props:{
+                      type:'text'
+                    },
+                    on:{
+                      click(){
+                        let id = params.row.id;
+                        _this.$router.push({name:'inventoryDetail',params:{id:id}})
+                      }
+                    }
+                  },'查看')
+                }},
+            ],
+            lists:[],
+            pageNo:1,
+            pageSize:10,
+            totalCount:0,
+            departmentLists:[], //组织列表
+            filterForm:{
+              departmentId:'',
+              dateRange:[],
+            }
+          }
+      },
+      methods:{
+        downloadExcel(){
+          let filterForm = {...this.filterForm};
+          let query =`pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+          delete filterForm.dateRange;
+          let param = util.formatterParams(filterForm);
+          this.$http.post(`/repair/material/check/order/list/export?${query}'&'${param}`,{responseType:'blob'})
+            .then(res=>{
+              let blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'}); //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
+              let downloadElement = document.createElement('a');
+              let href = window.URL.createObjectURL(blob); //创建下载的链接
+              downloadElement.href = href;
+              downloadElement.download = '辅材盘点列表.xlsx'; //下载后文件名
+              document.body.appendChild(downloadElement);
+              downloadElement.click(); //点击下载
+              document.body.removeChild(downloadElement); //下载完成移除元素
+              window.URL.revokeObjectURL(href); //释放掉blob对象
+            })
+          // window.location.href=this.downLink;
+        },
+        newInvent(){
+          this.$router.push({name:'inventoryNew'})
+        },
+        getOrgan(){
+          this.$http.get(`/repair/material/check/order/departmentList`)
+            .then(res=>{
+              if(res.data.code===0){
+                this.departmentLists=res.data.data;
+              }else{
+                console.log('辅料盘点组织列表获取失败：'+res.data.msg);
+              }
+            })
+        },
+        getLists(filter){
+          let params= `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+          if(filter){
+            params=params+'&'+util.formatterParams(filter);
+          }
+          this.$http.post(`/repair/material/check/order/list?${params}`)
+            .then(res=>{
+              if(res.data.code===0){
+                let data = res.data.data;
+                this.lists = data.list;
+                this.pageNo = data.pageNo;
+                this.totalCount=data.totalCount;
+                this.pageSize= data.pageSize;
+                this.filter=false;
+              }
+            })
+        },
+        filterList(){
+            let filterForm = this.filterForm;
+            let param = {};
+            if(filterForm.departmentId){
+              param.departmentId=filterForm.departmentId;
+            }
+            if(filterForm.dateRange[0]&&filterForm.dateRange[0]){
+              let dateRange = filterForm.dateRange;
+              param.startTime=util.formateTime(dateRange[0],true);
+              param.endTime=util.formateTime(dateRange[1],true);
+            }
+
+            this.getLists(param);
+        },
+        //清空筛选
+        clearFilter(){
+          this.filterForm={
+            dateRange:[],
+            departmentId:'',
+          };
+          this.filter=false;
+        },
+        pageChange(val){
+          this.pageNo=val;
+          this.getLists();
+        },
+        pageSizeChange(val){
+          this.pageSize=val;
+          this.getLists();
+        }
+      },
+      mounted(){
+          this.getOrgan();
+          this.getLists();
+      }
+    }
+</script>
+
+<style scoped>
+
+</style>

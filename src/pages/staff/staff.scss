@@ -8,7 +8,7 @@
   }
 }
 .form-ul{
-  li{
+  &>li{
     padding: 4px 0;
     display: flex;
     flex-wrap: nowrap;
@@ -24,9 +24,14 @@
   }
 }
 .service-lists{
-  li{
-    padding: 10px 20px;
+  .service-tag{
+    padding: 5px 15px;
     display: inline-block;
+    margin: 5px;
+    user-select: none;
+    border: 1px solid #2d8cf0;
+    color: #2d8cf0;
+    border-radius:4px;
   }
 }
 .form-ul_column2{
@@ -34,8 +39,12 @@
   flex-wrap: wrap;
   li{
     flex: 50% 0 0;
+    text-align:center;
     padding: 4px 15px;
     box-sizing: border-box;
     white-space: nowrap;
+    &>span{
+      color: #2d8cf0;
+    }
   }
 }

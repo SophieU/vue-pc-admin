@@ -5,24 +5,8 @@
         <div class="card-title">质保信息</div>
       </div>
       <div class="card-body">
-        <table class="native-table">
-          <thead>
-          <tr>
-            <th>生效日期</th>
-            <th>项目类型</th>
-            <th>项目名称</th>
-            <th>失效日期</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>2018/08/23  20:00</td>
-            <td>辅料</td>
-            <td>软管，PVC25</td>
-            <td>2018/08/28  20:39:40</td>
-          </tr>
-          </tbody>
-        </table>
+        <Table :columns="warrantyColumn" :data="warrantyList"></Table>
+
       </div>
     </div>
     <div class="card no-border">
@@ -30,40 +14,80 @@
         <div class="card-title">售后记录</div>
       </div>
       <div class="card-body">
-        <table class="native-table">
-          <thead>
-          <tr>
-            <th>日期</th>
-            <th>处理人</th>
-            <th>状态</th>
-            <th>处理凭据</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>2018/08/23  20:00</td>
-            <td>张某</td>
-            <td>已完成</td>
-            <td>查看</td>
-          </tr>
-          </tbody>
-          <tfoot>
-          <tr>
-            <td colspan="4">
-              <h5>辅材使用：</h5>
-              <div>名称：软管；型号：PVC25；单位：1m；数量：5</div>
-            </td>
-          </tr>
-          </tfoot>
-        </table>
+        <Table :columns="afterColumn" :data="afterSaleList"></Table>
+
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import expandRow from './expand-table';
     export default {
-        name: "after-service"
+        name: "after-service",
+      data(){
+          return {
+            warrantyList:[],
+            afterSaleList:[],
+            id:'',
+            warrantyColumn:[
+              {title:'生效日期',key:'effectiveTime',align:'center'},
+              {title:'项目类型',key:'planType',align:'center'},
+              {title:'项目名称',key:'planName',align:'center'},
+              {title:'失效日期',key:'expiryTime',align:'center'},
+            ],
+            afterColumn:[
+              {
+                type: 'expand',
+                width: 50,
+                render: (h, params) => {
+                  return h(expandRow, {
+                    props: {
+                      materialLists: params.row.materialList
+                    }
+                  })
+                }
+              },
+              {title:'日期',key:'createTime',align:'center'},
+              {title:'处理人',key:'serviceUserName',align:'center'},
+              {title:'状态',key:'afterSaleState',align:'center'},
+              {title:'处理凭据',align:'center',render:(h,params)=>{
+                let _this = this;
+                    return h('Button',{
+                      props:{
+                        type:'text',
+                        size:'small'
+                      },
+                      on:{
+                        click:()=>{
+                          let id= _this.id;
+                          _this.$route.push({name:'orderProve',params:{id:id}})
+                        }
+                      }
+                    },'查看')
+                }},
+            ]
+          }
+      },
+      methods:{
+          getAfter(id){
+            this.$http.get(`/repair/order/after/sale/list?id=${id}`)
+              .then(res=>{
+                if(res.data.code===0){
+                  let data = res.data.data;
+                  this.warrantyList=data.warrantyList;
+                  this.afterSaleList=data.afterSaleList;
+                }else{
+                  console.log('售后获取失败：'+res.data.msg);
+                }
+              })
+          }
+      },
+      mounted(){
+          let id = this.$route.query.id;
+          this.id=id;
+          this.getAfter(id);
+      }
     }
 </script>
 

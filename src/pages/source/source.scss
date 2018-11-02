@@ -36,16 +36,20 @@
 
 .new-inventory{
   .inventory-step{
-    text-align: center;
-    span,a{
-      display: inline-block;
-      padding: 5px 15px 6px;
-      vertical-align: top;
+    justify-content: center;
+    display:flex;
+    align-items: center;
+    .step-content{
+      padding: 5px 15px;
     }
-    .text-blue{
-      font-size: 14px;
+    .step-target{
+      display: block;
+      color: #2d8cf0;
+      cursor: pointer;
+      user-select: none;
     }
     .step{
+      text-align: center;
       width: 34px;
       height: 34px;
       padding: 0;

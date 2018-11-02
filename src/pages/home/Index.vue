@@ -12,7 +12,7 @@
               <info-card
                 id-name="today_new_order"
                 title="今日新增工单"
-                :end-val="20"
+                :end-val="count.todayNum"
                 icon="md-list"
               ></info-card>
             </Col>
@@ -20,7 +20,7 @@
               <info-card
                 id-name="month_new_order"
                 title="本月新增工单"
-                :end-val="120"
+                :end-val="count.currentMonthNum"
                 color="#FED478"
                 ></info-card>
             </Col>
@@ -28,7 +28,7 @@
               <info-card
                 id-name="history_order"
                 title="历史工单"
-                :end-val="2220"
+                :end-val="count.totalNum"
                 color="#68D576"
                 icon="ios-filing-outline"></info-card>
             </Col>
@@ -56,7 +56,7 @@
       </Col>
     </Row>
     <Row>
-      <Col :lg="24" :md="12" :sm="24">
+      <Col :lg="24" :md="24" :sm="24">
         <Card :style="{width:'100%'}">
           <p slot="title">工单趋势</p>
           <div class="weekChart" style="height: 300px;">
@@ -88,20 +88,39 @@
           orderWeekTrend,
           createOrder,
           initiateService,
-          cancelOrder
+          cancelOrder,
         },
         data(){
           return{
             createModal:false,
             initiateService:false,
             cancelModal:false,
+            count:{
+              "todayNum": 0,
+              "currentMonthNum": 0,
+              "totalNum": 0
+            }, //首页数据
           }
         },
       methods:{
           closeModal(model){
             this[model]=false;
-          }
+          },
+          getCount(){
+            this.$http.get(`/index/order/count`)
+              .then(res=>{
+                if(res.data.code===0){
+                  this.count=res.data.data;
+                }else{
+                  console.log('首页统计数据：'+res.data.msg);
+                }
+              })
+          },
+      },
+      mounted(){
+          this.getCount();
       }
+
     }
 </script>
 
