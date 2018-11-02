@@ -203,15 +203,7 @@
           // delete filterForm.dateRange;
           let id = this.id;
           this.$http.post(`/server/order/earning/list/export?id=${id}&${param}`,null,{responseType:'blob'}).then(res=>{
-            let blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'}); //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
-            let downloadElement = document.createElement('a');
-            let href = window.URL.createObjectURL(blob); //创建下载的链接
-            downloadElement.href = href;
-            downloadElement.download = '收益列表.xlsx'; //下载后文件名
-            document.body.appendChild(downloadElement);
-            downloadElement.click(); //点击下载
-            document.body.removeChild(downloadElement); //下载完成移除元素
-            window.URL.revokeObjectURL(href); //释放掉blob对象
+            util.downloadExcel(res);
 
           })
         }

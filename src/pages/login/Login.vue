@@ -36,8 +36,7 @@
 <script>
   import iView from 'iview'
   import Cookie from 'js-cookie'
-  import {appRouter} from '@/router/router'
-
+  import util from '../../libs/util'
     export default {
         name: "Login",
         data:()=>{
@@ -89,11 +88,13 @@
                       content:'登录成功，页面即将跳转...',
                       duration:0
                     });
-                    setTimeout(()=>{
-                      this.$router.push({name:'home'});
-                    },1000)
-                    this.getBaseInfo();
+                    //设置菜单权限
+                    this.$store.commit('updateMenulist');
+                    // this.getBaseInfo();
                     this.getQiNiuToken();
+                    setTimeout(()=>{
+                     this.$router.push({name:'home'});
+                   },1000)
                   }else{
                     this.$Message.error(res.data.msg);
                   }
@@ -113,36 +114,47 @@
             }
           })
         },
-        getBaseInfo(){
+        /*getBaseInfo(){
 
           this.$http.get(`/user/basicInfo`).then(res=>{
             let menuList=[];
             if(res.data.code===0){
-              let menu =res.data.data.resourceList;
-              console.log(menu)
-              menuList= appRouter.map(item=>{
-
-                item.children.forEach(child=>{
-
-                  menu.map(menuItem=>{
-                    if(menuItem.path===child.name){
-                      child.meta.hideInMenu=false;
-                      item.meta.hideInMenu=false;
-                    }else if(child.children&&child.children.length>0){
-                      child.children.map(ground=>{
-                        menu.map(groundMenu=>{
-                          if(groundMenu.path===ground.name){
-                            ground.meta.hideInMenu=false;
-                            child.meta.hideInMenu=false;
-                            item.meta.hideInMenu=false;
-                          }
-                        })
-                      })
-                    }
-                  })
-                });
-                return item;
+              let menu =res.data.data.resourceList.map(item=>{
+                return item.path;
               });
+              // order_filter
+              let menuHasAdd = []; //用于存放已添加的菜单项name（外层）
+              appRouter.forEach(item=>{
+                let childRouter = item.children; //必然存在
+                childRouter.forEach(child=>{
+                  if(menu.indexOf(child.name)>-1){
+                    item.meta.hideInMenu=false;
+                    child.meta.hideInMenu=false;
+                    if(menuHasAdd.indexOf(item.name)<0){
+                      menuList.push(item);
+                      menuHasAdd.push(item.name);
+                    }
+                  }else if(child.children&&child.children.length>0){
+
+                    let ground=child.children;
+                    ground.forEach(groundItem=>{
+                      if(menu.indexOf(groundItem)>-1){
+                        item.meta.hideInMenu=false;
+                        child.meta.hideInMenu=false;
+                        groundItem.meta.hideInMenu=false;
+                        if(menuHasAdd.indexOf(item.name)<0){
+                          menuList.push(item);
+                          menuHasAdd.push(item.name);
+                        }
+                      }
+                    })
+                  }
+                });
+
+              });
+
+              console.log(menuList);
+
               // console.log(menuList)
             }else{
               menuList=appRouter;
@@ -150,6 +162,16 @@
             }
             this.$store.commit('updateMenulist',menuList);
           });
+        },*/
+        iteratorRouter(obj,cb){
+          if(obj instanceof Array){
+            obj.forEach(item=>{
+              typeof cb==='function'&&cb(item);
+              if(item.children&&item.children.length>0){
+                this.iteratorRouter(item.children,cb);
+              }
+            })
+          }
         }
 
       },

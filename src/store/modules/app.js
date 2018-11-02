@@ -2,6 +2,7 @@ import {otherRouter,appRouter} from '@/router/router'
 import util from '@/libs/util'
 import Vue from 'vue'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const app = {
   state:{
@@ -60,13 +61,88 @@ const app = {
       state.tagsList.push(...list);
     },
     //更新菜单，以及权限设定
-    updateMenulist(state,menuLists){
-      // let accessCode = 102;
-      // let menuList = [];
+    updateMenulist(state){
+      let menuList = [];
+      axios.get(`/user/basicInfo`).then(res=>{
+        if(res.data.code===0){
+          Cookies.set('username',res.data.data.loginName);
+          //权限菜单名数组
+          let menu= res.data.data.resourceList.map(item=>{
+            return item.path;
+          });
+
+//筛选
+          let menuHasAdd = []; //用于存放已添加的菜单项name（外层）
+         menuList= appRouter.filter(item=>{
+            let childRouter = item.children; //必然存在
+
+           if(item.meta.single){
+             if(menu.indexOf(item.children[0].name)>-1){
+               return true;
+             }else if(item.children[0].name==='home'){
+                return true;
+              }
+           }else{
+             let childFilter = childRouter.filter(child=>{
+               //无三级菜单
+               if(!child.children){
+                 if(menu.indexOf(child.name)>-1){
+                  return true;
+                 }
+               }else{
+                 let groundRouter = child.children;
+                 if(child.meta.hideChild){
+                   if(menu.indexOf(child.children[0].name)>-1){
+                     return true
+                   }
+                 }else{
+                  let groundFilter =  groundRouter.filter(ground=>{
+                     if(menu.indexOf(ground.name)>-1){
+                       return true;
+                     }
+                   });
+                  if(groundFilter.length>0){
+                    child.children=groundFilter;
+                    return true;
+                  }
+                 }
+               }
+             });
+             if(childFilter.length>0){
+               return true;
+             }
+
+             /*let filterRes = false;
+             childRouter.forEach(child=>{
+               //无三级菜单
+               if(!child.children){
+                if(menu.indexOf(child.name)>-1){
+                  filterRes = true;
+                }
+               }else if(child.children&&child.children.length>1){
+                 let groundRouter = child.children;
+                 if(child.meta.hideChild){
+                   if(menu.indexOf(child.children[0].name)>-1){
+                     filterRes=true;
+                   }
+                 }
+                 groundRouter.forEach(ground=>{
+
+                 })
+               }
+             })
+             return filterRes;*/
+           }
 
 
-      state.menuList=menuLists;
+          });
 
+          state.menuList=menuList;
+        }else{
+          console.log('获取菜单权限失败')
+          state.menuList=menuList;
+        }
+      });
     },
     //展开子菜单
     addOpenSubmenu (state, name) {

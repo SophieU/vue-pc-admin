@@ -96,33 +96,15 @@
           let query =`pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
           delete filterForm.dateRange;
           let param = util.formatterParams(filterForm);
-          this.$http.post(`/repair/material/check/order/list/export?${query}'&'${param}`,{responseType:'blob'})
+          this.$http.post(`/repair/material/check/order/list/export?${query}&${param}`,null,{responseType:'blob'})
             .then(res=>{
-              let blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'}); //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
-              let downloadElement = document.createElement('a');
-              let href = window.URL.createObjectURL(blob); //创建下载的链接
-              downloadElement.href = href;
-              downloadElement.download = '辅材盘点列表.xlsx'; //下载后文件名
-              document.body.appendChild(downloadElement);
-              downloadElement.click(); //点击下载
-              document.body.removeChild(downloadElement); //下载完成移除元素
-              window.URL.revokeObjectURL(href); //释放掉blob对象
+              //这里res.data是返回的blob对象
+              util.downloadExcel(res)
             })
-          // window.location.href=this.downLink;
         },
         newInvent(){
           this.$router.push({name:'inventoryNew'})
         },
-        /*getOrgan(){
-          this.$http.get(`/repair/material/check/order/departmentList`)
-            .then(res=>{
-              if(res.data.code===0){
-                this.departmentLists=res.data.data;
-              }else{
-                console.log('辅料盘点组织列表获取失败：'+res.data.msg);
-              }
-            })
-        },*/
         getLists(filter){
           let params= `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
           if(filter){

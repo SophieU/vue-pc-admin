@@ -378,6 +378,29 @@ util.getDepartment=function(cb){
     })
 };
 
+//下载excel文件
+util.downloadExcel=function(res,fileName){
+  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'}); //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
+  let downloadElement = document.createElement('a');
+  let href = window.URL.createObjectURL(blob); //创建下载的链接
+  downloadElement.href = href;
+  let header = res.headers['content-disposition'];
+  // attachment; filename=è¾æçç¹åè¡¨.xls
+  header = header.split(';');
+  let headerObject={};
+  header.forEach(item=>{
+    let param=item.split('=');
+    let key =param[0].trim();
+    let val = param[1]?param[1]:'';
+     headerObject=Object.assign({},headerObject,{[key]:val});
 
+  });
+  let resFileName = decodeURI(headerObject['filename']);
+  downloadElement.download =resFileName?resFileName:fileName; //下载后文件名
+  document.body.appendChild(downloadElement);
+  downloadElement.click(); //点击下载
+  document.body.removeChild(downloadElement); //下载完成移除元素
+  window.URL.revokeObjectURL(href); //释放掉blob对象
+}
 
 export default util;

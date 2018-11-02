@@ -8,7 +8,7 @@
         <Icon :type="item.children[0].icon || item.icon" :size="16" :key="'menuicon' + item.name"></Icon>
         <span class="layout-text" :key="'title' + item.name">{{ item.children[0].title }}</span>
       </MenuItem>
-      <Submenu v-else  :name="item.name" :key="item.name">
+      <Submenu v-else  :name="item.name" :key="item.name" v-show="!item.meta.hideInMenu">
         <template slot="title">
           <Icon  :type="item.icon" :size="16"></Icon>
           <span class="layout-text">{{item.title}}</span>

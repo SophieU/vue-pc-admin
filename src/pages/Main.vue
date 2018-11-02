@@ -112,7 +112,7 @@
           this.collapse=!this.collapse;
         },
         init(){
-          // this.$store.commit('updateMenulist');
+          this.$store.commit('updateMenulist');
           let pathArr = util.setCurrentPath(this,this.$route.name);
           if(pathArr.length>=3){
             let arr = [pathArr[0].name,pathArr[1].name];
