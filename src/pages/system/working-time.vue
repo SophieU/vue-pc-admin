@@ -76,7 +76,7 @@
                       </Select>
                     </td>
                     <td>
-                      <Button type="primary" size="small" @click="saveNew('general')">保存</Button>
+                      <Button :loading="loadingNew" type="primary" size="small" @click="saveNew('general')">保存</Button>
                       <Button size="small" @click="cancelAdd('general')">取消</Button>
                     </td>
                   </tr>
@@ -160,7 +160,7 @@
                           </Select>
                         </td>
                         <td>
-                          <Button type="primary" size="small" @click="saveNew('backup')">保存</Button>
+                          <Button :loading="loadingNew" type="primary" size="small" @click="saveNew('backup')">保存</Button>
                           <Button size="small" @click="cancelAdd('backup')">取消</Button>
                         </td>
                       </tr>
@@ -187,13 +187,11 @@
           backupCustom:[],
           newGeneral:[],   //新增特殊日期（普通），用于过渡
           newCustom:[],
-
+          loadingNew:false,
         }
       },
         methods:{
-          test(val){
-            console.log(val)
-          },
+
           getTime(){
             this.$http.get(`/repair/work/time/config/info`)
               .then(res=>{
@@ -310,14 +308,27 @@
               data = this.newCustom[0];
               data.isSlave='Y';
             }
+          if(data.name.length<1){
+              this.$Message.info('特殊日期名称不能为空');
+              return false;
+          }
+           if(data.dateRange.length<=0){
+              this.$Message.info('请选择特殊日期范围');
+              return false;
+          }
+          if(!data.isWorkday){
+              this.$Message.info('请选择是否工作日');
+              return false;
+          }
+            this.loadingNew=true;
             let param = {
               "name":data.name,
               "isSlave":data.isSlave,
               "beginTime":util.formateTime(data.dateRange[0]),
               "endTime":util.formateTime(data.dateRange[1]),
               "isWorkday":data.isWorkday
-            }
-            console.log(param)
+            };
+
             this.$http.post(`/repair/work/time/custom/config/save`,{
                 ...param
               }).then(res=>{
@@ -331,6 +342,7 @@
                  /* this.newGeneral=[];
                   this.newCustom=[];*/
                 }
+                this.loadingNew=false;
             })
           },
           cancelAdd(type){

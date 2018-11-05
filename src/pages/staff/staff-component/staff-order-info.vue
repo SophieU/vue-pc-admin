@@ -154,7 +154,13 @@
                 })
           },
         clearFilter(name){
-            this.$refs[name].resetFields();
+            this.filterForm={
+              dateRange:[],
+              orderStateList:[],
+              repairCategoryId:'',
+              startDate:'',
+              endDate:'',
+            };
             this.getLists();
             this.filter=false;
         },

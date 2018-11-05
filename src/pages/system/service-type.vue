@@ -67,7 +67,7 @@
         </div>
         <div slot="footer">
           <Button @click="serviceModal=false">取消</Button>
-          <Button @click="saveType" type="primary">{{modalTitle===1?'添加':'保存'}}</Button>
+          <Button :loading="loadingSend" @click="saveType" type="primary">{{modalTitle===1?'添加':'保存'}}</Button>
         </div>
       </Modal>
       <!--报修筛选-->
@@ -90,7 +90,7 @@
             <Input v-model="serviceFilter.name"/>
           </FormItem>
           <FormItem label="质保天数大于0">
-            <i-switch v-model="serviceFilter.warrantyPeriodFlag"  />
+            <i-switch v-model="serviceFilter.warrantyPeriodFlag" :true-value="'Y'" :false-value="''" />
           </FormItem>
         </Form>
 
@@ -206,9 +206,10 @@
             },
             serviceFilter:{
               name:'',
-              warrantyPeriodFlag:false,
+              warrantyPeriodFlag:'Y',
               repairCategoryId:''
-            }
+            },
+            loadingSend:false,
           }
       },
       methods:{
@@ -230,7 +231,7 @@
             let data =this.serviceFilter;
             let filter = {
               name:data.name,
-              warrantyPeriodFlag:data.warrantyPeriodFlag?'Y':'',
+              warrantyPeriodFlag:data.warrantyPeriodFlag,
               repairCategoryId:data.repairCategoryId
             };
              this.getServiceList(filter);
@@ -240,7 +241,7 @@
         clearFilter(){
           this.serviceFilter={
             name:'',
-            warrantyPeriodFlag:true,
+            warrantyPeriodFlag:'Y',
             repairCategoryId:''
           };
           this.filter=false;
@@ -288,6 +289,7 @@
         saveType(){
             let typeForm= this.typeForm;
             let url='';
+            this.loadingSend=true;
             if(typeForm.id.length>0){
               url='/repair/service/category/edit'
             }else{
@@ -303,6 +305,7 @@
                 this.$Message.error(res.data.msg);
               }
               this.serviceModal=false;
+              this.loadingSend=false;
             });
         },
         deleteType(id){
@@ -313,7 +316,7 @@
                   this.$store.commit('setDeleteModal',{model:false});
                   this.getServiceList();
                 }else{
-                  this.$Message.info(res.data.msg)
+                  this.$Message.info(res.data.msg);
                   _this.$store.commit('setDeleteModal',{model:false});
                 }
               })
@@ -325,9 +328,10 @@
         },
         //下载excel
         downExcel(){
-            let baseUrl=localStorage.getItem('baseURL');
-            let url = baseUrl+'/repair/service/category/import/template';
-            window.location.href=url;
+           this.$http.get(`/repair/service/category/import/template`,null,{reponseType:'blob'})
+             .then(res=>{
+               util.downloadExcel(res)
+             })
         },
         //上传回调
         uploadSuccess(res,file,fileLists){

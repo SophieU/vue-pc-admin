@@ -59,6 +59,7 @@
       </div>
     </div>
     <delete-modal :model="showDelete.model" :callback="showDelete.callback"></delete-modal>
+    <upload-progress :model="uploadProgressVisible" :percent="uploadProgressPercent"></upload-progress>
   </div>
 </template>
 
@@ -69,13 +70,15 @@
   import util from '../libs/util'
   import Cookies from 'js-cookie'
   import deleteModal from './main-components/delete-alert'
+  import uploadProgress from './main-components/upload-progress'
     export default {
         name: "Main",
       components:{
         sidebar,
         breadcrumbNav,
         messageTip,
-        deleteModal
+        deleteModal,
+        uploadProgress
       },
       data:()=>{
           return {
@@ -85,6 +88,12 @@
       },
 
       computed:{
+          uploadProgressVisible(){
+            return this.$store.state.app.uploadProgressVisible
+          },
+          uploadProgressPercent(){
+            return this.$store.state.app.uploadProgressPercent
+          },
           cachePage(){
             return this.$store.state.app.cachePage;
           },
@@ -160,8 +169,8 @@
       watch:{
           '$route'(to){
             this.$store.commit('setCurrentPageName',to.name);
-            let pathArr = util.setCurrentPath(this,to.name);
-            if(pathArr.length>=3){
+           let pathArr = util.setCurrentPath(this,to.name);
+             if(pathArr.length>=3){
               let arr = [pathArr[0].name,pathArr[1].name];
               this.$store.commit('addOpenSubmenu',arr,true); //展开子菜单
             }else if(pathArr.length>=2){
@@ -170,6 +179,19 @@
 
             localStorage.currentPageName = to.name;
           },
+        uploadProgressVisible(val){
+          if(val){
+            let percent=0;
+            let timer = setInterval(()=>{
+              if(percent>=95){
+                clearTimeout(timer);
+              }else{
+                percent=percent+5;
+              }
+              this.$store.commit('setUploadPercent',percent);
+            },100);
+          }
+        }
       }
     }
 </script>

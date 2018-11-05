@@ -8,7 +8,7 @@
           <Button @click="$router.back()">返回上一页</Button>
         </div>
         <div class="pull-right">
-          <Button @click="sureOut" type="primary">确定出库</Button>
+          <Button :loading="loadingSave" @click="sureOut" type="primary">确定出库</Button>
         </div>
       </div>
 
@@ -115,6 +115,8 @@
         name: "new-out",
       data(){
           return {
+            sureAdd:false, //添加辅材，loading控制
+            loadingSave:false,
             showModal:false,
             outputForm:{
               sn:'',
@@ -130,9 +132,7 @@
               pageNo:1,
             },
             repairType:[],//报修分类列表
-            materialCheckedlists:[
-
-            ],
+            materialCheckedlists:[ ],
             materialTotal:0, //辅材搜索，列表总条数
             materialLists:[], //辅材列表
             materialCheck:[], //弹窗已选辅材
@@ -268,6 +268,7 @@
           return lists;
         },
         sureOut(){
+          this.loadingSave=true;
           let form = this.outputForm;
           let detailList = this.materialCheckedlists;
           let detailValid = true;
@@ -281,7 +282,10 @@
             }
             return item;
           });
-          if(!detailValid) return;
+          if(!detailValid){
+            this.loadingSave=false;
+            return;
+          }
           this.$refs['outForm'].validate(valid=>{
             if(valid){
               form.detailList=detailList.map(item=>{
@@ -296,6 +300,7 @@
               this.$http.post(`/repair/material/output/order/add`,{
                 ...form
               }).then(res=>{
+                this.loadingSave=false;
                 if(res.data.code===0){
                   this.$Message.success('保存成功');
                   this.$router.push({name:'output'})
@@ -303,7 +308,8 @@
                   this.$Message.error(res.data.msg);
                 }
               })
-
+            }else{
+              this.loadingSave=false;
             }
           })
         }

@@ -188,7 +188,7 @@
             this.getCount(filterForm);
         },
         clearFilter(){
-          this.$refs['filterForm'].resetFields();
+
           this.filterForm={
             repairCategoryId:'',
             serverName:'',

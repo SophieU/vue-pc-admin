@@ -60,7 +60,7 @@
       </div>
       <div slot="footer">
         <Button @click="activeModal=false">取消</Button>
-        <Button @click="sureSend" type="primary">发送至服务网点</Button>
+        <Button :loading="loadingSubmit" @click="sureSend" type="primary">发送至服务网点</Button>
       </div>
     </Modal>
   </div>
@@ -81,6 +81,7 @@
             }
           };
           return{
+            loadingSubmit:false,
             loadingSearch:false,
             acceptFee:false, //接受上门费
             searchTelRes:[],
@@ -173,7 +174,7 @@
             })
         },
         sureSend(){
-
+            this.loadingSubmit=true;
             this.$refs['newOrder'].validate(valid=>{
               if(valid){
                 let order = {...this.newOrder};
@@ -201,6 +202,7 @@
                    this.$Message.error('保存失败：'+res.data.msg);
                    this.activeModal=false;
                  }
+                 this.loadingSubmit=false;
                })
               }
             })

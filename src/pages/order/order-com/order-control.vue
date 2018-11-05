@@ -96,12 +96,12 @@
           let cancleAble=["待上门","待分配"];
           let serviceAble=["已完成"];
           let isInWarranty=this.$route.query.isWarranty;
-          console.log(state)
           let selectLists=[];
           if(cancleAble.indexOf(state)>-1){
             selectLists.push({name:'取消订单',value:'cancel'})
           }
-          if(serviceAble.indexOf(state)>-1&&isInWarranty==='是'){
+        // &&isInWarranty==='是'
+          if(serviceAble.indexOf(state)>-1){
             selectLists.push({name:'发起售后',value:'after'})
           }
           this.selectLists=selectLists;

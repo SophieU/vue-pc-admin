@@ -151,7 +151,7 @@
           this.getLists();
         },
         clearFilter(){
-          this.$refs['filterForm'].resetFields();
+
           this.filterForm={
               departmentId:'',
               inputType:'',

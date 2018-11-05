@@ -44,7 +44,7 @@
               <Row>
                 <Col span="4">账号状态</Col>
                 <Col span="12">
-                  <i-switch  :disabled="view" size="large" v-model="accountForm.isOpen">
+                  <i-switch  :disabled="view" size="large" :true-value="'Y'" :false-value="'N'" v-model="accountForm.isOpen">
                     <span slot="open">开启</span>
                     <span slot="close">关闭</span>
                   </i-switch>
@@ -57,7 +57,7 @@
         <div slot="footer">
           <Button  @click="activeModal=false">取消</Button>
           <Button v-if="view" type="primary" @click="view=false;modalTitle='编辑账号'">编辑</Button>
-          <Button v-if="!view" type="primary" @click="saveAccount">确定</Button>
+          <Button :loading="loadingSend" v-if="!view" type="primary" @click="saveAccount">确定</Button>
         </div>
       </Modal>
     </div>
@@ -76,6 +76,7 @@
             }
           };
           return{
+            loadingSend:false,
             editPwdInput:false,//修改密码
             view:false, //查看状态
             pageNo:1,
@@ -149,10 +150,10 @@
             roleLists:[],
             accountForm:{
               loginName:'',
-              password:'',
+              password:'11111', //默认待清除密码
               mobile:'',
               type:'',
-              isOpen:true,
+              isOpen:'Y',
               roleId:'',
               callCenterId:'',
               id:'',
@@ -164,27 +165,27 @@
                 {required:true,message:'请输入手机号',trigger:'blur'},
                 {validator:validateTel,trigger:'blur'}
               ],
-              roleId:[{required:true,message:'请选择账户角色',trigger:'change'}]
+              roleId:[{required:true,message:'请选择账户角色',trigger: 'change'}]
             }
           }
 
       },
       methods:{
         openModalNew(){
-          this.activeModal=true;
           this.view=false;
-          this.editPwdInput=true;
           this.modalTitle='新建账号';
           this.accountForm={
-              loginName:'',
-              password:'',
-              mobile:'',
-              isOpen:true,
-              roleId:'',
-              id:'',
-              callCenterId:'',
-              type:''
-          }
+            loginName:'',
+            password:'',
+            mobile:'',
+            isOpen:'Y',
+            roleId:'',
+            id:'',
+            callCenterId:'',
+            type:''
+          };
+          this.activeModal=true;
+          this.editPwdInput=true;
         },
         getLists(){
           this.$http.get(`/user/list`)
@@ -208,8 +209,9 @@
             .then(res=>{
               if(res.data.code===0){
                 this.accountForm=res.data.data;
+                this.accountForm.password='11111'; //默认待清除密码
 
-                this.accountForm.isOpen=this.accountForm.isOpen==='Y'?true:false;
+                // this.accountForm.isOpen=this.accountForm.isOpen==='Y'?true:false;
               }else{
                 this.$Message.error(res.data.msg);
               }
@@ -234,17 +236,13 @@
           }else{
             url='/user/add'
           }
+          this.loadingSend=true;
           this.$refs['accountForm'].validate(valid=>{
             if(valid){
-              this.$http.post(url,{
-                loginName:account.loginName,
-                password:this.editPwdInput?account.password:'',
-                mobile:account.mobile,
-                isOpen:account.isOpen?'Y':'N',
-                roleId:account.roleId,
-                id:account.id,
-                callCenterId: account.callCenterId,
-              }).then(res=>{
+              if(account.password==='11111'){
+                delete account.password;
+              }
+              this.$http.post(url,{...account}).then(res=>{
                 if(res.data.code===0){
                   this.$Message.success('保存成功');
                   this.activeModal=false;
@@ -253,7 +251,10 @@
                 }else{
                   this.$Message.error(res.data.msg);
                 }
-              })
+                this.loadingSend=false;
+              });
+            }else{
+              this.loadingSend=false;
             }
           })
 
@@ -264,7 +265,18 @@
         },
         modalChange(visible){
           if(!visible){
+            this.accountForm={
+              loginName:'',
+              password:'',
+              mobile:'',
+              isOpen:'Y',
+              roleId:'',
+              id:'',
+              callCenterId:'',
+              type:''
+            };
             this.$refs['accountForm'].resetFields();
+
           }
         }
 

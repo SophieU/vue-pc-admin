@@ -14,7 +14,7 @@
           <span class="layout-text">{{item.title}}</span>
         </template>
         <template v-for="child in item.children" >
-          <MenuItem :name="child.name?child.name:child.children[0].name" :key="'menuitem'+child.name+child.path" v-if="!child.children||child.meta.hideChild">
+          <MenuItem v-show="!child.meta.hideInMenu" :name="child.name?child.name:child.children[0].name" :key="'menuitem'+child.name+child.path" v-if="!child.children||child.meta.hideChild">
             <Icon size="16" :type="child.icon" :key="'icon'+child.name"></Icon>
             <span class="layout-text" :key="'title'+child.name">{{child.title}}</span>
           </MenuItem>

@@ -1,4 +1,5 @@
-import {otherRouter,appRouter} from '@/router/router'
+// import {otherRouter,appRouter} from '@/router/router'
+import {appRouter} from '@/router/router'
 import util from '@/libs/util'
 import Vue from 'vue'
 import axios from 'axios'
@@ -23,12 +24,12 @@ const app = {
     ],
     menuList:[],//菜单
     routers:[
-      otherRouter,
+      // otherRouter,
       ...appRouter
     ], //路由
     // dontCache:['notice'], //这里定义不要缓存的页面，如notice，见router中的name
     // curVillage:localStorage.getItem('village'), //当前选中的小区
-    tagsList:[...otherRouter.children],
+    // tagsList:[...otherRouter.children],
     staffServiceType:[], //员工服务类型id列表
     staffAccount:{},//员工账号信息
     deleteModal:{
@@ -36,8 +37,20 @@ const app = {
       callback:function(){
       }
     }, //删除弹窗
+    uploadProgressPercent:0,
+    uploadProgressVisible:false,
+   /* uploadProgress:{//上传进度动画
+      visible:false,
+      percent:0,
+    }*/
   },
   mutations:{
+    setUploadProgress(state,visible){
+      state.uploadProgressVisible=visible;
+    },
+    setUploadPercent(state,percent){
+      state.uploadProgressPercent=percent;
+    },
     setDeleteModal(state,control){
       if(control.model){
         state.deleteModal={
@@ -57,9 +70,9 @@ const app = {
     setStaffAccount(state,account){
       state.staffAccount=account;
     },
-    setTagsList (state, list) {
-      state.tagsList.push(...list);
-    },
+    // setTagsList (state, list) {
+    //   state.tagsList.push(...list);
+    // },
     //更新菜单，以及权限设定
     updateMenulist(state){
       let menuList = [];
@@ -235,7 +248,8 @@ const app = {
 
     //设置已打开的菜单
     setOpenedList (state) {
-      state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [otherRouter.children[0]];
+      // otherRouter.children[0]
+      state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [];
     },
     setCurrentPath (state, pathArr) {
       state.currentPath = pathArr;
@@ -249,7 +263,6 @@ const app = {
         state.cachePage.push(tagObj.name);
         localStorage.cachePage = JSON.stringify(state.cachePage);
       }
-      console.log(tagObj)
       state.pageOpenedList.push(tagObj);
       localStorage.pageOpenedList=JSON.stringify(state.pageOpenedList);
     }

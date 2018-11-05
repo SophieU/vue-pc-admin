@@ -90,7 +90,7 @@
         </div>
         <div slot="footer">
           <Button @click="materialsModal=false">取消</Button>
-          <Button @click="save" type="primary">{{modalTitle===1?'添加':'保存'}}</Button>
+          <Button :loading="loadingSend" @click="save" type="primary">{{modalTitle===1?'添加':'保存'}}</Button>
         </div>
       </Modal>
       <!--报修筛选-->
@@ -128,9 +128,9 @@
 
       </Drawer>
       <!--正在上传中-->
-      <Modal v-model="uploadingModal" title="正在上传中..." :mask-closable="false" :footer-hide="true" :closable="false">
+      <!--<Modal v-model="uploadingModal" title="正在上传中..." :mask-closable="false" :footer-hide="true" :closable="false">
         <Progress :percent="uploadPercent" status="active" />
-      </Modal>
+      </Modal>-->
     </div>
 </template>
 
@@ -156,6 +156,7 @@
       },
       data(){
           return {
+            loadingSend:false,
             uploadingModal:false,
             uploadPercent:0, // 上传进度百分比
             modalTitle:'新建', //1：新建，0：编辑
@@ -336,8 +337,10 @@
             })
         },
         download(){
-            let url = baseUrl+'/repair/material/import/template';
-            window.location.href=url;
+          this.$http.get(`/repair/material/import/template`,null,{responseType:'blob'})
+            .then(res=>{
+              util.downloadExcel(res);
+            })
         },
         uploadSuccess(res){
           setTimeout(()=>{
@@ -346,25 +349,22 @@
             }else{
               this.$Message.error(res.msg);
             }
-            this.uploadPercent=100;
-            this.uploadingModal=false;
+           /* this.uploadPercent=100;
+            this.uploadingModal=false;*/
+           this.$store.commit('setUploadProgress',false);
+           this.$store.commit('setUploadPercent',100);
             this.getLists();
           },1000)
         },
         uploading(){
-          this.uploadingModal=true;
-          let _this=this;
-          let timer = setInterval(()=>{
-            if(_this.uploadPercent>=95){
-              clearTimeout(timer);
-            }else{
-              _this.uploadPercent=_this.uploadPercent+5;
-            }
-          },100);
+          // this.uploadingModal=true;
+          this.$store.commit('setUploadProgress',true);
+          this.$store.commit('setUploadPercent',0);
+
+
         },
         modalHide(value){
             if(!value){
-              this.$refs['typeForm'].resetFields();
               this.typeForm={
                 id:'',
                 repairCategoryId:'',
@@ -375,14 +375,16 @@
                 employeeCommission:0,
                 charges:0,
                 image:'',
-              }
+              };
               this.latestPrice='';
+              this.$refs['typeForm'].resetFields(); //重置验证
             }
         },
         save(){
             let url = '';
+            this.loadingSend=true;
             this.$refs['typeForm'].validate(valid=>{
-              console.log('辅材分类表：'+valid)
+
               if(valid){
                 let typeForm = this.typeForm;
                 if(typeForm.id.length<=0){
@@ -402,23 +404,16 @@
                     this.$Message.error('保存失败'+res.data.msg);
                     this.materialsModal=false;
                   }
+                  this.loadingSend=false;
                 })
+              }else{
+                this.loadingSend=false;
               }
             })
         },
         filterSubmit(){
           let filter = this.materialsFilter;
 
-          // if(filter.warrantyPeriodFlag){
-          //   filter.warrantyPeriodFlag='Y';
-          // }else{
-          //   delete filter.warrantyPeriodFlag;
-          // }
-          // if(filter.hasImage){
-          //   filter.hasImage='Y';
-          // }else{
-          //   delete filter.hasImage;
-          // }
           this.pageNo=1;
           this.getLists(filter);
         },

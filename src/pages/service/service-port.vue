@@ -20,7 +20,7 @@
           </div>
         </div>
       </Card>
-      <Modal v-model="portSetting" :title="modalTitle+'服务网点'" >
+      <Modal v-model="portSetting" :title="modalTitle+'服务网点'" @on-visible-change="modalHide">
         <Form ref="portSet" :model="portSettingForm" :rules="portSettingRule" :label-width="120" label-position="right">
           <FormItem label="服务网点名称" prop="name">
             <Input :disabled="viewInfo" v-model="portSettingForm.name" class="form-input"/>
@@ -56,7 +56,7 @@
           <div class="inner-center">
             <template  v-if="!viewInfo">
               <Button @click="portSetting=false">取消</Button>
-              <Button @click="saveStation('portSet')" type="primary">确认</Button>
+              <Button :loading="loadingSave" @click="saveStation('portSet')" type="primary">确认</Button>
             </template>
             <!--查看-->
             <template v-else>
@@ -99,6 +99,7 @@
             }
           };
           return{
+            loadingSave:false,
             viewInfo:false, //查看网点信息时，所有项 不可编辑
             modalTitle:'添加',
             pageNo:1,
@@ -206,6 +207,7 @@
         },
         //新增或修改网点
         saveStation(name){
+            this.loadingSave=true;
           let formData= this.portSettingForm;
           let params={
             name:formData.name,
@@ -249,6 +251,7 @@
             }else{
               this.$Message.error('输入有误，表单未提交');
             }
+            this.loadingSave=false;
           })
 
         },
@@ -291,7 +294,7 @@
         //新建网点
         newStation(){
           this.portSettingForm={
-            name:'',
+              name:'',
               address:'',
               phone:'',
               isSlave:false,
@@ -304,7 +307,12 @@
           this.viewInfo=false;
           this.portSetting=true;
         },
+        modalHide(val){
+            if(!val){
+              this.$refs['portSet'].resetFields(); //重置验证信息
 
+            }
+        }
       },
       mounted(){
           this.getLists();

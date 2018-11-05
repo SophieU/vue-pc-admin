@@ -2,7 +2,7 @@
   <Card>
     <ul  class="tab-nav mb-15">
       <li @click="toggleTab(ind)" :class="nav.check?'nav-active':''" v-for="(nav,ind) in orderNav" :key="nav.title">
-        <Badge  :count="nav.count">
+        <Badge  :count="nav.count" :overflow-count="99">
           <span class="nav-title">{{nav.title}}</span>
         </Badge>
       </li>
@@ -240,6 +240,7 @@
         closeModal(param){
           this.showModal=false;
         },
+        //获取工单列表
         getLists(filter){
           let query = `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
           let param =util.formatterParams(filter);
@@ -258,6 +259,7 @@
           })
 
         },
+        //筛选
         filterDateChange(val){
           this.filterForm.createTimeStart=val[0];
           this.filterForm.createTimeEnd=val[1];
@@ -306,22 +308,15 @@
                 this.orderNav=this.orderNav.map(item=>{
                   for(let i=0;i<data.length;i++){
                     let state = data[i].state;
-
-                    let num = data[i].countNum;
                     if(item.state===state){
-                      if(num>99){
-                        item.count='99+';
-                      }else{
-                        item.count=num;
-                      }
+                      let num = parseInt(data[i].countNum);
+                      item.count=num;
                       total+=num;
                     }
+
                   }
                   return item;
                 });
-                if(total>99){
-                  total='99+'
-                }
                 this.orderNav[0].count=total;
               }else{
                 console.log('/repair/order/state/count:'+res.data.msg);

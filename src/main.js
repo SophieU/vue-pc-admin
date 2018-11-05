@@ -45,6 +45,6 @@ new Vue({
         tagsList.push(...item.children);
       }
     });
-    this.$store.commit('setTagsList',tagsList);
+    // this.$store.commit('setTagsList',tagsList);
   }
 })

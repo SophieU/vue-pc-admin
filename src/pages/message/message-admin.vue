@@ -42,7 +42,7 @@
         </Form>
         <div slot="footer">
           <Button v-if="!viewInfo" @click="showModal=false">取消</Button>
-          <Button v-if="!viewInfo" @click="sureSend" type="primary">确认并发送</Button>
+          <Button :loading="loadingSave" v-if="!viewInfo" @click="sureSend" type="primary">确认并发送</Button>
           <Button v-if="viewInfo" @click="showModal=false" type="primary">关闭</Button>
         </div>
       </Modal>
@@ -54,6 +54,7 @@
         name: "message-admin",
       data(){
           return {
+            loadingSave:false,
             indeterminate:true,  // 设置 indeterminate 状态，只负责样式控制
             checkAll:false,
             showModal:false,
@@ -156,11 +157,14 @@
           this.$http.get(`/notice/info?id=${id}`)
             .then(res=>{
               if(res.data.code===0){
-                this.msgForm=res.data.data;
+                let data = res.data.data;
+                delete data.callCenterId;
+                this.msgForm=data;
               }
             })
         },
         sureSend(){
+          this.loadingSave=true;
           let form = this.msgForm;
           this.$refs['msgForm'].validate(valid=>{
             if(valid){
@@ -176,7 +180,10 @@
                   this.$Message.error(res.data.msg);
                 }
                 this.showModal=false;
+                this.loadingSave=false;
               })
+            }else{
+              this.loadingSave=false;
             }
           })
         },
@@ -184,7 +191,11 @@
           if(!visible){
             this.modalTitle='新建消息';
             this.viewInfo=false;
-            this.$refs['msgForm'].resetFields();
+            this.msgForm={
+                 title:'',
+                 content:'',
+                 stationList:[],
+            }
           }
         },
         pageChange(val){

@@ -90,19 +90,23 @@
                   if(data.code===0){
                     this.$Message.success('保存成功');
                     this.getAreaLists();
-                    this.loadingSave=false;
                   }else{
                     this.$Message.error(`保存失败,${data.msg}`);
-                    this.loadingSave=false;
                   }
+                  this.loadingSave=false;
                 })
           },
         //添加区域
         addArea(){
-            this.areaLists.push({name:'新建小区',id:''});
-            this.editInd=this.areaLists.length-1;
-            this.areaName='新建小区';
-            this.editId='';
+            if(this.areaLists[this.areaLists.length-1].name==='新建小区'){
+              this.$Message.info('请修改新建小区的默认名称');
+            }else{
+              this.areaLists.push({name:'新建小区',id:''});
+              this.editInd=this.areaLists.length-1;
+              this.areaName='新建小区';
+              this.editId='';
+            }
+
         },
         deleteArea(){
             let id = this.editId;

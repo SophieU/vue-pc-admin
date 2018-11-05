@@ -49,7 +49,7 @@
         </div>
         <div slot="footer">
           <Button @click="faultModal=false">取消</Button>
-          <Button @click="saveFaultType" type="primary">{{modalTitle==='新增'?'添加':'保存'}}</Button>
+          <Button :loading="loadingSend" @click="saveFaultType" type="primary">{{modalTitle==='新增'?'添加':'保存'}}</Button>
         </div>
       </Modal>
       <!--报修筛选-->
@@ -76,9 +76,9 @@
       </Drawer>
 
       <!--正在上传中-->
-      <Modal v-model="uploadingModal" title="正在上传中..." :mask-closable="false" :footer-hide="true" :closable="false">
+     <!-- <Modal v-model="uploadingModal" title="正在上传中..." :mask-closable="false" :footer-hide="true" :closable="false">
         <Progress :percent="uploadPercent" status="active" />
-      </Modal>
+      </Modal>-->
     </div>
 </template>
 
@@ -95,6 +95,7 @@
       },
       data(){
           return {
+            loadingSend:false,
             uploadingModal:false,
             uploadPercent:0, // 上传进度百分比
             modalTitle:'新建', //1：新建，0：编辑
@@ -212,9 +213,10 @@
         },
         //下载
         download(){
-            let baseUrl = localStorage.getItem('baseURL');
-            let url = baseUrl+'/fault/reason/import/template';
-            window.location.href=url;
+           this.$http.get(`/fault/reason/import/template`,null,{responseType:'blob'})
+             .then(res=>{
+               util.downloadExcel(res)
+             })
         },
         uploadSuccess(res,file,fileLists){
           setTimeout(()=>{
@@ -223,24 +225,18 @@
             }else{
               this.$Message.error(res.msg);
             }
-            this.uploadPercent=100;
-            this.uploadingModal=false;
+            this.$store.commit('setUploadProgress',false);
+            this.$store.commit('setUploadPercent',100);
             this.getLists();
           },1000)
         },
         uploading(){
-          this.uploadingModal=true;
-          let _this=this;
-          let timer = setInterval(()=>{
-            if(_this.uploadPercent>=95){
-              clearTimeout(timer);
-            }else{
-              _this.uploadPercent=_this.uploadPercent+5;
-            }
-          },100);
+          this.$store.commit('setUploadProgress',true);
+          this.$store.commit('setUploadPercent',0);
         },
         //保存
         saveFaultType(){
+          this.loadingSend=true;
           this.$refs['typeForm'].validate(valid=>{
             if(valid){
               let url='';
@@ -260,7 +256,10 @@
                   }else{
                     this.$Message.error(res.data.msg);
                   }
-                })
+                this.loadingSend=false;
+              })
+            }else{
+              this.loadingSend=false;
             }
           })
         },

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import packjson from '../../package.json';
-
+import {appRouter} from '../router/router';
 let util={};
 util.title=function(title){
   let Title='天富呼叫中心';
@@ -52,7 +52,6 @@ util.handleTitle=function(vm,item){
 util.setCurrentPath=function(vm,name){
   let title = '';
   let isOtherRouter = false;
-
   //获取 title，并判断当前是否为otherRouter中的组件
   vm.$store.state.app.routers.forEach(item => {
     //只有一个子路由
@@ -92,7 +91,7 @@ util.setCurrentPath=function(vm,name){
     * else if ((name.indexOf('_index') >= 0 || isOtherRouter) && name !== 'home')
     *  _index：匹配“个人中心，消息中心等单独页面）
     * */
-    //当前 name为不在菜单栏中显示的Main组件子菜单index时
+    //当前 name为不在菜单栏中显示的Main组件,如单独的个人中心页面等。
   } else if (isOtherRouter&& name !== 'home') {
     currentPathArr = [
       {
@@ -123,7 +122,7 @@ util.setCurrentPath=function(vm,name){
           if (childArr[i].name === name) {
             return true;
           }else if(childArr[i].children){
-            //有二级路由
+            //有三级路由
             let j=0;
             let subChildArr = childArr[i].children;
             let subLen = subChildArr.length;
@@ -136,95 +135,83 @@ util.setCurrentPath=function(vm,name){
           }
           i++;
         }
-        return false;
       }
     })[0];
+
     if (currentPathObj.children.length <= 1 && currentPathObj.name === 'home') {
 
-      currentPathArr = [
-        {
-          title: '首页',
-          path: '',
-          name: 'home'
-        }
-      ];
-    } else if (currentPathObj.children.length <= 1 && currentPathObj.name !== 'home') {
-      currentPathArr = [
-        {
-          title: '首页',
-          path: '/home',
-          name: 'home'
-        },
-        {
-          title: currentPathObj.title,
-          path: '',
-          name: name
-        }
-      ];
-    } else {
-      // let childObj = currentPathObj.children.filter((child) => {
-      //   return child.name === name;
-      // })[0];
-      let childObj = null;
-      let thirdChildObj = null;
-      currentPathObj.children.map((child) => {
-        if(child.name===name) childObj = child;
-        if(child.children){
-          let i = 0;
-          let subChild = child.children;
-          let len = subChild.length;
-          while(i<len){
-            if(subChild[i].name===name){
-              childObj=child;
-              thirdChildObj= subChild[i];
+        currentPathArr = [
+          {
+            title: '首页',
+            path: '',
+            name: 'home'
+          }
+        ];
+      } else if (currentPathObj.children.length <= 1 && currentPathObj.name !== 'home') {
+        currentPathArr = [
+          {
+            title: '首页',
+            path: '/home',
+            name: 'home'
+          },
+          {
+            title: currentPathObj.title,
+            path: '',
+            name: name
+          }
+        ];
+      } else {
+        let childObj = null;
+        let thirdChildObj = null;
+        currentPathObj.children.map((child) => {
+          if(child.name===name) childObj = child;
+          if(child.children){
+            let i = 0;
+            let subChild = child.children;
+            let len = subChild.length;
+            while(i<len){
+              if(subChild[i].name===name){
+                childObj=child;
+                thirdChildObj= subChild[i];
+              }
+              i++;
             }
-            i++;
           }
-        }
-      });
-      if(thirdChildObj){
-        currentPathArr = [
-          // {
-          //   title: '首页',
-          //   path: '/home',
-          //   name: 'home'
-          // },
-          {
-            title: currentPathObj.title,
-            path: '',
-            name: currentPathObj.name
-          },
-          {
-            title: childObj.title,
-            path: currentPathObj.path + '/' + childObj.path,
-            name: childObj.name
-          },
-          {
-            title:thirdChildObj.title,
-            name:thirdChildObj.name,
-            path:currentPathObj.path + '/' + childObj.path+'/'+thirdChildObj.path,
-          }
-        ];
-      }else{
-        currentPathArr = [
-          // {
-          //   title: '首页',
-          //   path: '/home',
-          //   name: 'home'
-          // },
-          {
-            title: currentPathObj.title,
-            path: '',
-            name: currentPathObj.name
-          },
-          {
-            title: childObj.title,
-            path: currentPathObj.path + '/' + childObj.path,
-          }
-        ];
-      }
+        });
+        if(thirdChildObj){
+          currentPathArr = [
+            {
+              title: currentPathObj.title,
+              path: '',
+              name: currentPathObj.name
+            },
+            {
+              title: childObj.title,
+              path: currentPathObj.path + '/' + childObj.path,
+              name: childObj.name
+            },
+            {
+              title:thirdChildObj.title,
+              name:thirdChildObj.name,
+              path:currentPathObj.path + '/' + childObj.path+'/'+thirdChildObj.path,
+            }
+          ];
+        }else{
+          currentPathArr = [
 
-    }
+            {
+              title: currentPathObj.title,
+              path: '',
+              name: currentPathObj.name
+            },
+            {
+              title: childObj.title,
+              path: currentPathObj.path + '/' + childObj.path,
+            }
+          ];
+        }
+
+      }
   }
   vm.$store.commit('setCurrentPath', currentPathArr);
   return currentPathArr;
@@ -257,7 +244,7 @@ util.openNewPage = function (vm, name, argu, query) {
     // tag = tag[0];
 
     let tag = null;
-    vm.$store.state.app.tagsList.forEach(item=>{
+ /*   vm.$store.state.app.tagsList.forEach(item=>{
       if(item.children){
         item.children.forEach(child=>{
           if(child.name===name){
@@ -269,7 +256,7 @@ util.openNewPage = function (vm, name, argu, query) {
           tag=item;
         }
       }
-    });
+    });*/
 
 
     if (tag) {

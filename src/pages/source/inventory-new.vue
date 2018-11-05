@@ -41,7 +41,7 @@
           <div class="inventory-step">
             <span  class="step">3</span>
             <div class="step-content">
-              <Button style="margin-bottom: 4px;" @click="sureInvent" class="step-target" >确认完成</Button>
+              <Button :loading="loadingSave" style="margin-bottom: 4px;" @click="sureInvent" class="step-target" >确认完成</Button>
               <span>确认盘点</span>
             </div>
           </div>
@@ -105,13 +105,10 @@
 </template>
 
 <script>
+  import util from '../../libs/util'
     export default {
         name: "inventory-new",
       computed:{
-          downLink(){
-            let baseUrl = localStorage.getItem('baseURL');
-            return baseUrl+'/repair/material/check/order/export';
-          },
           uploadLink(){
             let baseUrl = localStorage.getItem('baseURL');
             return baseUrl+'/repair/material/check/order/import';
@@ -119,6 +116,7 @@
       },
       data(){
           return {
+            loadingSave:false,
             departmentId:'',
             uploadExcel:null,
             sureId:null,
@@ -126,7 +124,10 @@
       },
       methods:{
         downTpl(){
-          window.location.href=this.downLink;
+          this.$http.get(`/repair/material/check/order/export`,null,{responseType:'blob'})
+            .then(res=>{
+              util.downloadExcel(res);
+            })
         },
         uploadSuccess(res, file, fileList){
             if(res.code===0){
@@ -137,12 +138,16 @@
             }
         },
         sureInvent(){
+          this.loadingSave=true;
             let id = this.sureId;
             if(!id){
               this.$Message.warning('请先上传盘点数据');
+              this.loadingSave=false;
+
             }else{
               this.$http.post(`/repair/material/check/order/verify?id=${id}`)
                 .then(res=>{
+                  this.loadingSave=false;
                   if(res.data.code===0){
                     this.$Message.success('盘点成功');
                     this.$router.push({name:'inventory'});

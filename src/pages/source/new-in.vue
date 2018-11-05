@@ -8,7 +8,7 @@
           <Button @click="$router.back()" >返回上一页</Button>
         </div>
         <div class="pull-right">
-          <Button @click="sureIn" type="primary">确认入库</Button>
+          <Button :loading="loadingSave" @click="sureIn" type="primary">确认入库</Button>
         </div>
       </div>
       <Form style="margin-right: 100px;" ref="formIn" :model="formIn" :rules="formInRules" :label-width="100">
@@ -129,7 +129,7 @@
         name: "new-out",
       data(){
           return {
-            test:true,
+            loadingSave:false,
             showModal:false,
             lists:[ ],
             organLists:[], //组织列表
@@ -160,6 +160,7 @@
       },
       methods:{
         sureIn(){
+          this.loadingSave=true;
             let form = this.formIn;
             let detailList = this.materialCheckedlists;
             let detailValid = true;
@@ -183,7 +184,10 @@
               }
               return item;
             });
-            if(!detailValid) return;
+            if(!detailValid){
+              this.loadingSave=false;
+              return;
+            }
             this.$refs['formIn'].validate(valid=>{
               if(valid){
                 form.detailList=detailList.map(item=>{
@@ -204,7 +208,10 @@
                   }else{
                     this.$Message.error(res.data.msg);
                   }
+                  this.loadingSave=false;
                 })
+              }else{
+                this.loadingSave=false;
               }
             })
 

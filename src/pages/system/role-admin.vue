@@ -72,7 +72,7 @@
             /*
             * @params: type:跳转类型，1:新建，0：编辑，2：查看
             * */
-            this.$router.push({name:'roleControl',params:{type:type,id:id}});
+            this.$router.push({name:'editRole',query:{type:type,id:id}});
           },
         getRoleLists(){
           this.$http.get(`/role/list`)

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import {routers,otherRouter,appRouter} from './router'
+// import {routers,otherRouter,appRouter} from './router'
+import {routers,appRouter} from './router'
 import iView from 'iview'
 import Util from '../libs/util'
 import Cookie from 'js-cookie'

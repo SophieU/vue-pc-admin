@@ -36,6 +36,7 @@ let countRes = 0;
 axios.interceptors.response.use(function (response) {
   let code = response.data.code;
   let method = response.config.method;
+  // code: 904-登录失效  905-无权限
   if(code===904&&method!=='option'){
     // if(countRes<1){
     //   iView.Message.error(response.data.msg);

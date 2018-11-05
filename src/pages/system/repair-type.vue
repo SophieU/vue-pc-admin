@@ -39,7 +39,9 @@
         <div  class="modal_wrap_form">
           <Form ref="typeForm" :model="typeForm" label-position="top" :rules="typeFormRule">
             <FormItem label="报修分类名称" prop="name">
-              <Input v-model="typeForm.name"/>
+              <Input v-model="typeForm.name"
+                @on-keydown="inputName"
+              />
             </FormItem>
             <FormItem label="上门费收费标准" >
               <Row :gutter="15">
@@ -60,6 +62,7 @@
               <InputNumber
                         :precision="2"
                            style="width:100%;"
+                        :min="0"
                            v-model="typeForm.employeeDtdServiceCommission"></InputNumber>
               <!--<Input ref="epDtdFee"  @on-keydown="inputMoney($event,'epDtdFee')" v-model="typeForm.employeeDtdServiceCommission" />-->
             </FormItem>
@@ -67,7 +70,7 @@
         </div>
         <div slot="footer">
           <Button @click="repairModal=false">取消</Button>
-          <Button @click="saveType" type="primary">{{modalTitle===1?'添加':'保存'}}</Button>
+          <Button :loading="loadingSend" @click="saveType" type="primary">{{modalTitle===1?'添加':'保存'}}</Button>
         </div>
       </Modal>
       <!--报修筛选-->
@@ -126,7 +129,12 @@
               callback();
             }
           };
+          const validName=function(rule,value,callback){
+            let reg = /[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/;
+
+          };
           return {
+            loadingSend:false,
             uploadingModal:false,
             uploadPercent:0, // 上传进度百分比
             hasFee:false,//自定属性，适应checkbox，是否收取上门费
@@ -209,7 +217,8 @@
             },
             typeFormRule:{
               name:[
-                {required:true,message:'请输入报修分类名称',trigger:'blur'}
+                {required:true,message:'请输入报修分类名称',trigger:'blur'},
+                // {validator:validName,message:'请输入有效的报修分类名称',trigger:'blur'}
               ],
               employeeDtdServiceCommission:[
                 {required:true,message:'请输入员工上门费结算标准',trigger:'blur',type:'number'}
@@ -229,6 +238,15 @@
           }
       },
       methods:{
+          inputName(event){
+            let key = event.key;
+            let reg=/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/;
+            if(reg.test(key)){
+              event.preventDefault();
+              return false;
+            }
+            // this.typeForm.name='';
+          },
           toggleFee(val){
             this.hasFee=val;
             if(!val){
@@ -296,6 +314,7 @@
               //添加
               url='/repair/category/add';
             }
+            this.loadingSend=true;
             this.$http.post(url,{
               ...params
             }).then(res=>{
@@ -306,6 +325,7 @@
                 }else{
                   this.$Message.error(res.data.msg);
                 }
+                this.loadingSend=false;
             })
         },
         //金额输入验证
@@ -344,8 +364,10 @@
         },
         //下载模板
         downExcel(){
-            let url=this.$http.defaults.baseURL+'/repair/category/import/template';
-            window.location.href=url;
+           this.$http.get(`/repair/category/import/template`,null,{responseType:'blob'})
+             .then(res=>{
+               util.downloadExcel(res);
+             })
         },
         //上传回调
         uploadSuccess(res,file,fileLists){
@@ -374,7 +396,15 @@
         },
         // 关闭弹窗时，重置表单及验证
         resetForm(){
-            this.$refs['typeForm'].resetFields();
+            this.typeForm={
+              id:'',
+              callCenterId:'',
+              name:'',
+              hasDtdServiceFee:'Y',
+              dtdServiceFee:0,
+              employeeDtdServiceCommission:0,
+            };
+            this.$refs['typeForm'].resetFields(); //重置验证错误信息
         }
       },
       mounted(){
