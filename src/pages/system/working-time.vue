@@ -312,7 +312,7 @@
               this.$Message.info('特殊日期名称不能为空');
               return false;
           }
-           if(data.dateRange.length<=0){
+           if(!data.dateRange[0]){
               this.$Message.info('请选择特殊日期范围');
               return false;
           }
