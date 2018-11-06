@@ -34,6 +34,7 @@
       <!--报修弹窗-->
       <Modal v-model="repairModal"
         :title="modalTitle+'报修分类'"
+             :mask-closable="false"
           @on-visible-change="resetForm"
       >
         <div  class="modal_wrap_form">
