@@ -5,7 +5,7 @@
         <Button type="primary" @click="$router.back()">返回上一页</Button>
       </div>
       <div class="pull-right">
-        <Button type="primary">excel导出</Button>
+        <Button @click="exportExcel" type="primary">excel导出</Button>
       </div>
     </div>
     <div>
@@ -50,7 +50,7 @@
             <td>{{item.materialName}}</td>
             <td>{{item.repairCategoryName}}</td>
             <td>{{item.materialSpec}}</td>
-            <td>{{item.unit}}</td>
+            <td>{{item.materialUnit}}</td>
             <td>{{item.price}}</td>
             <td>{{item.num}}</td>
             <td>{{item.checkedNum}}</td>
@@ -65,48 +65,36 @@
 </template>
 
 <script>
+  import util from '../../libs/util'
     export default {
         name: "inventory-detail",
       data(){
         return {
-          detail:null
+          detail:null,
+          id:'',
         }
       },
       methods:{
           getDetail(id){
             this.$http.get(`/repair/material/check/order/info?id=${id}`)
               .then(res=>{
-                /*if(res.data.code===0){
+                if(res.data.code===0){
                   this.detail=res.data.data;
                 }else{
                   console.log('盘点详情：'+res.data.msg);
-                }*/
-                this.detail={
-                  "id": "c1388d059fc44c8e875cad01bff5c150",
-                  "departmentName": "test",
-                  "sn": "4581245",
-                  "createTime": "2018-10-16 20:31",
-                  "diffNum": "1",
-                  "amount": "5.00",
-                  "creator": "admin",
-                  "detailList": [
-                    {
-                      "materialName": "辅材1",
-                      "repairCategoryName": "燃气服务",
-                      "materialSpec": "型号1",
-                      "price": 5,
-                      "num": 10,
-                      "checkedNum": 11,
-                      "diffNum": 1,
-                      "amount": 5
-                    }
-                  ]
                 }
               })
-          }
+          },
+        exportExcel(){
+            this.$http.get(`/repair/material/check/order/info/export?id=${this.id}`,{responseType:'blob'})
+              .then(res=>{
+                util.downloadExcel(res);
+              })
+        }
       },
       mounted(){
           let id = this.$route.params.id;
+          this.id = id;
           this.getDetail(id);
       }
     }

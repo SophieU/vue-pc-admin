@@ -1,0 +1,241 @@
+<style scoped lang="scss">
+  @import './home-components.scss';
+</style>
+<template>
+  <div>
+    <Modal
+      :mask-closable="false"
+      v-model="activeModal"
+      title="新建工单"
+    >
+      <div class="new_order_wrapper">
+        <Form ref="newOrder" :model="newOrder" :rules="newOrderRule" label-position="top">
+          <FormItem label="一生约绑定手机（非必填）" prop="ysyUserPhone">
+            <Select
+              v-model="newOrder.ysyUserPhone"
+              filterable
+              remote
+              :remote-method="searchTel"
+              :loading="loadingSearch"
+              @on-query-change="setTel"
+            >
+              <Option v-for="(tel, index) in searchTelRes" :value="tel" :key="index">{{tel}}</Option>
+            </Select>
+            <span v-if="!ysyUserPhoneValid" class="text-red">请填写正确的手机号</span>
+          </FormItem>
+          <FormItem label="联系电话"  prop="userPhone">
+            <Input v-model="newOrder.userPhone"></Input>
+          </FormItem>
+          <FormItem label="报修分类"  prop="repairCategoryId">
+            <Row :gutter="15">
+              <Col span="14">
+                <Select v-model="newOrder.repairCategoryId">
+                  <Option v-for="item in repairLists" :key="item.id" :value="item.id+'+'+item.dtdServiceFee">{{item.name}}{{item.dtdServiceFee?'(上门费：'+item.dtdServiceFee+')':''}}</Option>
+                </Select>
+              </Col>
+              <Col span="8">
+                <Checkbox v-model="acceptFee">接受上门费</Checkbox>
+              </Col>
+            </Row>
+
+          </FormItem>
+          <FormItem label="服务区域"  prop="repairRegionId">
+            <Select v-model="newOrder.repairRegionId">
+              <Option v-for="item in regionList" :key="item.id" :value="item.id">{{item.name}}</Option>
+            </Select>
+           <!-- <div class="search-wrap">
+              <Input search suffix="ios-search" v-model="newOrder.repairDis" @on-search="searchThis('repairDis')"></Input>
+              <transition name="fade">
+                <div class="search-result" v-if="repairDisSearch">
+                  <ul>
+                    <li v-for="item in [1,2,3,4]" @click="sureSearch('repairDis','网点1')">网点1</li>
+                  </ul>
+                </div>
+              </transition>
+            </div>-->
+          </FormItem>
+          <FormItem label="详细地址"  prop="repairAddress">
+            <Input v-model="newOrder.repairAddress"></Input>
+          </FormItem>
+        </Form>
+      </div>
+      <div slot="footer">
+        <Button @click="activeModal=false">取消</Button>
+        <Button :loading="loadingSubmit" @click="sureSend" type="primary">发送至服务网点</Button>
+      </div>
+    </Modal>
+  </div>
+
+</template>
+
+<script>
+  import util from '../../../libs/util';
+    export default {
+        name: "createOrder",
+      data(){
+          const validateTel=function(rule,val,callback){
+            let telReg = /^1[3456789]\d{9}$/;
+            if(telReg.test(val)||val.length<=0){
+              callback();
+            }else{
+              callback(new Error('请输入正确格式的手机号码'))
+            }
+          };
+          return{
+            loadingSubmit:false,
+            loadingSearch:false,
+            acceptFee:false, //接受上门费
+            searchTelRes:[],
+            newOrder: {
+              repairRegionId: '', //参数为id,需决定是否收费
+              repairCategoryId: '',
+              userPhone: '',
+              ysyUserPhone: '',
+              repairAddress: '',
+            },
+            newOrderRule:{
+              repairAddress:[{required:true,message:'请输入报修地址',trigger:'blur'}],
+              repairCategoryId:[{required:true,message:'请选择报修分类',trigger:'change'}],
+              repairRegionId:[{required:true,message:'请选择报修区域',trigger:'change'}],
+              userPhone:[
+                {required:true,message:'请输入联系电话',trigger:'blur'},
+                {validator:validateTel,trigger:'blur'},
+                ],
+            },
+            ysyTelSearch:false, //ysyTel搜索状态标识
+            repairDisSearch:false, //服务区域搜索状态标识
+            repairLists:[],
+            regionList:[],
+            stationLists:[], //网点下拉
+            ysyUserPhoneValid:true,
+          }
+      },
+      props:{
+        createOrder:Boolean
+      },
+      computed:{
+          activeModal:{
+            get:function(){
+              return this.createOrder;
+            },
+            set:function(newValue){
+              this.$refs['newOrder'].resetFields();
+              /*this.newOrder={
+                repairRegionId: '',
+                repairCategoryId: '',
+                userPhone: '',
+                ysyUserPhone: '',
+                repairAddress: '',
+              }*/
+              this.$emit('close','createModal');
+            }
+          }
+      },
+      methods:{
+        setTel(query){
+          if(query.length<=0){
+            this.ysyUserPhoneValid=true;
+            this.newOrder.ysyUserPhone='';
+            return;
+          }
+          let telReg = /^1[3456789]\d{9}$/;
+          if(telReg.test(query)){
+            this.ysyUserPhoneValid=true;
+            this.newOrder.ysyUserPhone=query;
+          }else{
+            this.ysyUserPhoneValid=false;
+          }
+
+        },
+        // inputYsyTel(val){
+        //   if(!val){ //收起时
+        //     if(this.newOrder.ysyUserPhone.length<0&&this.ysyUserPhoneTemp.length>0){
+        //       this.newOrder.ysyUserPhone=this.ysyUserPhoneTemp
+        //     }
+        //   }
+        // },
+          //点击搜索
+        searchThis(model){
+          this[model+'Search']=true;
+          //ajax查询
+        },
+        //选中搜索值
+        sureSearch(prop,val){
+          this.newOrder[prop] = val;
+          this[prop+'Search']=false;
+        },
+        getRegionLists(){
+          this.$http.get(`/repair/region/list`)
+            .then(res=>{
+              if(res.data.code===0){
+                this.regionList=res.data.data;
+              }else{
+               console.log('新建工单获取报修区域：'+res.data.msg);
+              }
+            })
+        },
+        sureSend(){
+            this.loadingSubmit=true;
+            this.$refs['newOrder'].validate(valid=>{
+              if(valid){
+                let order = {...this.newOrder};
+                let repairType = this.newOrder.repairCategoryId.split('+');
+                order.repairCategoryId=repairType[0];
+                let needFee=parseFloat(repairType[1]);
+                if(needFee>0&&!this.acceptFee){
+                  this.$Message.info('请先勾选接受上门费，再继续');
+                  this.loadingSubmit=false;
+                  return false;
+                }
+               this.$http.post(`/repair/order/add`,{
+                 ...order
+               }).then(res=>{
+                 if(res.data.code===0){
+                   this.$Message.success('保存成功');
+                   this.activeModal=false;
+                   this.newOrder={
+                     repairRegionId: '',
+                     repairCategoryId: '',
+                     userPhone: '',
+                     ysyUserPhone: '',
+                     repairAddress: '',
+                   }
+                 }else{
+                   this.$Message.error('保存失败：'+res.data.msg);
+                   this.activeModal=false;
+                 }
+
+                 this.loadingSubmit=false;
+               })
+              }else{
+                this.loadingSubmit=false;
+              }
+            })
+        },
+        searchTel(query){
+          if (query !== '') {
+            this.loadingSearch = true;
+            this.$http.get(`/repair/order/user/list?phone=${query}`)
+              .then(res=>{
+                this.loadingSearch=false;
+                if(res.data.code===0){
+                  this.searchTelRes=res.data.data;
+                }
+              })
+          } else {
+            this.searchTelRes = [];
+          }
+        }
+      },
+      mounted(){
+          this.getRegionLists();
+          util.getRepairType(data=>{
+            this.repairLists=data;
+          });
+          util.getStationLists(data=>{
+            this.stationLists=data;
+          })
+      }
+    }
+</script>
+

@@ -30,16 +30,16 @@
         </div>
       </div>
       <div>
-        <Form :model="filterForm" label-position="top">
-          <FormItem label="创建时间">
+        <i-form :model="filterForm" label-position="top">
+          <form-item label="创建时间">
             <DatePicker v-model="filterForm.dateRange" type="daterange" style="width: 100%;"></DatePicker>
-          </FormItem>
-          <FormItem label="组织名称">
+          </form-item>
+          <form-item label="组织名称">
             <Select v-model="filterForm.departmentId">
               <Option v-for="department in departmentLists" :key="department.id" :value="department.id">{{department.name}}</Option>
             </Select>
-          </FormItem>
-        </Form>
+          </form-item>
+        </i-form>
       </div>
     </Drawer>
   </Card>
@@ -143,6 +143,7 @@
             departmentId:'',
           };
           this.filter=false;
+          this.getLists()
         },
         pageChange(val){
           this.pageNo=val;

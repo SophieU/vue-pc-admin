@@ -59,7 +59,7 @@
       <Col :lg="24" :md="24" :sm="24">
         <Card :style="{width:'100%'}">
           <p slot="title">工单趋势</p>
-          <div class="weekChart" style="height: 300px;">
+          <div class="weekChart" style="height: 500px;">
             <order-week-trend></order-week-trend>
           </div>
         </Card>

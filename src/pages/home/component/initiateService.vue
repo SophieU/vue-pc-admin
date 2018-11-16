@@ -13,6 +13,7 @@
       v-model="activeModal"
       title="发起售后"
       width="650"
+      @on-visible-change="modalChange"
     >
       <div class="create_service">
         <Form :model="newService" inline :label-width="80">
@@ -29,7 +30,7 @@
             <Input v-model="newService.userPhone"></Input>
           </FormItem>
           <FormItem label="报修分类">
-            <Select v-model="newService.repairCategoryId" style="width:162px;">
+            <Select :clearable="true" v-model="newService.repairCategoryId" style="width:162px;">
               <Option v-for="item in repairLists" :key="item.id" :value="item.id">{{item.name}}</Option>
             </Select>
           </FormItem>
@@ -38,7 +39,7 @@
         <div class="table-wrapper">
           <Table size="small" :columns="orderColumn" :data="orderLists"></Table>
           <div  v-if="orderLists.length>0" class="pagination">
-            <Page :total="totalCount" @on-change="pageChange"></Page>
+            <Page :page-size="5" :total="totalCount" @on-change="pageChange"></Page>
           </div>
         </div>
       </div>
@@ -66,7 +67,7 @@
               orderSn:'',
               userPhone:'',
               serverName:'',
-              searchTyp:2
+              searchType:2
             },
             orderIdSearch:false,
             repairLists:[],
@@ -78,12 +79,14 @@
               {title:'工单详情',align:'left',render:(h,param)=>{
                   let row = param.row;
                   let string = `工单${row.orderSn}，
-                区域：${row.regionName}，
-                网点：${row.stationName}，
-                状态：${row.orderState}，
+                ${row.regionName}，
+                ${row.stationName}，
                 ${row.repairCategoryName}，
                 ${row.userPhone}，
-                ${row.createTime}`
+                ${row.orderState}，
+                ${row.isInWarrantyPeriod==='是'?'质保中，':''}
+                ${row.orderAmount>0?'￥'+row.orderAmount+'，':''}
+                ${row.materialNames?'辅材使用：'+row.materialNames:''}`
                   return h('span',string)
                 }},
               {title:'操作',align:'center',width:80,render:(h,param)=>{
@@ -133,6 +136,18 @@
         pageChange(val){
           this.pageNo=val;
           this.searchOrder();
+        },
+        modalChange(visible){
+          if(!visible){
+            this.newService= {
+              regionName:'',
+              repairCategoryId:'',
+              orderSn:'',
+              userPhone:'',
+              searchType:1
+            }
+            this.orderLists=[]
+          }
         }
       },
       mounted(){

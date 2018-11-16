@@ -30,21 +30,21 @@
             </div>
           </div>
           <div>
-            <Form :model="filterForm" label-position="top">
-              <FormItem label="组织名称">
+            <i-form :model="filterForm" label-position="top">
+              <form-item label="组织名称">
                 <Select v-model="filterForm.departmentId">
                   <Option :key="index" v-for="(item,index) in organLists" :value="item.id">{{item.name}}</Option>
                 </Select>
-              </FormItem>
-              <FormItem label="报修类型">
+              </form-item>
+              <form-item label="报修类型">
                 <Select v-model="filterForm.repairCategoryId">
                   <Option :key="index" v-for="(item,index) in repairLists" :value="item.id">{{item.name}}</Option>
                 </Select>
-              </FormItem>
-              <FormItem label="名称">
+              </form-item>
+              <form-item label="名称">
                 <Input v-model="filterForm.materialName" />
-              </FormItem>
-            </Form>
+              </form-item>
+            </i-form>
           </div>
         </Drawer>
       </Card>
@@ -141,6 +141,7 @@
             departmentId:'',
           };
           this.filter=false;
+          this.getLists();
         }
       },
       mounted(){

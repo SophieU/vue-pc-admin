@@ -20,6 +20,7 @@
       </Card>
       <Modal v-model="activeModal"
              :title="modalTitle"
+             :mask-closable="false"
               @on-visible-change="modalChange"
       >
         <div class="modal_wrap_form">
@@ -28,7 +29,7 @@
               <Input :disabled="view" v-model="accountForm.loginName"/>
             </FormItem>
             <FormItem label="登陆密码" prop="password">
-              <Input :disabled="view||!editPwdInput" type="password" v-model="accountForm.password">
+              <Input :maxlength="10"  :disabled="view||!editPwdInput" type="password" v-model="accountForm.password">
                 <Button v-show="modalTitle!=='新建账号'" :disabled="view" slot="append" @click="editPwd">修改密码</Button>
               </Input>
             </FormItem>
@@ -75,6 +76,15 @@
              callback(new Error('请输入正确的手机号'))
             }
           };
+          const minLenVal=function(rule,value,callback){
+            let pwdReg = /^[a-zA-Z0-9]{6,10}$/;
+            if(pwdReg.test(value)){
+              callback();
+            }else{
+              callback(new Error());
+            }
+          }
+
           return{
             loadingSend:false,
             editPwdInput:false,//修改密码
@@ -150,7 +160,7 @@
             roleLists:[],
             accountForm:{
               loginName:'',
-              password:'11111', //默认待清除密码
+              password:'', 
               mobile:'',
               type:'',
               isOpen:'Y',
@@ -160,7 +170,9 @@
             },
             accountRule:{
               loginName:[{required:true,message:'请输入账号名',trigger:'blur'}],
-              password:[{required:true,message:'请输入密码',trigger:'blur'}],
+              password:[{required:true,message:'请输入密码',trigger:'blur'},
+                {validator:minLenVal,message:'密码应为6-10位字母或数字',trigger:'blur'},
+              ],
               mobile:[
                 {required:true,message:'请输入手机号',trigger:'blur'},
                 {validator:validateTel,trigger:'blur'}
@@ -209,7 +221,7 @@
             .then(res=>{
               if(res.data.code===0){
                 this.accountForm=res.data.data;
-                this.accountForm.password='11111'; //默认待清除密码
+                this.accountForm.password='111111'; //默认待清除密码
 
                 // this.accountForm.isOpen=this.accountForm.isOpen==='Y'?true:false;
               }else{
@@ -239,7 +251,7 @@
           this.loadingSend=true;
           this.$refs['accountForm'].validate(valid=>{
             if(valid){
-              if(account.password==='11111'){
+              if(account.password==='111111'){
                 delete account.password;
               }
               this.$http.post(url,{...account}).then(res=>{
