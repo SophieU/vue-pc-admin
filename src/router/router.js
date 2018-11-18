@@ -10,6 +10,14 @@ import Main from '@/pages/Main.vue'
 
 
 // 1、不在Main组件内展示
+export const defaultIndex = {
+  path:'/',
+  name:'default',
+  meta:{
+    title:'Login-登录'
+  },
+  component:()=>import('@/pages/login/Login.vue')
+}
 export const loginRouter = {
   path :'/login',
   name:'login',
@@ -216,6 +224,7 @@ export const appRouter=[
 ];
 //所有路由汇总
 export const routers=[
+  defaultIndex,
   loginRouter,
   // otherRouter,
   ...appRouter,

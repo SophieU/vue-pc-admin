@@ -21,10 +21,10 @@
                 <Row  :gutter="15" >
                   <Col span="6" align="right">{{worktime.name}}</Col>
                   <Col span="6"  align="center">
-                    <TimePicker  format="HH:mm" v-model="worktime.beginTime"  type="time"></TimePicker>
+                    <TimePicker :confirm="true" format="HH:mm" v-model="worktime.beginTime"  type="time"></TimePicker>
                   </Col>
                   <Col span="6"  align="center">
-                    <TimePicker format="HH:mm" v-model="worktime.endTime"  type="time"></TimePicker>
+                    <TimePicker :confirm="true" format="HH:mm" v-model="worktime.endTime"  type="time"></TimePicker>
                   </Col>
                   <Col span="6">
                     <Checkbox v-model="worktime.isWorkday" :true-value="'N'" :false-value="'Y'">非工作日</Checkbox>
@@ -104,10 +104,10 @@
                 <Row :gutter="15">
                   <Col span="6" align="right">{{backtime.name}}</Col>
                   <Col span="6"  align="center">
-                    <TimePicker format="HH:mm" v-model="backtime.beginTime" type="time"></TimePicker>
+                    <TimePicker :confirm="true" format="HH:mm" v-model="backtime.beginTime" type="time"></TimePicker>
                   </Col>
                   <Col span="6"  align="center">
-                    <TimePicker format="HH:mm" v-model="backtime.endTime" type="time"></TimePicker>
+                    <TimePicker :confirm="true" format="HH:mm" v-model="backtime.endTime" type="time"></TimePicker>
                   </Col>
                   <Col span="6">
                     <Checkbox v-model="backtime.isWorkday" :true-value="'N'" :false-value="'Y'">非工作日</Checkbox>

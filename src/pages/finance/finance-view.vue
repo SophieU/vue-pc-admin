@@ -26,7 +26,8 @@
             </thead>
             <tbody>
             <tr>
-              <td>{{earningCount.name}}</td>
+              <!--2018-11-19 测试确定，项目名称写死为“数目” {{earningCount.name}}-->
+              <td>数目</td>
               <td>{{earningCount.orderNum}}</td>
               <td>{{earningCount.orderAmount}}</td>
               <td>{{earningCount.employeeCommission}}</td>
@@ -117,7 +118,10 @@
               {title:'工单金额',key:'orderAmount',align:'center',width:100},
               {title:'师傅姓名',key:'serverName',align:'center',width:100},
               {title:'师傅提成',key:'employeeCommission',align:'center',width:100},
-              {title:'平台佣金比',key:'platformCommissionRate',align:'center',width:100},
+              {title:'平台佣金比',align:'center',width:100,render:(h,params)=>{
+                  let rate = params.row.platformCommissionRate>0?params.row.platformCommissionRate:0;
+                  return h('span',{},`${rate}%`)
+                }},
               {title:'平台佣金',key:'platformCommission',align:'center',width:100},
               {title:'操作',fixed:'right',width:100,align:'center',render:(h,params)=>{
                  let _this = this;
