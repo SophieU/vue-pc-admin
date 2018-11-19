@@ -39,7 +39,7 @@
         <div class="table-wrapper">
           <Table size="small" :columns="orderColumn" :data="orderLists"></Table>
           <div  v-if="orderLists.length>0" class="pagination">
-            <Page :page-size="5" :total="totalCount" @on-change="pageChange"></Page>
+            <Page :current.sync="pageNo" :page-size="5" :total="totalCount" @on-change="pageChange"></Page>
           </div>
         </div>
       </div>
@@ -84,7 +84,7 @@
                 ${row.repairCategoryName}，
                 ${row.userPhone}，
                 ${row.orderState}，
-                ${row.isInWarrantyPeriod==='是'?'质保中，':''}
+                ${row.isInWarrantyPeriod==='-'?'':'质保中，'}
                 ${row.orderAmount>0?'￥'+row.orderAmount+'，':''}
                 ${row.materialNames?'辅材使用：'+row.materialNames:''}`
                   return h('span',string)
@@ -121,21 +121,23 @@
       },
       methods:{
         //点击搜索
-        searchOrder() {
+        searchOrder(page) {
+          let pageNo = page.pageNo?page.pageNo:1;
           let newService = util.formatterParams(this.newService);
-          let query = `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+          let query = `pageNo=${pageNo}&pageSize=${this.pageSize}`;
           this.$http.post(`/index/search/order?${query}&${newService}`)
             .then(res => {
               if (res.data.code === 0) {
                 let data = res.data.data;
                 this.totalCount = data.totalCount;
                 this.orderLists = data.list;
+                this.pageNo = data.pageNo;
               }
             })
         },
         pageChange(val){
           this.pageNo=val;
-          this.searchOrder();
+          this.searchOrder({pageNo:val});
         },
         modalChange(visible){
           if(!visible){
@@ -144,8 +146,9 @@
               repairCategoryId:'',
               orderSn:'',
               userPhone:'',
-              searchType:1
-            }
+              searchType:1,
+              pageNo:1,
+            };
             this.orderLists=[]
           }
         }

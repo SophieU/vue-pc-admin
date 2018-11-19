@@ -57,7 +57,7 @@
         },
         delay: {
           type: Number,
-          default: 500
+          default: 300
         },
         options: {
           type: Object,
@@ -100,7 +100,13 @@
           let res = transformValue(val);
           let endVal = res.val;
           this.unit = res.unit;
-          // this.demo.update(endVal);
+          let timer = setInterval(()=>{
+            if(this.demo.update){
+              clearInterval(timer);
+              this.demo.update(endVal);
+            }
+          },100)
+
         }
       }
     }

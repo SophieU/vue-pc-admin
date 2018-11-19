@@ -36,7 +36,7 @@
         <div class="table-wrapper">
           <Table size="small" :columns="orderColumn" :data="orderLists"></Table>
           <div  v-if="orderLists.length>0" class="pagination">
-            <Page :page-size="5" :total="totalCount" @on-change="pageChange"></Page>
+            <Page :current.sync="pageNo" :page-size="5" :total="totalCount" @on-change="pageChange"></Page>
           </div>
         </div>
       </div>
@@ -114,9 +114,10 @@
       },
       methods:{
           //点击搜索
-        searchOrder(){
+        searchOrder(page){
+          let pageNo = page.pageNo?page.pageNo:1;
           let cancelForm = util.formatterParams(this.cancelOrder);
-          let query =`pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
+          let query =`pageNo=${pageNo}&pageSize=${this.pageSize}`;
 
           this.$http.post(`/index/search/order?${query}&${cancelForm}`)
             .then(res=>{
@@ -124,6 +125,7 @@
                 let data = res.data.data;
                 this.totalCount=data.totalCount;
                 this.orderLists=data.list;
+                this.pageNo=data.pageNo;
               }
             })
         },
@@ -134,7 +136,7 @@
         },
         pageChange(val){
           this.pageNo=val;
-          this.searchOrder();
+          this.searchOrder({pageNo:val});
         },
         modalChange(visible){
           if(!visible){
