@@ -158,23 +158,23 @@
       },
       mounted(){
           this.init();
-
           // window.addEventListener('resize',this.checkScreen);
       },
       created(){
-        //显示 打开的页面列表
+        //显示打开的页面列表
         this.$store.commit('setOpenedList');
       },
 
       watch:{
           '$route'(to){
             this.$store.commit('setCurrentPageName',to.name);
-           let pathArr = util.setCurrentPath(this,to.name);
-             if(pathArr.length>=3){
+
+            let pathArr = util.setCurrentPath(this,this.$route.name);
+            if(pathArr.length>=3){
               let arr = [pathArr[0].name,pathArr[1].name];
               this.$store.commit('addOpenSubmenu',arr,true); //展开子菜单
             }else if(pathArr.length>=2){
-              this.$store.commit('addOpenSubmenu', pathArr[0].name);
+              this.$store.commit('addOpenSubmenu',pathArr[0].name); //展开子菜单
             }
 
             localStorage.currentPageName = to.name;

@@ -258,7 +258,7 @@
                 if(res.data.code===0){
                   this.lists=res.data.data;
                 }else{
-                  this.$Message.error(res.data.msg);
+                  console.log(res.data.msg);
                 }
               })
           },
@@ -283,7 +283,7 @@
                 if(res.data.code===0){
                   this.repairLists=res.data.data;
                 }else{
-                  this.$Message.error(res.data.msg);
+                  console.log(res.data.msg);
                 }
               });
           },

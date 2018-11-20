@@ -59,7 +59,7 @@ util.setCurrentPath=function(vm,name){
       //匹配设置的name
       if (item.children[0].name === name) {
         title = util.handleTitle(vm, item);
-        if (item.name === 'otherRouter') {
+        if (item.name === 'forbid') {
           isOtherRouter = true;
         }
       }
@@ -117,11 +117,13 @@ util.setCurrentPath=function(vm,name){
         let i = 0;
         let childArr = item.children;
         let len = childArr.length;
-
+// 二级目录
         while (i < len) {
+
           if (childArr[i].name === name) {
             return true;
           }else if(childArr[i].children){
+
             //有三级路由
             let j=0;
             let subChildArr = childArr[i].children;
@@ -161,7 +163,8 @@ util.setCurrentPath=function(vm,name){
           }
         ];
       } else {
-        let childObj = null;
+
+      let childObj = null;
         let thirdChildObj = null;
         currentPathObj.children.map((child) => {
           if(child.name===name) childObj = child;
@@ -178,7 +181,8 @@ util.setCurrentPath=function(vm,name){
             }
           }
         });
-        if(thirdChildObj){
+
+      if(thirdChildObj){
           currentPathArr = [
             {
               title: currentPathObj.title,
@@ -197,6 +201,7 @@ util.setCurrentPath=function(vm,name){
             }
           ];
         }else{
+
           currentPathArr = [
 
             {
@@ -213,6 +218,7 @@ util.setCurrentPath=function(vm,name){
 
       }
   }
+
   vm.$store.commit('setCurrentPath', currentPathArr);
   return currentPathArr;
 };

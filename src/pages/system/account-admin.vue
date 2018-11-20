@@ -211,7 +211,7 @@
                 }
                 this.accountList=data.list;
               }else{
-                this.$Message.error(res.data.msg);
+                console.log('账户管理列表：'+res.data.msg);
               }
             })
         },

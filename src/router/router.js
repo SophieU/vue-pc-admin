@@ -42,6 +42,17 @@ export const page500={
   },
   component:()=>import('@/pages/error-page/500.vue')
 };
+export const forbid={
+  path:'/forbid',
+  name:'forbid',
+  meta:{
+    title:'没有权限'
+  },
+  component:Main,
+  children:[
+    {path:'',title:'无权限',  name:'forbid',component:()=>import('@/pages/error-page/forbid.vue') }
+  ]
+}
 
 //2、作为Main组件的子页面但不是菜单显示的路由（otherRouter)
 /*export const otherRouter={
@@ -228,6 +239,7 @@ export const routers=[
   loginRouter,
   // otherRouter,
   ...appRouter,
+  forbid,
   page500,
   page404, //缺省配置放最后
 ];

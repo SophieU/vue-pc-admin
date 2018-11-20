@@ -78,7 +78,7 @@
                 this.authListsCheck=res.data.data.resourceList;
                 this.getAuth();
               }else{
-                this.$Message.error(res.data.msg)
+                console.log(res.data.msg)
               }
             })
         },

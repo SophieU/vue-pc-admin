@@ -93,7 +93,7 @@
              if(res.data.code===0){
                this.detail=res.data.data;
              }else{
-               this.$Message.error('详情获取失败：'+res.data.msg);
+               console.log('详情获取失败：'+res.data.msg);
              }
            })
         },

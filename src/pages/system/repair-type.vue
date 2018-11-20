@@ -299,7 +299,7 @@
                   this.typeForm.employeeDtdServiceCommission*=1;
                   this.hasFee=res.data.data.hasDtdServiceFee==='Y'?true:false;
                 }else{
-                  this.$Message.error(res.data.msg)
+                  console.log('单个信息获取失败：'+res.data.msg)
                 }
               })
         },

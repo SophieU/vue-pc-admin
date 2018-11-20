@@ -231,11 +231,11 @@
             this.getOrderTotal(filterForm);
         },
         pageChange(val){
-          this.pageNo=val;
+          this.detailPageNo=val;
           this.getOrderLists();
         },
         pageSizeChange(val){
-          this.pageSize=val;
+          this.detailPageSize=val;
           this.getOrderLists();
         },
         //筛选时间范围格式化

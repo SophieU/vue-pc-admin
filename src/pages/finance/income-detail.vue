@@ -26,7 +26,7 @@
           </thead>
           <tbody>
           <tr>
-            <td>{{earningCount.name}}</td>
+            <td>数目</td>
             <td>{{earningCount.orderAmount}}</td>
             <td>{{earningCount.employeeCommission}}</td>
             <td>{{earningCount.platformCommission}}</td>

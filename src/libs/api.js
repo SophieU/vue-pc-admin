@@ -38,7 +38,10 @@ axios.interceptors.response.use(function (response) {
   if(code===904&&method!=='option'){
     Cookies.remove('user');
     router.push({name:'login'});
-    return {}
+    return response
+  }else if(code===905&&method!=='option'){
+    router.replace({name:'forbid'});
+    return response
   }else{
     return response;
   }

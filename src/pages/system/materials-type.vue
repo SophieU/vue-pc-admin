@@ -311,7 +311,7 @@
                   this.lists=res.data.data.list;
                   this.totalCount=res.data.data.totalCount;
                 }else{
-                  this.$Message.error(res.data.msg);
+                  console.log(res.data.msg);
                 }
                 this.filter=false;
               })

@@ -1,5 +1,5 @@
 // import {otherRouter,appRouter} from '@/router/router'
-import {appRouter} from '@/router/router'
+import {forbid,appRouter} from '@/router/router'
 import util from '@/libs/util'
 import Vue from 'vue'
 import axios from 'axios'
@@ -25,6 +25,7 @@ const app = {
     menuList:[],//菜单
     routers:[
       // otherRouter,
+      forbid,
       ...appRouter
     ], //路由
     // dontCache:['notice'], //这里定义不要缓存的页面，如notice，见router中的name
@@ -86,7 +87,9 @@ const app = {
 
 //筛选
           let menuHasAdd = []; //用于存放已添加的菜单项name（外层）
-         menuList= appRouter.filter(item=>{
+          let appRouterTemp=JSON.stringify(appRouter);
+          let appRouterArr = JSON.parse(appRouterTemp);
+          menuList= appRouterArr.filter(item=>{
             let childRouter = item.children; //必然存在
 
            if(item.meta.single){
@@ -142,6 +145,7 @@ const app = {
 
 
           });
+
           state.menuList=menuList;
         }else{
           console.log('获取菜单权限失败')
