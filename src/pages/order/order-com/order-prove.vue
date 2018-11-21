@@ -86,7 +86,7 @@
   </div>
   <Divider />
   <Modal class="carouse_wrap" v-model="carouselModal" title="证明图片" width="700" @on-visible-change="modalHide">
-    <Carousel :value="0" loop v-model="carouselVal" :height="400" style="width: 600px;margin:0 auto;">
+    <Carousel :value="0" loop v-model="carouselVal" :height="500" style="width: 600px;margin:0 auto;">
       <CarouselItem v-for="(item,index) in carouselLists" :key="index">
         <div class="carousel" >
           <img :src="item.imageName" alt="">

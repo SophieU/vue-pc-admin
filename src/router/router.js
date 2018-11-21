@@ -44,7 +44,6 @@ export const page500={
 };
 export const forbid={
   path:'/forbid',
-  name:'forbid',
   meta:{
     title:'没有权限'
   },

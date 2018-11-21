@@ -49,7 +49,7 @@
               <Row :gutter="15">
                 <Col span="16" >
                   <form-item prop="dtdServiceFee">
-                    <InputNumber :precision="2" style="width:100%;"  :disabled="!hasFee" v-model="typeForm.dtdServiceFee"></InputNumber>
+                    <InputNumber :min="0" :precision="2" style="width:100%;"  :disabled="!hasFee" v-model="typeForm.dtdServiceFee"></InputNumber>
                     <!--<Input  ref="dtdServiceFee" @on-keydown="inputMoney($event,'dtdServiceFee')"  :disabled="!hasFee" v-model="typeForm.dtdServiceFee" />-->
                   </form-item>
                 </Col>

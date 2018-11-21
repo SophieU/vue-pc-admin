@@ -46,19 +46,20 @@
             </FormItem>
             <FormItem label="质保天数"  prop="warrantyPeriod">
               <!--<Input v-model="typeForm.warrantyPeriod" />-->
-              <InputNumber  style="width:100%;" v-model="typeForm.warrantyPeriod"  :min="1"
+              <InputNumber :min="0"  style="width:100%;" v-model="typeForm.warrantyPeriod"
                             :precision="0"
               ></InputNumber>
             </FormItem>
             <FormItem label="服务收费"  prop="serviceFee">
               <!--<Input   v-model="typeForm.serviceFee" />-->
-              <InputNumber  style="width:100%;" v-model="typeForm.serviceFee"
+              <InputNumber  style="width:100%;" v-model="typeForm.serviceFee" :min="0"
                             :precision="2"
               ></InputNumber>
             </FormItem>
             <FormItem label="员工结算标准"  prop="employeeServiceCommission">
               <!--<Input  v-model="typeForm.employeeServiceCommission"/>-->
               <InputNumber
+                :min="0"
                 style="width:100%;"
                 v-model="typeForm.employeeServiceCommission"
                 :precision="2"
@@ -336,7 +337,7 @@
         },
         //下载excel
         downExcel(){
-           this.$http.get(`/repair/service/category/import/template`,{reponseType:'blob'})
+           this.$http.get(`/repair/service/category/import/template`,{responseType:'blob'})
              .then(res=>{
                util.downloadExcel(res)
              })

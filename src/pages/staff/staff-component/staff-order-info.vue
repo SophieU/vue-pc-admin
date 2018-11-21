@@ -89,9 +89,16 @@
               {title:'创建时间',key:'createTime',align:'center'},
               {title:'工单状态',key:'orderState',align:'center'},
               {title:'操作',align:'center',render:(h,params)=>{
+                let _this = this;
+                let id = params.row.id;
                   return h('Button',{
                     props:{
                       type:'text'
+                    },
+                    on:{
+                      click:function(){
+                       _this.$router.push({name:'orderDetail',query:{id:id}})
+                      }
                     }
                   },'查看订单')
                 }},
@@ -161,6 +168,7 @@
               startDate:'',
               endDate:'',
             };
+            this.$refs['filterForm'].resetFields();
             this.getLists();
             this.filter=false;
         },
@@ -168,8 +176,10 @@
             let filterParam = {...this.filterForm};
             delete filterParam.dateRange;
             let param = {};
+            console.log(filterParam)
             for(let key in filterParam){
-              if(filterParam[key].length>0||filterParam[key]>0){
+
+              if((filterParam[key]&&filterParam[key].length>0)||filterParam[key]>0){
                 param[key]=filterParam[key];
               }
             }
@@ -204,6 +214,9 @@
           delete filterParam.dateRange;
           let param = {};
           for(let key in filterParam){
+            if(!!filterParam[key]){
+
+            }
             if(filterParam[key].length>0||filterParam[key]>0){
               param[key]=filterParam[key];
             }

@@ -35,17 +35,22 @@
           <form-item label="接单单数" >
             <Row>
               <Col span="11">
-                <InputNumber style="width:100%;" v-model="filterForm.singularNumberStart"></InputNumber>
+                <InputNumber :min="0" style="width:100%;" v-model="filterForm.singularNumberStart"></InputNumber>
               </Col>
               <Col span="2" style="text-align:center;">至</Col>
               <Col span="11">
-                <InputNumber style="width:100%;" v-model="filterForm.singularNumberEnd"></InputNumber>
+                <InputNumber :min="0" style="width:100%;" v-model="filterForm.singularNumberEnd"></InputNumber>
               </Col>
             </Row>
           </form-item>
           <form-item label="所属服务网点">
-            <Select  v-model="filterForm.repairStationId">
-              <Option v-for="(item,index) in stationLists" :key="item.id" :value="item.id">{{item.name}}</Option>
+            <Select :clearable="true" @on-change="toggleStation" v-model="filterForm.repairStationId">
+              <Option  v-for="(item,index) in stationLists" :key="item.id" :value="item.id">{{item.name}}</Option>
+            </Select>
+          </form-item>
+          <form-item label="所属组">
+            <Select  v-model="filterForm.serviceGroupId"  not-found-text="请先选择服务网点">
+              <Option v-for="group in groupLists" :key="group.id" :value="group.id">{{group.name}}</Option>
             </Select>
           </form-item>
           <form-item class="inline_form_item" label="网点休息中">
@@ -57,11 +62,7 @@
           <form-item class="inline_form_item" label="账号停用">
             <i-switch v-model="filterForm.accountsState" true-value="DISABLE" false-value="NORMAL"></i-switch>
           </form-item>
-          <form-item label="所属组">
-            <Select  v-model="filterForm.serviceGroupId">
-              <Option v-for="group in groupLists" :key="group.id" :value="group.id">{{group.name}}</Option>
-            </Select>
-          </form-item>
+
         </i-form>
       </Drawer>
     </Card>
@@ -106,6 +107,7 @@
             totalCount:0,
             stationLists:[],//网点列表
             groupLists:[], //组列表
+            showFilterGroup:[], //组列表只有在选择了网点时显示
             filterForm:{
               trueName:'',
               mobile:'',
@@ -122,6 +124,15 @@
           }
       },
       methods:{
+        toggleStation(stationId){
+          if(stationId){
+            this.showFilterGroup=true;
+            this.getGroup(stationId)
+          }else{
+            this.showFilterGroup=false;
+            this.groupLists=[];
+          }
+        },
         pageChange(val){
           this.pageNo=val;
           let filter=this.filterForm;
@@ -142,8 +153,9 @@
                 }
               })
           },
-        getGroup(){
-          this.$http.get('/server/service/group/list')
+        getGroup(stationId){
+          let stationIdIn=stationId?stationId:''
+          this.$http.get(`/server/service/group/list?stationId=${stationIdIn}`)
             .then(res=>{
               if(res.data.code===0){
                 this.groupLists=res.data.data;
@@ -151,6 +163,7 @@
             })
         },
         getLists(filter){
+          console.log(filter)
           let param = `pageNo=${this.pageNo}&pageSize=${this.pageSize}`;
           if(filter){
             param=param+'&'+util.formatterParams(filter);

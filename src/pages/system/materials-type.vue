@@ -63,7 +63,7 @@
                   <Input v-model="typeForm.unit"/>
                 </form-item>
                 <form-item label="质保天数" prop="warrantyPeriod">
-                  <InputNumber style="width:100%" v-model="typeForm.warrantyPeriod"/>
+                  <InputNumber :min="0" style="width:100%" v-model="typeForm.warrantyPeriod"/>
                 </form-item>
                 <form-item label="员工结算标准" prop="employeeCommission">
                   <!--<InputMoney v-model="typeForm.employeeCommission" ></InputMoney>-->

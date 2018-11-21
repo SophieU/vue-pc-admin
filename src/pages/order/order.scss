@@ -86,6 +86,7 @@
     .label{
       font-weight: bold;
       width: 80px;
+      white-space:nowrap;
     }
     .item-info{
       display: block;
@@ -155,8 +156,11 @@
 .carouse_wrap{
   .carousel{
     margin: 0 auto;
+    height:100%;
+    width:100%;
+    text-align: center;
     img{
-      width: 100%;
+      width: auto;
       height: 100%;
     }
   }

@@ -45,8 +45,8 @@
             <td>{{material.unit}}</td>
             <td>{{material.price}}</td>
             <td style="width:200px">
-              <InputNumber @on-change="numChange(material.num,index)" style="width:80%;" v-model="material.num" :step="1" :min="1" placeholder="请输入数量"></InputNumber>
-              <p v-if="material.notValid&&material.notValidType.indexOf('num')>-1" class="text-red">请输入单价</p>
+              <InputNumber @on-change="numChange(material.num,index)" style="width:80%;" v-model="material.num" :step="1" :min="0" placeholder="请输入数量"></InputNumber>
+              <p v-if="material.notValid&&material.notValidType.indexOf('num')>-1" class="text-red">请输入数量</p>
             </td>
             <td>{{material.amount}}</td>
             <td>
@@ -57,62 +57,19 @@
         </table>
       </div>
       <!--辅材弹窗-->
-      <!--辅材弹窗-->
-      <Modal :mask-closable="false" title="选择辅材" v-model="showModal" width="650" @on-visible-change="modalVisible">
-        <div>
-          <div class="mb-15">
-            <i-form ref="searchForm" :model="searchForm" inline :label-width="70">
-              <form-item label="辅材类别">
-                <Select style="width:160px ;" v-model="searchForm.categoryId">
-                  <Option v-for="repair in repairType" :value="repair.id" :key="repair.id">{{repair.name}}</Option>
-                </Select>
-              </form-item>
-              <FormItem label="关键字">
-                <Input v-model="searchForm.searchKey" placeholder="请输入辅材名称或型号"/>
-              </FormItem>
-              <Button @click="searchMaterial" type="primary">搜索</Button>
-            </i-form>
-          </div>
-          <div class="table-wrapper">
-            <table class="native-table">
-              <thead>
-              <tr>
-                <th>辅材名称</th>
-                <th>型号</th>
-                <th>单位</th>
-                <th>操作</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(material,index) in materialLists" :key="material.id">
-                <td>{{material.name}}</td>
-                <td>{{material.spec}}</td>
-                <td>{{material.unit}}</td>
-                <td>
-                  <!--<Button type="text" class="text-blue">选择</Button>-->
-                  <Checkbox :disabled="material.disabled" v-model="material.checked" @on-change="checkChange" :true-value="1+'-'+index" :false-value="0+'-'+index">选择</Checkbox>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-            <div class="pagination">
-              <Page @on-change="materialPageChange" size="small" :total="materialTotal" :page-size="5"></Page>
-            </div>
-          </div>
-        </div>
-        <div slot="footer">
-          <Button @click="showModal=false">关闭</Button>
-          <Button type="primary" @click="sureMaterial">确认</Button>
-        </div>
-      </Modal>
-
+      <CheckModal :hasInput="true" :alreadyExist="materialCheckedlists" :showModal="showModal" @close="showModal=false" @checkSubmit="checkSubmit"></CheckModal>
     </Card>
 </template>
 
 <script>
   import util from '../../libs/util'
+  import CheckModal from './component/choose-material';
+
     export default {
         name: "new-out",
+      components:{
+        CheckModal
+      },
       data(){
           return {
             sureAdd:false, //添加辅材，loading控制
@@ -125,62 +82,14 @@
             outputFormRule:{
               outputType:[{required:true,message:'请选择出库类型',trigger:'change'}]
             },
-            searchForm:{
-              categoryId:'',
-              searchKey:'',
-              pageSize:5,
-              pageNo:1,
-            },
             repairType:[],//报修分类列表
-            materialCheckedlists:[ ],
-            materialTotal:0, //辅材搜索，列表总条数
+            materialCheckedlists:[],
             materialLists:[], //辅材列表
-            materialCheck:[], //弹窗已选辅材
-            materialCheckTemp:[], //弹窗已选辅材
           }
       },
       methods:{
         deleteMater(ind){
           this.materialCheckedlists.splice(ind,1);
-        },
-        //弹窗显示状态变化
-        modalVisible(visible){
-          /*
-          *  materialLists:[], //辅材列表
-          *    materialCheckedlists  //界面已选辅材
-          * */
-          if(!visible){
-            this.materialCheckTemp=[];
-            this.materialLists=[];
-            this.materialCheck=this.materialCheckedlists;
-            this. searchForm={
-              categoryId:'',
-              searchKey:'',
-              pageSize:5,
-              pageNo:1,
-            };
-          }else{
-            this.searchMaterial();
-          }
-        },
-        //辅材分页切换
-        materialPageChange(val){
-          this.searchForm.pageNo=val;
-          this.searchMaterial();
-        },
-        //确定弹窗
-        sureMaterial(){
-          let checkLists = this.materialCheckTemp;
-          this.showModal=false;
-          let checkTemp = checkLists.map(item=>{
-            item.num=null;
-            item.amount=null;
-
-
-            return item;
-          });
-          this.materialCheckedlists = this.materialCheckedlists.concat(checkTemp);
-
         },
         //搜索辅材
         searchMaterial(){
@@ -206,13 +115,18 @@
                 let hasChecked = this.materialCheck;
                 let lists = this.materialLists;
                 this.materialLists=this.compareChoosed(hasChecked,lists);
-
                 //设置页码
                 this.materialTotal = data.totalCount
               }else{
                 console.log('辅材搜索失败：'+res.data.msg)
               }
             })
+        },
+        //确定弹窗
+        checkSubmit(lists){
+          // let checkLists = this.materialCheckTemp;
+          this.showModal=false;
+          this.materialCheckedlists = this.materialCheckedlists.concat(lists);
         },
         //数量输入改变
         numChange(val,index){
@@ -222,52 +136,6 @@
             }
             return item;
           });
-        },
-        //获取报修分类
-        getRepairType(){
-          this.$http.get(`/repair/category/list`)
-            .then(res=>{
-              if(res.data.code===0){
-                this.repairType=res.data.data;
-              }else{
-                console.log('报修分类获取失败：'+res.data.msg);
-              }
-            })
-        },
-        //弹窗选择辅材交互
-        checkChange(val){
-          /**
-           * 辅材选择切换：val构成： boolean-index
-           */
-          let materialLists = this.materialLists;
-          val = val.split('-');
-          let checked = val[0];
-          let index = parseInt(val[1]);
-          if(checked==='1'){
-            this.materialCheckTemp.push(materialLists[index])
-          }else{
-            this.materialCheckTemp.map((item,ind)=>{
-              if(item.id===materialLists[index].id){
-                this.materialCheckTemp.splice(ind,1);
-              }
-            });
-          }
-
-        },
-        /*用于比对已选辅材*/
-        compareChoosed(hasCheck,lists){
-          lists=lists.map(item=>{
-            hasCheck.forEach(check=>{
-              if(item.id===check.id){
-                item.disabled=true;
-              }
-            });
-            if(!item.disabled){
-              item.disabled=false;
-            }
-            return item;
-          });
-          return lists;
         },
         sureOut(){
           this.loadingSave=true;
@@ -316,10 +184,6 @@
           })
         }
       },
-      mounted(){
-          this.getRepairType();
-          this.searchMaterial();
-      }
     }
 </script>
 
