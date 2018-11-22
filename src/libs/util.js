@@ -83,7 +83,7 @@ util.setCurrentPath=function(vm,name){
     currentPathArr = [
       {
         title:'首页',
-        path: '',
+        path: '/content/home',
         name: 'home'
       }
     ];
@@ -96,7 +96,7 @@ util.setCurrentPath=function(vm,name){
     currentPathArr = [
       {
         title: '首页',
-        path: '/home',
+        path: '/content/home',
         name: 'home'
       },
       {
@@ -139,13 +139,12 @@ util.setCurrentPath=function(vm,name){
         }
       }
     })[0];
-
     if (currentPathObj.children.length <= 1 && currentPathObj.name === 'home') {
 
         currentPathArr = [
           {
             title: '首页',
-            path: '',
+            path: '/content/home',
             name: 'home'
           }
         ];
@@ -153,7 +152,7 @@ util.setCurrentPath=function(vm,name){
         currentPathArr = [
           {
             title: '首页',
-            path: '/home',
+            path: '/content/home',
             name: 'home'
           },
           {
@@ -183,15 +182,17 @@ util.setCurrentPath=function(vm,name){
         });
 
       if(thirdChildObj){
+        //三级菜单中有像工单管理这样的特殊情况
+        let isSingle=currentPathObj.meta.single;
           currentPathArr = [
             {
-              title: currentPathObj.title,
-              path: '',
+              title: isSingle?currentPathObj.children[0].title:currentPathObj.title,
+              path: isSingle?currentPathObj.path+ '/'+currentPathObj.children[0].path:'',
               name: currentPathObj.name
             },
             {
               title: childObj.title,
-              path: currentPathObj.path + '/' + childObj.path,
+              path: '',
               name: childObj.name
             },
             {
@@ -200,10 +201,9 @@ util.setCurrentPath=function(vm,name){
               path:currentPathObj.path + '/' + childObj.path+'/'+thirdChildObj.path,
             }
           ];
-        }else{
 
+      }else{
           currentPathArr = [
-
             {
               title: currentPathObj.title,
               path: '',

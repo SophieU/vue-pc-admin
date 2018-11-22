@@ -89,13 +89,13 @@
         <Col :lg="16" :sm="24">
           <Card class="order-detail-right">
             <ul class="mb-15 nav-ul">
-              <router-link exact active-class="text-blue" tag="li" :to="{name:'orderDetail',query:{id:id}}">处理流程</router-link>
-              <router-link active-class="text-blue" tag="li" :to="{name:'feeDetail',query:{id:id}}">收费明细</router-link>
-              <router-link active-class="text-blue" tag="li" :to="{name:'orderProve',query:{id:id}}">证据证明</router-link>
-              <router-link active-class="text-blue" tag="li" :to="{name:'orderDetailIncome',query:{id:id}}">工单收益</router-link>
-              <router-link active-class="text-blue" tag="li" :to="{name:'afterService',query:{id:id}}">售后质保</router-link>
-              <router-link active-class="text-blue" tag="li" :to="{name:'visitedInfo',query:{id:id}}">回访信息</router-link>
-              <router-link active-class="text-blue" tag="li" :to="{name:'orderControl',query:{id:id,state:baseInfo.orderState,isWarranty:baseInfo.isWarranty}}">订单操作</router-link>
+              <router-link exact active-class="text-blue" replace tag="li" :to="{name:'orderDetail',query:{id:id}}">处理流程</router-link>
+              <router-link active-class="text-blue" replace tag="li" :to="{name:'feeDetail',query:{id:id}}">收费明细</router-link>
+              <router-link active-class="text-blue" replace tag="li" :to="{name:'orderProve',query:{id:id}}">证据证明</router-link>
+              <router-link active-class="text-blue" replace tag="li" :to="{name:'orderDetailIncome',query:{id:id}}">工单收益</router-link>
+              <router-link active-class="text-blue" replace tag="li" :to="{name:'afterService',query:{id:id}}">售后质保</router-link>
+              <router-link active-class="text-blue" replace tag="li" :to="{name:'visitedInfo',query:{id:id}}">回访信息</router-link>
+              <router-link active-class="text-blue" replace tag="li" :to="{name:'orderControl',query:{id:id,state:baseInfo.orderState,isWarranty:baseInfo.isWarranty}}">订单操作</router-link>
             </ul>
             <router-view></router-view>
           </Card>

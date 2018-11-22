@@ -18,7 +18,7 @@ const app = {
     currentPath:[ //面包屑数组
       {
         title:'首页',
-        path:'',
+        path:'/content/home',
         name:'home'
       }
     ],
