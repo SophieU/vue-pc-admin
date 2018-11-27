@@ -203,7 +203,8 @@
           this.getLists();
         },
         getStation(id){
-          this.$http.get(`/repair/station/region/list?id=${id}`)
+          let params = id?`id=${id}`:'';
+          this.$http.get(`/repair/station/region/list?${params}`)
             .then(res=>{
               if(res.data.code===0){
                 let data=res.data.data;

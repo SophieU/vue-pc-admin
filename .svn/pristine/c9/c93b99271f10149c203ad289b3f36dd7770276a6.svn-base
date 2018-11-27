@@ -62,7 +62,7 @@
                   this.areaLists=data.data;
                 }
                 //首次设置默认
-                if(this.editInd===0&&this.areaLists.length>0){
+                if(this.editInd===0){
                   this.areaName=this.areaLists[0].name;
                   this.editId=this.areaLists[0].id;
                 }
