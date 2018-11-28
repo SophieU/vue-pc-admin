@@ -5,8 +5,8 @@ let baseUrl = '';
 let domin = window.location.hostname;
 if (domin === 'hjzx.yishengyue.cn') {
    //正式
-  baseUrl = 'https://bsbxapi.yishengyue.cn'
-  localStorage.setItem('baseURL','https://bsbxapi.yishengyue.cn');
+  baseUrl = 'http://47.100.100.153:8109/repair/call/center/v1/'
+  localStorage.setItem('baseURL','http://47.100.100.153:8109/repair/call/center/v1/');
 } else if (domin === 'yanshihjzx.yishengyue.cn') { 
   //演示
   baseUrl='http://101.132.99.21:8116/repair/call/center/v1/';
